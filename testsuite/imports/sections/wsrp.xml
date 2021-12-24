@@ -1,0 +1,33 @@
+<project name="tests-wsrp-jars">
+  <!-- wsrp tests -->
+  <target name="_jars-wsrp">
+     <!-- wsrp-integration testcase -->
+     <war warfile="${build.lib}/wsrp.war" 
+       webxml="${build.resources}/wsrp/WEB-INF/web.xml">
+        <classes dir="${build.classes}">
+           <include name="org/jboss/test/wsrp/**/*.class"/>
+           <exclude name="org/jboss/test/wsrp/*TestCase.class"/>
+        </classes>
+        <webinf dir="${build.resources}/wsrp/WEB-INF">
+            <include name="webservices.xml"/>
+            <include name="jaxrpc-mapping.xml"/>
+            <include name="wsdl/**"/>
+        </webinf>
+      </war>
+      <jar destfile="${build.lib}/wsrp-client.jar">
+          <fileset dir="${build.classes}">
+             <include name="org/jboss/test/wsrp/**/*.class"/>
+             <exclude name="org/jboss/test/wsrp/*TestCase.class"/>
+			 <exclude name="org/jboss/test/wsrp/*Endpoint.class"/>
+          </fileset>
+          <metainf dir="${build.resources}/wsrp/META-INF">
+             <include name="application-client.xml"/>
+             <include name="jboss-client.xml"/>
+          </metainf>
+          <metainf dir="${build.resources}/wsrp/WEB-INF">
+             <include name="jaxrpc-mapping.xml"/>
+             <include name="wsdl/**"/>
+          </metainf>
+       </jar>
+ </target>
+</project>

@@ -1,0 +1,18 @@
+<project name="joesnmp-component-info">
+   <!-- ============================================================ -->
+   <!-- Joe SNMP lib                                                 -->
+   <!-- ============================================================ -->
+   <component id="joesnmp"
+              version="0.3.4-brew"
+              licenseType="lgpl"
+              projectHome="http://sourceforge.net/projects/joesnmp"
+              description="joeSNMP is an open-source Java SNMP library"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/joesnmp"
+              tag="joesnmp-0_3_4-1jpp_el4ep1_3">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="joesnmp.jar"/>
+      <export>
+         <include input="joesnmp.jar"/>
+      </export>
+   </component>
+</project>

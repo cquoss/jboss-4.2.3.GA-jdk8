@@ -1,0 +1,44 @@
+<?xml version='1.0'?>
+<!DOCTYPE policy PUBLIC
+      "-//JBoss//DTD JBOSS Security Config 3.0//EN"
+      "http://www.jboss.org/j2ee/dtd/security_config.dtd">
+
+<policy>
+    <!-- A template configuration for the jmx-console web application. This
+      defaults to the UsersRolesLoginModule the same as other and should be
+      changed to a stronger authentication mechanism as required.
+    -->
+    <application-policy name = "jbosstest-sso">
+       <authentication>
+          <login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule"
+             flag = "required">
+             <module-option name="usersProperties">sso-users.properties</module-option>
+             <module-option name="rolesProperties">sso-roles.properties</module-option>
+             <module-option name="roleGroupSeperator">.</module-option>
+          </login-module>
+       </authentication>
+    </application-policy>
+   <application-policy name = "jbosstest-web">
+      <authentication>
+         <login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule"
+            flag = "required">
+            <module-option name="usersProperties">sso-users.properties</module-option>
+            <module-option name="rolesProperties">sso-roles.properties</module-option>
+            <module-option name="roleGroupSeperator">.</module-option>
+         </login-module>
+      </authentication>
+   </application-policy>
+   <!-- Security domains for the jca framework -->
+   <application-policy name = "HsqlDbRealm">
+      <authentication>
+         <login-module code = "org.jboss.resource.security.ConfiguredIdentityLoginModule"
+            flag = "required">
+            <module-option name = "principal">sa</module-option>
+            <module-option name = "userName">sa</module-option>
+            <module-option name = "password"></module-option>
+            <module-option name = "managedConnectionFactoryName">jboss.jca:service=LocalTxCM,name=DefaultDS</module-option>
+         </login-module>
+      </authentication>
+   </application-policy>
+
+</policy>

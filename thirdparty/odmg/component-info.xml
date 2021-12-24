@@ -1,0 +1,15 @@
+<project name="odmg-component-info">
+   <component id="odmg"
+              version="3.0-brew"
+              licenseType="apache-2.0"
+              projectHome="http://www.odmg.org/"
+              description="ODMG Java binding"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/odmg"
+              tag="odmg-3_0-3jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="odmg.jar"/>
+      <export>
+         <include input="odmg.jar"/>
+      </export>
+   </component>
+</project>

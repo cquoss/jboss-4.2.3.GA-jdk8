@@ -1,0 +1,15 @@
+<project name="apache-commons-discovery">
+   <component id="apache-discovery"
+              licenseType="apache-2.0"
+              version="0.4-brew"
+              projectHome="http://jakarta.apache.org/commons/discovery/"
+              description="Jakarta Commons Discovery"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/jakarta-commons-discovery"
+              tag="jakarta-commons-discovery-0_4-1jpp_el4ep1_3">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="commons-discovery.jar"/>
+      <export>
+         <include input="commons-discovery.jar"/>
+      </export>
+   </component>
+</project>

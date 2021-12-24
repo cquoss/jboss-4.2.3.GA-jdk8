@@ -1,0 +1,24 @@
+<project name="sun-servlet-component-info">
+
+   <!-- ============================================================ -->
+   <!-- Sun Servlet API                                              -->
+   <!-- ============================================================ -->
+
+   <component id="sun-servlet"
+      licenseType="apache-2.0"
+      version="2.5-brew"
+      projectHome="http://jakarta.apache.org/tomcat/index.html"
+      description="Tomcat 6.0.10 servlet 2.5 spec api classes (jsp 2.1)"
+      scm=":ext:cvs.devel.redhat.com:/cvs/dist/servletapi6"
+      tag="servletapi6-6_0_10-3jpp_ep1_1">
+      <!-- Built using JDK 1.5 -->
+
+      <artifact id="servlet-api.jar"/>
+      <artifact id="jsp-api.jar"/>
+      <export>
+         <include input="servlet-api.jar"/>
+         <include input="jsp-api.jar"/>
+      </export>
+   </component>
+
+</project>

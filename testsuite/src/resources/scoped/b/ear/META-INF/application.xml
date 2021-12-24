@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<application>
+    <display-name>scopedB</display-name>
+	<module>
+		<ejb>scopedB.jar</ejb>
+	</module>
+</application>
+

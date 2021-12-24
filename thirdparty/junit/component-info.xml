@@ -1,0 +1,15 @@
+<project name="junit-component-info">
+   <component id="junit"
+              licenseType="cpl-1.0"
+              version="3.8.2-brew"
+              projectHome="http://www.junit.org/index.htm"
+              description="Java unit testing framework"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/junit"
+              tag="junit-3_8_2-4jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="junit.jar"/>
+      <export>
+         <include input="junit.jar"/>
+      </export>
+   </component>
+</project>

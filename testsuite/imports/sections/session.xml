@@ -1,0 +1,17 @@
+<project name="tests-session-jars">
+   <!-- session test -->
+   <target name="_jars-session">
+      <mkdir dir="${build.lib}"/>
+      
+      <!-- build test-session-remove.jar -->
+      <jar destfile="${build.lib}/test-session-remove.jar">
+         <fileset dir="${build.classes}">
+            <include name="org/jboss/test/session/interfaces/Count**"/>
+            <include name="org/jboss/test/session/ejb/Count**"/>
+         </fileset>
+         <fileset dir="${build.resources}/session/session-remove">
+            <include name="**"/>
+         </fileset>
+      </jar>
+   </target>
+</project>

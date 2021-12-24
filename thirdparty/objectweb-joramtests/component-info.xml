@@ -1,0 +1,17 @@
+<project name="objectweb-joramtests-component-info">
+   <!-- ============================================================ -->
+   <!-- JORAM TESTS                                                  -->
+   <!-- ============================================================ -->
+
+   <component id="objectweb-joramtests"
+              module="joramtests"
+              licenseType="lgpl"
+              version="1.1"
+   >
+      <artifact id="joram-tests.jar"/>
+      <export>
+         <include input="joram-tests.jar"/>
+      </export>
+   </component>
+
+</project>

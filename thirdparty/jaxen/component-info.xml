@@ -1,0 +1,15 @@
+<project name="jaxen-component-info">
+   <component id="jaxen"
+              licenseType="jaxen"
+              version="1.1-brew"
+              projectHome="http://jaxen.codehaus.org/"
+              description="Java XPath Engine"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/jaxen"
+              tag="jaxen-1_1-1jpp_el4ep1_1">
+      <artifact id="jaxen.jar"/>
+      <!-- Built using JDK 1.4 -->
+      <export>
+         <include input="jaxen.jar"/>
+      </export>
+   </component>
+</project>

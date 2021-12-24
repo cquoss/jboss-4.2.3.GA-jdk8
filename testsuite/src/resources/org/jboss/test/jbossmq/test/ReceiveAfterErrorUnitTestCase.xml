@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:jboss:bean-deployer bean-deployer_1_0.xsd"
+            xmlns="urn:jboss:bean-deployer">
+   
+   <bean name="PersistenceManager" class="org.jboss.mq.pm.none.PersistenceManager"/>
+   
+   <bean name="StateManager" class="org.jboss.mq.sm.none.NullStateManager"/>
+   
+   <bean name="MessageCache" class="org.jboss.mq.kernel.MessageCache">
+      <property name="persistenceManager"><inject bean="PersistenceManager"/></property>
+   </bean>
+   
+   <bean name="DestinationManager" class="org.jboss.mq.kernel.DestinationManager">
+      <property name="persistenceManagerInstance"><inject bean="PersistenceManager"/></property>
+      <property name="stateManagerInstance"><inject bean="StateManager"/></property>
+      <property name="messageCacheInstance"><inject bean="MessageCache"/></property>
+   </bean>
+
+   <bean name="JMSServer" class="org.jboss.mq.server.JMSDestinationManager">
+      <constructor factoryMethod="getInterceptor">
+         <factory bean="DestinationManager"/>
+      </constructor>
+   </bean>
+
+   <bean name="MockServerFailure" class="org.jboss.test.jbossmq.support.MockServerFailureInterceptor">
+      <property name="next"><inject bean="JMSServer"/></property>
+   </bean>
+   
+   <bean name="Invoker" class="org.jboss.mq.server.JMSServerInvoker">
+      <property name="next"><inject bean="MockServerFailure"/></property>
+   </bean>
+
+   <bean name="ServerIL" class="org.jboss.mq.il.jvm.JVMServerIL">
+      <constructor>
+         <parameter><inject bean="Invoker"/></parameter>
+      </constructor>
+   </bean>
+   
+   <bean name="GCF" class="org.jboss.mq.GenericConnectionFactory">
+      <constructor>
+         <parameter><inject bean="ServerIL"/></parameter>
+         <parameter>
+            <map class="java.util.Properties" keyClass="java.lang.String" valueClass="java.lang.String">
+               <entry>
+                  <key>ClientILService</key><value>org.jboss.mq.il.jvm.JVMClientILService</value>
+               </entry>
+            </map>
+         </parameter>
+      </constructor>
+   </bean>
+   
+   <bean name="ConnectionFactory" class="org.jboss.mq.SpyConnectionFactory">
+      <constructor>
+         <parameter class="org.jboss.mq.GenericConnectionFactory"><inject bean="GCF"/></parameter>
+      </constructor>
+   </bean>
+      
+</deployment>

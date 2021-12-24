@@ -1,0 +1,26 @@
+<project name="apache-xerces-component-info">
+
+   <!-- ============================================================ -->
+   <!-- Apache Xerces                                                -->
+   <!-- ============================================================ -->
+
+   <component id="apache-xerces"
+              licenseType="apache-2.0"
+              version="2.7.1-brew"
+              projectHome="http://xml.apache.org/xerces2-j/index.html"
+              description="High performance, fully compliant XML parser"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/xerces-j2"
+              tag="xerces-j2-2_7_1-9jpp_el4ep1_2">
+      <!-- Build using JDK 1.4 -->
+      <artifact id="xercesImpl.jar"/>
+      
+      <import componentref="apache-xml-commons">
+        <compatible version="1.3.03-brew"/>
+      </import>
+       
+      <export>
+         <include input="xercesImpl.jar"/>
+      </export>
+   </component>
+
+</project>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE person PUBLIC "-//DTD Person//EN" "resources/xml/person.dtd">
+
+<person>
+   <first-name>Vasiliy</first-name>
+   <last-name>Poupkin</last-name>
+   <date-of-birth>1980-01-01</date-of-birth>
+   <phones>
+      <phone>01</phone>
+      <phone>02</phone>
+   </phones>
+   <addresses>
+      <address>
+         <street>prosp. Rad. Ukr. 11A, 70</street>
+      </address>
+      <address>
+         <street>Sky 7</street>
+      </address>
+   </addresses>
+</person>

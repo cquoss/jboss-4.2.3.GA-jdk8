@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<jboss-web>
+   <replication-config>
+      <max-unreplicated-interval>16</max-unreplicated-interval>
+   </replication-config>
+</jboss-web>

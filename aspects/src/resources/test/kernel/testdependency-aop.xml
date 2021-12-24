@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<aop xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="urn:jboss:aop-deployer aop-deployer_1_1.xsd"
+     xmlns="urn:jboss:aop-deployer">
+
+   <interceptor name="SimpleInterceptorWithDependency">
+       <![CDATA[
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:jboss:bean-deployer bean-deployer_1_0.xsd"
+            xmlns="urn:jboss:bean-deployer">
+   <bean class="org.jboss.test.kernel.SimpleInterceptorWithDependency">
+      <property name="bean"><inject bean="SimpleBean"/></property>
+   </bean>
+</deployment>
+
+ ]]>
+   </interceptor>
+
+   <bind pointcut="execution(* org.jboss.test.kernel.Aspectized->*(..))">
+      <interceptor-ref name="SimpleInterceptorWithDependency"/>
+   </bind>
+</aop>
+
+
+

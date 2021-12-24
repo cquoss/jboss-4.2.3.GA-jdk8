@@ -1,0 +1,16 @@
+<project name="codehaus-jettison">
+
+   <component id="codehaus-jettison"
+      licenseType="apache-2.0"
+      version="1.0-RC2"
+      projectHome="http://jettison.codehaus.org"
+      description="Jettison is a collection of StAX parsers and writers which read and write JSON">
+
+      <artifact id="jettison.jar"/>
+      <artifact id="jettison-src.jar"/>
+      
+      <export>
+         <include input="jettison.jar"/>
+      </export>
+   </component>
+</project>

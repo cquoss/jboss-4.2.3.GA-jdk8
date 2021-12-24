@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: jboss-service.xml 32500 2005-06-19 07:10:22Z bill $ -->
+
+<!-- ===================================================================== -->
+<!--  JBoss Server Configuration                                           -->
+<!-- ===================================================================== -->
+
+<server>
+
+   <mbean code="org.jboss.test.hotdeploy.mbean.Service"
+      name="jboss.aop:service=HotdeployTest"/>
+
+</server>

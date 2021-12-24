@@ -1,0 +1,18 @@
+<project name="woodstox-component-info">
+   <!-- ============================================================ -->
+   <!-- WOODSTOX STAX PARSER                                         -->
+   <!-- ============================================================ -->
+   <component id="woodstox"
+           version="3.1.1-brew"
+            licenseType="lgpl"
+            projectHome="http://woodstox.codehaus.org/"
+            description="A fast STAX parser implementation"
+            scm=":ext:cvs.devel.redhat.com:/cvs/dist/wstx"
+            tag="wstx-3_1_1-1jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="wstx.jar"/>
+      <export>
+         <include input="wstx.jar"/>
+      </export>
+   </component>
+</project>

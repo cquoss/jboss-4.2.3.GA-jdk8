@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns:xmbean="http://jboss.org/xmbean"
+   xmlns:jbxb="http://www.jboss.org/xml/ns/jbxb"
+   targetNamespace="http://jboss.org/xmbean"
+   elementFormDefault="qualified">
+
+   <xs:simpleType name="descriptionType">
+      <xs:restriction base="xs:string"/>
+   </xs:simpleType>
+
+   <xs:complexType name="constructorType">
+      <xs:sequence>
+         <xs:element name="description" type="xmbean:descriptionType"/>
+         <xs:element name="name" type="xs:string"/>
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="attributeType">
+      <xs:sequence>
+         <xs:element name="description" type="xmbean:descriptionType"/>
+         <xs:element name="name" type="xs:string"/>
+         <xs:element name="type" type="xs:string"/>
+      </xs:sequence>
+      <xs:attribute name="access" type="xs:string"/>
+      <xs:attribute name="getMethod" type="xs:string"/>
+      <xs:attribute name="setMethod" type="xs:string"/>
+   </xs:complexType>
+
+   <xs:complexType name="operationType">
+      <xs:sequence>
+         <xs:element name="description" type="xmbean:descriptionType"/>
+         <xs:element name="name" type="xs:string"/>
+         <xs:element name="return-type" type="xs:string"/>
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="notificationType">
+      <xs:sequence>
+         <xs:element name="description" type="xmbean:descriptionType"/>
+         <xs:element name="name" type="xs:string"/>
+         <xs:element name="notification-type" type="xs:string"/>
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="xmbeanType">
+      <xs:sequence>
+         <xs:element name="description" type="xmbean:descriptionType"/>
+         <xs:element name="class" type="xs:string">
+            <xs:annotation>
+               <xs:appinfo>
+                  <jbxb:property name="mbeanClass"/>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="constructor" type="xmbean:constructorType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+               <xs:appinfo>
+                  <jbxb:property name="constructors"/>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="attribute" type="xmbean:attributeType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+               <xs:appinfo>
+                  <jbxb:property name="attributes"/>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="operation" type="xmbean:operationType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+               <xs:appinfo>
+                  <jbxb:property name="operations"/>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="notification" type="xmbean:notificationType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+               <xs:appinfo>
+                  <jbxb:property name="notifications"/>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="persistence" type="xs:anyType">
+            <xs:annotation>
+               <xs:appinfo>
+                  <jbxb:property name="persistenceManager"/>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:element name="mbean" type="xmbean:xmbeanType"/>
+</xs:schema>

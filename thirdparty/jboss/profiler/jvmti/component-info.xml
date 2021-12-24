@@ -1,0 +1,18 @@
+<project name="jboss-serialization-info">
+   <!-- ============================================================ -->
+   <!-- JBossSerialization                                           -->
+   <!-- ============================================================ -->
+   <component id="jboss/profiler/jvmti"
+              licenseType="lgpl"
+              version="1.0.0.CR5-brew"
+              projectHome="http://www.jboss.org/profiler"
+              description="JVMTI Wrapper Library"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/jboss-profiler"
+              tag="jboss-profiler-1_0-0_CR5_el4ep1_1">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="jboss-profiler-jvmti.jar"/>
+      <export>
+         <include input="jboss-profiler-jvmti.jar"/>
+      </export>
+   </component>
+</project>

@@ -1,0 +1,17 @@
+<a:aspects 
+	xmlns:a="org.jboss.aspect"
+	xmlns:di="org.jboss.aspect.interceptors.DelegatingInterceptor"
+	xmlns:ai="org.jboss.aspect.interceptors.AdaptorInterceptor"
+	xmlns:jii="org.jboss.aspect.interceptors.JMXInvokerInterceptor"
+	>
+
+    <!-- ================================================================ -->
+    <!-- Used by AspectUnitTestCase . -->
+    <!-- ================================================================ -->				   
+	<a:aspect a:name="AspectUnitTestCase.AddThree">
+		<a:interceptor a:class="org.jboss.test.aspect.test.AddOneInterceptor"/>
+		<a:interceptor a:class="org.jboss.test.aspect.test.AddOneInterceptor"/>
+		<a:interceptor a:class="org.jboss.test.aspect.test.AddOneInterceptor"/>
+	</a:aspect>
+
+</a:aspects>

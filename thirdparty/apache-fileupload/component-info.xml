@@ -1,0 +1,16 @@
+<project name="apache-commons-fileupload">
+   <component id="apache-fileupload"
+              licenseType="apache-2.0"
+              version="1.1.1-brew"
+              projectHome="http://jakarta.apache.org/commons/fileupload/"
+              description="FileUpload parses HTTP requests which conform to RFC 1867"
+	      scm=":ext:cvs.devel.redhat.com:/cvs/dist/jakarta-commons-fileupload"
+              tag="jakarta-commons-fileupload-1_1_1-3jpp_el4ep1_3">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="commons-fileupload.jar"/>
+      <export>
+         <include input="commons-fileupload.jar"/>
+      </export>
+   </component>
+
+</project>

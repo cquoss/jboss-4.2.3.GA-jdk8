@@ -1,0 +1,36 @@
+<project name="jboss/jbossxb-component-info">
+
+   <component id="jboss/jbossxb"
+              licenseType="lgpl"
+              version="1.0.0.SP3"
+              projectHome="http://anonsvn.jboss.org/repos/common/jbossxb/"
+              description="JBoss XML Binding"
+              scm="svn:http://anonsvn.jboss.org/repos/common/jbossxb/tags/1.0.0.SP3/"
+              >
+      <!-- Built using JDK 1.5 -->
+      <artifact id="jboss-xml-binding.jar"/>
+      <artifact id="jboss-xml-binding-sources.jar"/>
+
+      <import componentref="apache-xerces">
+         <compatible version="2.7.1"/>
+         <compatible version="2.7.1-brew"/>
+      </import>
+      <import componentref="oswego-concurrent">
+         <compatible version="1.3.4"/>
+         <compatible version="1.3.4-brew"/>
+         <compatible version="1.3.4-jboss"/>
+         <compatible version="1.3.4-jboss-update1"/>
+      </import>
+      <import componentref="wutka-dtdparser">
+         <compatible version="1.2.1"/>
+         <compatible version="1.21-brew"/>
+      </import>
+
+      <export>
+         <include input="jboss-xml-binding.jar"/>
+      </export>
+
+   </component>
+
+</project>
+

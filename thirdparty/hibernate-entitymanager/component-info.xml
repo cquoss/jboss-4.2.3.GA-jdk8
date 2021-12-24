@@ -1,0 +1,27 @@
+<project name="hibernate-entitymanager-component-info">
+   <component id="hibernate-entitymanager"
+              version="3.2.1.GA"
+              licenseType="lgpl"
+              projectHome="http://entitymanager.hibernate.org/"
+              description="Hibernate EntityManager for EJB3"
+      >
+      <artifact id="hibernate-entitymanager.jar"/>
+      <artifact id="ejb3-persistence.jar"/>
+      <import componentref="hibernate">
+	 <compatible version="3.2.0.GA"/>
+         <compatible version="3.2.1.GA"/>
+         <compatible version="3.2.3.GA"/>
+         <compatible version="3.2.4.SP1"/>         
+         <compatible version="3.2.4.SP1_CP01-brew"/>         
+      </import>
+      <import componentref="hibernate-annotations">
+         <compatible version="3.2.1.GA"/>
+      </import>
+      <export>
+         <include input="hibernate-entitymanager.jar"/>
+         <include input="ejb3-persistence.jar"/>
+      </export>
+
+   </component>
+
+</project>

@@ -1,0 +1,89 @@
+<project name="tests-cache-jars">
+  <!-- cache JARs -->
+  <target name="_jars-cache">
+    <!-- Not much to do with jar, but ... -->
+    <mkdir dir="${build.resources}/META-INF"/>
+    <copy todir="${build.resources}/META-INF" filtering="no">
+      <fileset dir="${build.resources}/cache/META-INF">
+        <include name="*-service*.xml"/>
+      </fileset>
+    </copy>
+
+    <!-- pre-compile the aop classes -->
+    <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+    <path id="aop.task.classpath">
+      <path refid="javassist.classpath"/>
+      <path refid="trove.classpath"/>
+      <path refid="jboss.aop.classpath"/>
+      <path refid="jboss.common.classpath"/>
+    </path>
+
+    <aopc compilerclasspathref="aop.task.classpath">
+      <classpath refid="thirdparty.classpath"/>
+      <classpath path="${build.classes}"/>
+      <src path="${build.classes}"/>
+      <include name="org/jboss/test/cache/test/standAloneAop/**"/>
+      <aoppath path="${build.resources}/cache/standalone/META-INF/jboss-aop.xml"/>
+    </aopc>
+
+    <!-- build cachetest.jar -->
+    <jar destfile="${build.lib}/cachetest.jar"
+      manifest="${build.resources}/cache/manifest.mf">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/cache/bean/*.class"/>
+        <include name="org/jboss/test/cache/test/standAloneAop/*.class"/>
+      </fileset>
+      <metainf dir="${build.resources}/cache/META-INF/">
+        <include name="jboss.xml"/>
+        <include name="ejb-jar.xml"/>
+      </metainf>
+    </jar>
+
+    <!-- build cachetest.sar -->
+    <!--
+    -->
+    <delete file="${build.resources}/cache/META-INF/jboss-service.xml"/>
+    <copy file="${build.resources}/cache/META-INF/tree-service.xml"
+      tofile="${build.resources}/cache/META-INF/jboss-service.xml"/>
+
+    <jar destfile="${build.lib}/cachetest.sar">
+      <fileset dir="${jboss.cache.lib}">
+        <include name="jboss-cache.jar"/>
+      </fileset>
+      <fileset dir="${jgroups.jgroups.lib}">
+        <include name="jgroups.jar"/>
+      </fileset>
+      <fileset dir="${build.resources}/cache">
+        <include name="META-INF/jboss-service.xml"/>
+      </fileset>
+    </jar>
+
+    <!-- build cacheAoptest.sar -->
+    <delete file="${build.resources}/cache/META-INF/jboss-service.xml"/>
+    <copy file="${build.resources}/cache/META-INF/tree-aop-service.xml"
+      tofile="${build.resources}/cache/META-INF/jboss-service.xml"/>
+
+    <jar destfile="${build.lib}/cacheAoptest.sar">
+      <fileset dir="${jboss.cache.lib}">
+        <include name="jboss-cache.jar"/>
+      </fileset>
+      <fileset dir="${jgroups.jgroups.lib}">
+        <include name="jgroups.jar"/>
+      </fileset>
+      <fileset dir="${build.resources}/cache">
+        <include name="META-INF/jboss-service.xml"/>
+      </fileset>
+    </jar>
+
+    <!-- build cachetest.aop -->
+    <!--
+    <jar destfile="${build.lib}/cachetest.aop">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/cache/bean/aop/*.class"/>
+      </fileset>
+      <metainf dir="${build.resources}/cache/aop/META-INF/"/>
+    </jar>
+    -->
+
+  </target>
+</project>

@@ -1,0 +1,13 @@
+<!-- The contents of this file will be loaded for each web application -->
+<Context cookies="true" crossContext="true">
+   
+   <!-- We want a low processExpiresFrequency so we can have 
+        fast turnaround of expiration tests -->
+   <Manager pathname="" processExpiresFrequency="1"/>
+
+   <!-- Install an InstanceListener to handle the establishment of the run-as
+   role for servlet init/destroy events.
+   -->
+   <InstanceListener>org.jboss.web.tomcat.security.RunAsListener</InstanceListener>
+   
+</Context>

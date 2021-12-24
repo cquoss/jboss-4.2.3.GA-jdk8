@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server
+    PUBLIC "-//JBoss//DTD MBean Service 3.2//EN"
+    "http://www.jboss.org/j2ee/dtd/jboss-service_3_2.dtd">
+
+<server>
+   <mbean code="org.jboss.test.cluster.drm.DRMUser"
+      name="jboss.test:service=DRMTestCase"
+      xmbean-dd="">
+      <xmbean>
+         <description>DistributedReplicantManager XMBean</description>
+
+         <!-- Attributes -->
+         <attribute access="read-write" getMethod="getPartitionName" setMethod="setPartitionName">
+            <description>The cluster partition name</description>
+            <name>PartitionName</name>
+            <type>java.lang.String</type>
+            <descriptors>
+               <value value="DefaultPartition" />
+            </descriptors>
+         </attribute>
+         <attribute access="read-write" getMethod="getCategory" setMethod="setCategory">
+            <description>The category used with the DRM binding</description>
+            <name>Category</name>
+            <type>java.lang.String</type>
+            <descriptors>
+               <value value="DRMUser" />
+            </descriptors>
+         </attribute>
+
+         <!-- Operations -->
+         <operation>
+            <description>The start lifecycle operation</description>
+            <name>start</name>
+         </operation>
+         <operation>
+            <description>The stop lifecycle operation</description>
+            <name>stop</name>
+         </operation>
+
+         <operation>
+            <name>lookupLocalReplicant</name>
+            <return-type>java.io.Serializable</return-type>
+         </operation>
+         <operation>
+            <name>lookupLocalReplicant</name>
+            <parameter>
+               <name>key</name>
+               <type>java.lang.String</type>
+            </parameter>
+            <return-type>java.io.Serializable</return-type>
+         </operation>
+         <operation>
+            <name>lookupLocalReplicant</name>
+            <return-type>java.io.Serializable</return-type>
+         </operation>
+         <operation>
+            <name>lookupReplicants</name>
+            <return-type>java.util.List</return-type>
+         </operation>
+         <operation>
+            <name>lookupReplicants</name>
+            <parameter>
+               <name>key</name>
+               <type>java.lang.String</type>
+            </parameter>
+            <return-type>java.util.List</return-type>
+         </operation>
+         <operation>
+            <name>add</name>
+            <parameter>
+               <name>key</name>
+               <type>java.lang.String</type>
+            </parameter>
+            <parameter>
+               <name>data</name>
+               <type>java.io.Serializable</type>
+            </parameter>
+            <return-type>void</return-type>
+         </operation>
+         <operation>
+            <name>remove</name>
+            <parameter>
+               <name>key</name>
+               <type>java.lang.String</type>
+            </parameter>
+            <return-type>void</return-type>
+         </operation>
+      </xmbean>
+      <depends>jboss:service=DefaultPartition</depends>
+   </mbean>
+
+</server>

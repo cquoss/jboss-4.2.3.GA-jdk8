@@ -1,0 +1,18 @@
+<project name="apache-jaxme-component-info">
+
+   <!-- ============================================================ -->
+   <!-- Apache JAXME                                                 -->
+   <!-- ============================================================ -->
+
+   <component id="apache-jaxme"
+              licenseType="apache-2.0"
+              version="0.2-cvs"
+              projectHome="http://ws.apache.org/jaxme/">
+
+      <artifact id="jaxmexs.jar"/>
+      <export>
+         <include input="jaxmexs.jar"/>
+      </export>
+   </component>
+
+</project>

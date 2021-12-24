@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<jboss-web>
+   <replication-config>
+      <replication-trigger>SET_AND_GET</replication-trigger>
+   </replication-config>
+</jboss-web>

@@ -1,0 +1,28 @@
+/** A BeanShell script service that binds a URL under SomeWebSite to test
+indirect URL resource-refs
+*/
+import java.net.URL;
+import javax.naming.InitialContext;
+
+void create()
+{
+   URL someWebSite = new URL("http://www.somesite.com");
+   InitialContext ctx = new InitialContext();
+   ctx.bind("SomeWebSite", someWebSite);
+   System.out.println("Bound SomeWebSite: "+someWebSite);
+}
+
+void start()
+{
+}
+
+void stop()
+{
+}
+
+void destroy()
+{
+   InitialContext ctx = new InitialContext();
+   ctx.unbind("SomeWebSite");
+   System.out.println("Unbound SomeWebSite");
+}

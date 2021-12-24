@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+         http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd"
+         version="2.1">
+
+   <enterprise-beans>
+
+      <message-driven>
+         <ejb-name>MDBA</ejb-name>
+         <ejb-class>org.jboss.test.resendmdb.beans.RollbackMDB</ejb-class>
+         <messaging-type>javax.jms.MessageListener</messaging-type>
+         <transaction-type>Container</transaction-type>
+         <activation-config>
+            <activation-config-property>
+               <activation-config-property-name>destination</activation-config-property-name>
+               <activation-config-property-value>queue/A</activation-config-property-value>
+            </activation-config-property>
+            <activation-config-property>
+               <activation-config-property-name>destinationType</activation-config-property-name>
+               <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+            </activation-config-property>
+         </activation-config>
+      </message-driven>
+
+      <message-driven>
+         <ejb-name>MDBB</ejb-name>
+         <ejb-class>org.jboss.test.resendmdb.beans.ResendMDB</ejb-class>
+         <messaging-type>javax.jms.MessageListener</messaging-type>
+         <transaction-type>Container</transaction-type>
+         <env-entry>
+            <env-entry-name>queueName</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>queue/C</env-entry-value>
+         </env-entry>
+         <activation-config>
+            <activation-config-property>
+               <activation-config-property-name>destination</activation-config-property-name>
+               <activation-config-property-value>queue/B</activation-config-property-value>
+            </activation-config-property>
+            <activation-config-property>
+               <activation-config-property-name>destinationType</activation-config-property-name>
+               <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+            </activation-config-property>
+         </activation-config>
+      </message-driven>
+
+      <message-driven>
+         <ejb-name>MDBC</ejb-name>
+         <ejb-class>org.jboss.test.resendmdb.beans.RollbackMDB</ejb-class>
+         <messaging-type>javax.jms.MessageListener</messaging-type>
+         <transaction-type>Container</transaction-type>
+         <activation-config>
+            <activation-config-property>
+               <activation-config-property-name>destination</activation-config-property-name>
+               <activation-config-property-value>queue/C</activation-config-property-value>
+            </activation-config-property>
+            <activation-config-property>
+               <activation-config-property-name>destinationType</activation-config-property-name>
+               <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+            </activation-config-property>
+         </activation-config>
+      </message-driven>
+
+   </enterprise-beans>
+
+   <assembly-descriptor>
+
+      <container-transaction>
+         <method>
+            <ejb-name>MDBA</ejb-name>
+            <method-name>*</method-name>
+         </method>
+         <trans-attribute>Required</trans-attribute>
+      </container-transaction>
+
+      <container-transaction>
+         <method>
+            <ejb-name>MDBB</ejb-name>
+            <method-name>*</method-name>
+         </method>
+         <trans-attribute>Required</trans-attribute>
+      </container-transaction>
+
+      <container-transaction>
+         <method>
+            <ejb-name>MDBC</ejb-name>
+            <method-name>*</method-name>
+         </method>
+         <trans-attribute>Required</trans-attribute>
+      </container-transaction>
+
+   </assembly-descriptor>
+
+</ejb-jar>

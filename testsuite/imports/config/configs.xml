@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<!--
+   | Targets that create separate server configurations
+-->
+ 
+<!-- $Id: build-integration.xml 42813 2006-03-27 18:24:30Z asaldhana $ -->
+<project name="main.server.configs" xmlns:server="http://jboss.org/ns/test/ant/server">
+
+<!-- Import all the xml files that define targets that require a separate
+    JBoss Server Configuration -->
+<import file="tests-jacc.xml"/>
+
+</project>

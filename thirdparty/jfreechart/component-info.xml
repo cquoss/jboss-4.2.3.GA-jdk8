@@ -1,0 +1,21 @@
+<project name="jfreechart-component-info">
+
+   <!-- ============================================================ -->
+   <!-- JFreeChart                                                   -->
+   <!-- ============================================================ -->
+
+   <component id="jfreechart"
+              licenseType="lgpl"
+              version="1.0.2"
+              projectHome="http://www.jfree.org/jfreechart/"
+              description="A free Java class library for generating charts, including">
+      <artifact id="jfreechart.jar"/>
+      <artifact id="jcommon.jar"/>
+      <export>
+         <include input="jfreechart.jar"/>
+         <include input="jcommon.jar"/>
+      </export>
+   </component>
+
+
+</project>

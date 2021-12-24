@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<jboss-web>
+   <replication-config>
+      <replication-granularity>bogus</replication-granularity>
+      <replication-trigger>bogus</replication-trigger>
+      <replication-field-batch-mode>bogus</replication-field-batch-mode>
+      <max-unreplicated-interval>-2345</max-unreplicated-interval>
+   </replication-config>
+</jboss-web>

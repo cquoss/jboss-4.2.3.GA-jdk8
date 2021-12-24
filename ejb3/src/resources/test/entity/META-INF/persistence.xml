@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence>
+   <persistence-unit name="tempdb">
+      <!--jta-data-source>java:/DefaultDS</jta-data-source-->
+      <jta-data-source>${jta-data-source}</jta-data-source>
+      <properties>
+          <!--property name="hibernate.hbm2ddl.auto" value="create-drop"/-->
+          <property name="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}"/>
+      </properties>
+   </persistence-unit>
+</persistence>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+   <!ENTITY buildmagic SYSTEM "../tools/etc/buildmagic/buildmagic.ent">
+   <!ENTITY libraries SYSTEM "../thirdparty/libraries.ent">
+   <!ENTITY modules SYSTEM "../tools/etc/buildmagic/modules.ent">
+   <!ENTITY targets SYSTEM "../tools/etc/buildmagic/targets.ent">
+]>
+
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--  JBoss, the OpenSource J2EE webOS                                      -->
+<!--                                                                        -->
+<!--  Distributable under LGPL license.                                     -->
+<!--  See terms of license at http://www.gnu.org.                           -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+
+<!-- $Id: build.xml 42901 2006-03-29 05:01:48Z starksm $ -->
+
+<project default="main" name="JBoss/Messaging">
+
+  <!-- ================================================================== -->
+  <!-- Setup                                                              -->
+  <!-- ================================================================== -->
+
+  <!--
+     | Include the common Buildmagic elements.
+     |
+     | This defines several different targets, properties and paths.
+     | It also sets up the basic extention tasks amoung other things.
+   -->
+
+  &buildmagic;
+
+  <!--
+     | Include the normal targets.
+   -->
+  &targets;
+
+  <!-- ================================================================== -->
+  <!-- Configuration                                                      -->
+  <!-- ================================================================== -->
+
+  <!--
+     | Configure the build system.  
+     |
+     | This target is invoked by the Buildmagic initialization logic and 
+     | should contain module specific configuration elements.
+   -->
+
+  <target name="configure" unless="configure.disable">
+
+    <!-- =================== -->
+    <!-- Basic Configuration -->
+    <!-- =================== -->
+
+    <!-- Module name(s) & version -->
+    <property name="module.name" value="messaging"/>
+    <property name="module.Name" value="JBoss Messaging"/>
+    <property name="module.version" value="DEV"/>
+
+    <!-- ========= -->
+    <!-- Libraries -->
+    <!-- ========= -->
+    &libraries;
+    <!-- The combined library classpath -->
+    <path id="library.classpath">
+      <path refid="apache.log4j.classpath"/>
+      <path refid="apache.commons.classpath"/>
+      <path refid="oswego.concurrent.classpath"/>
+      <path refid="junit.junit.classpath"/>
+    </path>
+
+    <!-- ======= -->
+    <!-- Modules -->
+    <!-- ======= -->
+    &modules;
+    <!-- The combined depedant module classpath -->
+    <path id="dependentmodule.classpath">
+      <path refid="jboss.j2ee.classpath"/>
+      <path refid="jboss.common.classpath"/>
+      <path refid="jboss.system.classpath"/>
+      <path refid="jboss.naming.classpath"/>
+      <path refid="jboss.server.classpath"/>
+      <path refid="jboss.jmx.classpath"/>
+      <path refid="jboss.security.classpath"/>
+      <path refid="jboss.transaction.classpath"/>
+    </path>
+
+    <!-- ===== -->
+    <!-- Tasks -->
+    <!-- ===== -->
+
+    <property name="jar.prefix" value="jbossmq"/>
+    <property name="jar.client.includes" 
+              value="org/jboss/mq/*.class,
+                     org/jboss/mq/referenceable/**,
+	                 org/jboss/mq/il/**,
+	                 org/jboss/mq/cluster/**,
+	                 org/jboss/mq/xml/**,
+	                 org/jboss/mq/selectors/**"
+	/>
+
+    <call target="_default:task-init"/>
+  </target>
+
+  <patternset id="compile-rmi.pattern">
+      <include name="org/jboss/mq/il/rmi/RMIServerIL.class"/>
+      <include name="org/jboss/mq/il/rmi/RMIClientIL.class"/>
+  </patternset>
+
+  <!-- ================================================================== -->
+  <!-- Compile                                                            -->
+  <!-- ================================================================== -->
+
+  <!-- 
+     |  Compile everything.
+     |
+     |  This target should depend on other compile-* targets for each 
+     |  different type of compile that needs to be performed, short of
+     |  documentation compiles.
+    -->
+  <target name="compile" 
+	  depends="compile-parsers, _default:compile-classes, _default:compile-rmi, _default:compile-resources, _default:compile-etc"
+	  description="Compile all source files."/>
+
+  <!-- Compile parsers -->
+  <target name="compile-parsers" depends="init">
+    <mkdir dir="${build.parsers}/org/jboss/mq/selectors"/>
+
+    <!-- message selector parser -->
+    <javacc target="${source.java}/org/jboss/mq/selectors/SelectorParser.jj" 
+            outputdirectory="${build.parsers}/org/jboss/mq/selectors"
+            javacchome="${sun.javacc.lib}"
+            static="false"/>
+
+    <!-- compile them now -->
+    <mkdir dir="${build.classes}"/>
+    <javac destdir="${build.classes}"
+           optimize="${javac.optimize}"
+           target="${javac.target}"
+           source="${javac.source}"
+           debug="${javac.debug}"
+           depend="${javac.depend}"
+           verbose="${javac.verbose}"
+           deprecation="${javac.deprecation}"
+           includeAntRuntime="${javac.include.ant.runtime}"
+           includeJavaRuntime="${javac.include.java.runtime}"
+           failonerror="${javac.fail.onerror}">
+       <classpath refid="javac.classpath"/>
+
+       <!-- 
+          | Ant really pissses me off!  Why can't I create a fileset
+          | and list the includes/excludes there?  Why the *uck do I have
+          | to use this src crap...
+        -->
+     
+       <!-- JavaCC creates output in a flat namespace -->
+       <src path="${build.parsers}"/>
+       <!--
+       <include name="*.java"/>
+	-->
+       <!-- Only want to build required the bits under selectors.* here -->
+       <src path="${source.java}"/>
+       <include name="org/jboss/mq/selectors/ASCII_CharStream.java"/>
+       <include name="org/jboss/mq/selectors/ParserException.java"/>
+       <include name="org/jboss/mq/selectors/SelectorParser.java"/>
+       <include name="org/jboss/mq/selectors/SelectorParserConstants.java"/>
+       <include name="org/jboss/mq/selectors/SelectorParserTokenManager.java"/>
+       <include name="org/jboss/mq/selectors/Token.java"/>
+       <include name="org/jboss/mq/selectors/TokenMgrError.java"/>
+       <include name="org/jboss/mq/selectors/Operator.java"/>
+       <include name="org/jboss/mq/selectors/Identifier.java"/>
+    </javac>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Archives                                                           -->
+  <!-- ================================================================== -->
+
+  <!-- 
+     |  Build all jar files.
+    -->
+  <target name="module-jars">
+
+    <!-- Server and client jars -->
+    <call target="_default:server-client-jars"/>
+
+  </target>
+</project>

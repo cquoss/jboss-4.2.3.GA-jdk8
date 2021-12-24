@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jboss>
+   <!--loader-repository>jboss.test.txpropiiop:loader=txpropiiopa.jar</loader-repository-->
+   <enterprise-beans>
+      <session>
+         <ejb-name>SessionA</ejb-name>
+         <invoker-bindings>
+           <invoker>
+              <invoker-proxy-binding-name>iiop</invoker-proxy-binding-name>
+           </invoker>
+         </invoker-bindings>
+      </session>
+   </enterprise-beans>
+</jboss>

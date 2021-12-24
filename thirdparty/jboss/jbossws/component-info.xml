@@ -1,0 +1,97 @@
+<project name="jboss/jbossws">
+  
+  <component id="jboss/jbossws" 
+    description="JBossWS an implementation of J2EE Web Services"
+    version="3.0.1-native-2.0.4.GA" 
+    licenseType="lgpl">
+    
+    <artifact id="jbossws-client.jar"/>
+    <artifact id="jbossws-core.jar"/>
+    <artifact id="jboss-jaxrpc.jar"/>
+    <artifact id="jboss-jaxws.jar"/>
+    <artifact id="jboss-jaxws-ext.jar"/>
+    <artifact id="jboss-saaj.jar"/>
+    <artifact id="jbossws-core-src.zip"/>
+    <artifact id="jbossws-context.war"/>
+    <artifact id="standard-jaxrpc-client-config.xml"/>
+    <artifact id="standard-jaxrpc-endpoint-config.xml"/>
+    <artifact id="standard-jaxws-client-config.xml"/>
+    <artifact id="standard-jaxws-endpoint-config.xml"/>
+    <artifact id="jbossws-native42-beans.xml"/>
+    <artifact id="jbossws-native50-beans.xml"/>
+    <artifact id="jbossws-deploy-macros.xml"/>
+    <artifact id="jbossws-deploy.conf"/>
+    <artifact id="wsrunclient.bat"/>
+    <artifact id="wsrunclient.sh"/>
+    <artifact id="wstools.bat"/>
+    <artifact id="wstools.sh"/>
+
+    <import componentref="jboss/jbossxb">
+      <compatible version="1.0.0.SP1"/>
+      <compatible version="1.0.0.SP1-brew"/>
+      <compatible version="1.0.0.SP3"/>
+      <compatible version="1.0.0.SP3-brew"/>      
+      <compatible version="2.0.0.CR7"/>
+      <compatible version="2.0.0.CR7-brew"/>
+    </import>
+    <import componentref="jboss/remoting">
+      <compatible version="2.2.2.SP5"/>
+      <compatible version="2.2.2.SP5-brew"/>
+      <compatible version="2.2.2.SP8"/>
+      <compatible version="2.2.2.SP8-brew"/>      
+      <compatible version="2.4.0.CR1"/>
+      <compatible version="2.4.0.CR1-brew"/>
+    </import>
+    
+    <import componentref="jboss/jaxbintros">
+      <compatible version="1.0.0.beta2"/>
+    </import>
+    <import componentref="jboss/jbossws-common">
+      <compatible version="1.0.4.GA"/>
+    </import>
+    <import componentref="jboss/jbossws-framework">
+      <compatible version="3.0.1.GA"/>
+    </import>
+    <import componentref="jboss/jbossws-spi">
+      <compatible version="1.0.2.GA"/>
+    </import>
+    
+    <import componentref="apache-xmlsec">
+      <compatible version="1.3.0"/>
+      <compatible version="1.3.0-brew"/>
+    </import>
+    <import componentref="ibm-wsdl4j">
+      <compatible version="1.6.2"/>
+      <compatible version="1.6.2-brew"/>
+    </import>
+    <import componentref="stax-api">
+      <compatible version="1.0"/>
+    </import>
+    <import componentref="sun-fi">
+      <compatible version="1.2.2"/>
+    </import>
+    <import componentref="sun-jaxb">
+      <compatible version="2.1.4"/>
+    </import>
+    <import componentref="sun-jaxws">
+      <compatible version="2.1.1"/>
+    </import>
+    <import componentref="woodstox">
+      <compatible version="3.1.1"/>
+      <compatible version="3.1.1-brew"/>
+    </import>
+    <import componentref="wscommons-policy">
+      <compatible version="1.0"/>
+    </import>
+    
+    <export>
+      <include input="jbossws-core.jar"/>
+      <include input="jboss-jaxrpc.jar"/>
+      <include input="jboss-jaxws.jar"/>
+      <include input="jboss-jaxws-ext.jar"/>
+      <include input="jboss-saaj.jar"/>
+    </export>
+    
+  </component>
+  
+</project>

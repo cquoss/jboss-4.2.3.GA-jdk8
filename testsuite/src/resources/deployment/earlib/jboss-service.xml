@@ -1,0 +1,5 @@
+<server>
+	<mbean code="org.jboss.test.deployment.earlib.services.LibService"
+		name="jboss.test:name=libService">
+	</mbean>
+</server>

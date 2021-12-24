@@ -1,0 +1,21 @@
+<project name="sun-jstl-component-info">
+  
+  <!-- ============================================================ -->
+  <!-- JSTL 1.2                                                     -->
+  <!-- ============================================================ -->
+  
+  <component 
+    id="sun-jstl" 
+    version="1.2" 
+    licenseType="cddl" 
+    projectHome="http://jcp.org/en/jsr/detail?id=52" 
+    description="The JSTL 1.2 implementation">
+    
+    <artifact id="jstl.jar"/>
+    
+    <export>
+      <include input="jstl.jar"/>
+    </export>
+  </component>
+  
+</project>

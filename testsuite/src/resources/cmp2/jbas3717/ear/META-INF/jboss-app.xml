@@ -1,0 +1,3 @@
+<jboss-app>
+  <loader-repository>jboss.test:loader=jbas3717</loader-repository>
+</jboss-app>

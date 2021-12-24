@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<server>
+
+   <mbean code="org.jboss.hibernate.jmx.Hibernate"
+          name="jboss.test.har:service=Hibernate,testcase=TimersUnitTestCase">
+      <attribute name="DatasourceName">java:/DefaultDS</attribute>
+      <attribute name="SessionFactoryName">
+         java:/hib-timers/SessionFactory</attribute>
+      <attribute name="Dialect">org.hibernate.dialect.HSQLDialect</attribute>
+      <attribute name="SessionFactoryInterceptor">
+         org.jboss.test.hibernate.SimpleInterceptor</attribute>
+      <attribute name="JdbcBatchSize">0</attribute>
+      <attribute name="Hbm2ddlAuto">create-drop</attribute>
+      <depends>jboss:service=Naming</depends>
+      <depends>jboss:service=TransactionManager</depends>
+   </mbean>
+
+</server>

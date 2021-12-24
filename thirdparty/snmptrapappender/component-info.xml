@@ -1,0 +1,15 @@
+<project name="snmptrapappender">
+   <component id="snmptrapappender"
+              version="1.2.8-brew"
+              licenseType="apache-2.0"
+              projectHome=" http://www.m2technologies.net/asp/snmpTrapAppender.asp"
+              description="SNMP Trap Appender extension for log4j"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/snmptrapappender"
+              tag="snmptrapappender-1_2_8-5jpp_el4ep1_1">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="snmpTrapAppender.jar"/>
+      <export>
+         <include input="snmpTrapAppender.jar"/>
+      </export>
+   </component>
+</project>

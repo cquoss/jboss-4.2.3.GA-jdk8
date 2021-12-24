@@ -1,0 +1,18 @@
+<project name="apache-bcel-component-info">
+   <!-- ============================================================ -->
+   <!-- Apache BCEL                                                  -->
+   <!-- ============================================================ -->
+   <component id="apache-bcel"
+              licenseType="apache-2.0"
+              version="5.1-brew"
+              projectHome="http://jakarta.apache.org/bcel/index.html"
+              description="Byte Code Engineering Library"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/bcel"
+              tag="bcel-5_1-1jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="bcel.jar"/>
+      <export>
+         <include input="bcel.jar"/>
+      </export>
+   </component>
+</project>

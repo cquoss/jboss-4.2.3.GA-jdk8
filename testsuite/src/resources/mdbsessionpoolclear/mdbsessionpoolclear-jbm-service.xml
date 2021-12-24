@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server>
+
+  <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=mdbsessionpoolclearQueue">
+    <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+    <depends optional-attribute-name="SecurityManager">jboss.mq:service=SecurityManager</depends>
+    <attribute name="SecurityConf">
+      <security>
+        <role name="guest" read="true" write="true"/>
+        <role name="publisher" read="true" write="true" create="false"/>
+        <role name="noacc" read="false" write="false" create="false"/>
+      </security>
+    </attribute>
+  </mbean>
+
+</server>

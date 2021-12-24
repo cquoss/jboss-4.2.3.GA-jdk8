@@ -1,0 +1,24 @@
+<project name="dom4j-jarjar-component-info">
+<!--
+   $Id: component-info.xml,v 1.1 2006/09/19 17:08:02 dimitris Exp $
+  
+   A jarjard version of dom4j that moves the classes to the org.jboss.dom4j package
+   space and strips the following packages:
+   
+      org.dom4j.jaxb.*
+      org.dom4j.swing.*
+      org.dom4j.xpath.*
+      org.dom4j.xpp.*
+-->
+   <component id="jboss/dom4j-jarjar"
+              licenseType="dom4j"
+              version="1.6.1"
+              projectHome="http://dom4j.org/"
+              description="JarJar Dom4j(base package = org.jboss.dom4j)">
+      <artifact id="dom4j-jarjar.jar"/>
+      <export>
+         <include input="dom4j-jarjar.jar"/>
+      </export>
+   </component>
+
+</project>

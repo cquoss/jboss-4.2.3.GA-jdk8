@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence>
+   <persistence-unit name="manager1">
+      <jta-data-source>java:/DefaultDS</jta-data-source>
+      <!-- Known Issue: In AS 4.2 you need to add ../ to the path -->
+      <jar-file>../ejbthree724-persistence.jar</jar-file>
+      <properties>
+         <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+      </properties>
+   </persistence-unit>
+</persistence>

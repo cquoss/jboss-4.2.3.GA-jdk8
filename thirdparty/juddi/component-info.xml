@@ -1,0 +1,20 @@
+<project name="juddi-component-info">
+   <!-- ============================================================ -->
+   <!-- jUDDI                                                        -->
+   <!-- ============================================================ -->
+   <component id="juddi"
+              licenseType="apache-2.0"
+              version="0.9RC4-brew"
+              projectHome="http://ws.apache.org/juddi/"
+              description="Universal Description, Discovery, and Integration (UDDI)"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/juddi"
+              tag="juddi-0_9-0_rc4_2jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="juddi.jar"/>
+      <artifact id="juddi.war"/>
+      <export>
+         <include input="juddi.jar"/>
+         <include input="juddi.war"/>
+      </export>
+   </component>
+</project>

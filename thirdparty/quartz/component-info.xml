@@ -1,0 +1,21 @@
+<project name="quartz-component-info">
+   <!-- ============================================================ -->
+   <!-- QDox                                                         -->
+   <!-- ============================================================ -->
+   <component id="quartz"
+              licenseType="apache-2.0"
+              version="1.5.2-brew"
+              projectHome="http://www.opensymphony.com/"
+              description="Quartz is a full-featured, open source job scheduling system that can be integrated with, or used along side virtually any J2EE or J2SE application"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/quartz"
+              tag="quartz-1_5_2-1jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="quartz-all.jar"/>
+      <artifact id="quartz.jar"/>      
+      <export>
+         <include input="quartz-all.jar"/>
+         <include input="quartz.jar"/>         
+      </export>
+   </component>
+
+</project>

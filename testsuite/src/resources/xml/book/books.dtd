@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!ELEMENT book (title, author, character*)>
+<!ATTLIST book isbn CDATA #REQUIRED>
+
+<!ELEMENT title (#PCDATA)>
+
+<!ELEMENT author (#PCDATA)>
+
+<!ELEMENT character (name, friend-of?, since?, qualification?)>
+
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT friend-of (#PCDATA)>
+<!ELEMENT since (#PCDATA)>
+<!ELEMENT qualification (#PCDATA)>

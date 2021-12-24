@@ -1,0 +1,13 @@
+<jboss-web>
+   <!-- Isolate this deployment from others
+        Comment it out if you don't need this.
+   -->
+   <class-loading>
+   <loader-repository>jboss.web:loader=testHA</loader-repository>
+   </class-loading>
+
+   <replication-config>
+      <replication-granularity>FIELD</replication-granularity>
+      <replication-field-batch-mode>TRUE</replication-field-batch-mode>
+   </replication-config>
+</jboss-web>

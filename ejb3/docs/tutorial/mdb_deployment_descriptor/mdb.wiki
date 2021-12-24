@@ -1,0 +1,71 @@
+!!!Message Drive Beans
+
+!!The MDB
+This example shows you how to implement an MDB with EJB 3.0 using xml deployment descriptors.
+
+Take a look at [ExampleMDB.java|src/org/jboss/tutorial/mdb_deployment_descriptor/bean/ExampleMDB.java],
+[ejb-jar.xml|META-INF/ejb-jar.xml], and [jboss.xml|META-INF/jboss.xml].
+The {{<message-driven>}} element in {{ejb-jar.xml}} defines the bean as an MDB. The
+{{<activation-config>}} and  elements contain much of the MDB configuration via the
+{{activation-config-property}} elements. The {{jboss.xml}} descriptor provides the JBoss extensions 
+to the EJB3 specification, such as the Destination JNDI binding via the {{<destination-jndi-name>}}
+element.
+
+The following is the list of standard Activation Config Properties available from the JCA1.5
+specification. Also listed are the respective types and default values where defined.
+
+{{{
+String destination - the jndi name of the Queue or Topic - MANDATORY
+String destinationType - the type of destination valid values are javax.jms.Queue or javax.jms.Topic
+String messageSelector - the message selector of the subscription 
+int acknowledgeMode - the type of acknowledgement when not using transacted jms - valid values AUTO_ACKNOWLEDGE or DUPS_OK_ACKNOWLEDGE - default is AUTO_ACKNOWLEDGE
+String clientID - the client id of the connection
+boolean subscriptionDurability - whether topic subscriptions are durable - valid values Durable or NonDurable - default is NonDurable
+String subscriptionName - the subsription name of the topic subscription
+}}}
+
+The following is the list of Activation Config Properties available as JBoss extensions.
+Also listed are the respective types and default values where defined.
+
+{{{
+boolean isTopic - sets the destinationType - default is false
+String providerAdapterJNDI - the jndi name of the jms provider - default java:/DefaultJMSProvider
+String user - the user id used to connect to the jms server
+String pass - the password of the user
+int maxMessages - read this number of messages before delivering messages to the mdb (each message is delivered individually on the same thread in an attempt to avoid context excessive context switching) - default 1
+int minSession - the minimum number of jms sessions that are available to concurrently deliver messages to this mdb - default 1
+int maxSession - the maximum number of jms sessions that can concurrently deliver messages to this mdb - default 15
+long reconnectInterval - the length of time in seconds between attempts to (re-)connect to the jms provider - default 10 seconds
+long keepAlive - the length of time in milliseconds that sessions over the minimum are kept alive - default is 60 seconds
+booleam sessionTransacted - whether the sessions are transacted - default is true
+boolean useDLQ - whether to use a DLQ handler - valid values true or false - default is true
+String dLQHandler - the org.jboss.resource.adapter.jms.inflow.DLQHandler implementation class name - default org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler
+int dLQMaxResent - the maximum number of times a message is redelivered before it is sent to the DLQ - default 5
+String dLQUser - the user id used to make the dlq connection to the jms server
+String dLQPassword - the password of the DLQUser
+String dLQClientID - the client id of the dlq connection - default is null
+boolean redeliverUnspecified - whether to attempt to redeliver a message in an unspecified transaction context - default is true
+int transactionTimeout - time in seconds for the transaction timeout - default is the timeout set for the resource manager
+}}}
+
+!! The Destination
+The [queue-example-service.xml|queue-example-service.xml] file defines the Queue.  There are no changes for deploying 
+an EJB3 ready Destination as a standard Destination.
+
+!Building and Running
+To build and run the example, make sure you have {{ejb3.deployer}} installed in JBoss 4.0.x and have JBoss running.  See the reference manual on how to install EJB 3.0.  
+{{{
+Unix:    $ export JBOSS_HOME=<where your jboss 4.0 distribution is>
+Windows: $ set JBOSS_HOME=<where your jboss 4.0 distribution is>
+$ ant
+$ ant run
+
+}}}
+
+Look in the console window to determine that the message was sent.
+
+{{{
+01:01:20,828 INFO  [STDOUT] ----------------
+01:01:20,828 INFO  [STDOUT] Received message
+01:01:20,828 INFO  [STDOUT] ----------------
+}}}

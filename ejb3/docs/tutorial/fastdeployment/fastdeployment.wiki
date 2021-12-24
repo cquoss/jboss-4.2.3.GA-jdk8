@@ -1,0 +1,17 @@
+!!!Fast Deployment using DeployEjb3ExtensionOnly
+
+In order to deploy EJB3s, all .jar files must be examined for the existence of annotated classes and 
+EJB3 style deployment descriptors. This can significantly slow the deployment if there are large numbers
+of .jar files, xml descriptors, and classes that need to be examined. In order to provide a mechanism to
+speed the deployment time in these scenarios, JBoss EJB3 provides a flag which will cause the EJB3 
+deployer to only examine .ejb3 files for the existence of annotated classes and EJB3 style deployment
+descriptors. 
+
+Take a look at [jboss-service.xml|META-INF/jboss-service.xml]. This file is found in the
+{{deploy/ejb3.deployer}} directory. The {{jboss.ejb3:service=EJB3Deployer}} mbean configuration
+contains a {{DeployEjb3ExtensionOnly}} attribute. The default value for this atrribute is {{false}},
+which indicates that all .jar files should be examined for annotated classes and EJB3 style deployment
+descriptors. Setting the value to {{true}} will cause the EJB3 deployer to only examine files with
+.ejb3 extensions.
+
+

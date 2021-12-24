@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  Sample Clustering Service Configuration                              -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+
+<server>
+
+   <!-- ==================================================================== -->
+   <!-- Partition used for testing failure to receive state                  -->
+   <!-- ==================================================================== -->
+
+   <mbean code="org.jboss.test.cluster.partition.StartupTestClusterPartition"
+      name="jboss:service=BadProviderPartition">      
+
+      <!-- Inject the JGroups multiplexed channel into the ClusterPartition service -->
+      <!-- comment out to disable multiplexer
+      <depends optional-attribute-name="Multiplexer"
+         proxy-type="attribute">jgroups.mux:name=Multiplexer</depends>
+      <attribute name="MultiplexerStack">fc-fast-minimalthreads</attribute>
+      --> 
+      
+      <!-- Name of the partition being built -->
+      <attribute name="PartitionName">BadProviderPartition</attribute>
+
+      <!-- The address used to determine the node name -->
+      <attribute name="NodeAddress">${jboss.bind.address}</attribute>
+
+      <!-- Determine if deadlock detection is enabled -->
+      <attribute name="DeadlockDetection">False</attribute>
+     
+      <!-- Keep this timeout short -->
+      <attribute name="StateTransferTimeout">2000</attribute>
+
+      <!-- The JGroups protocol configuration -->
+      <attribute name="PartitionConfig">
+         <!--
+         The default UDP stack:
+         - If you have a multihomed machine, set the UDP protocol's bind_addr attribute to the
+         appropriate NIC IP address, e.g bind_addr="192.168.0.2".
+         - On Windows machines, because of the media sense feature being broken with multicast
+         (even after disabling media sense) set the UDP protocol's loopback attribute to true
+         -->
+         <Config>
+            <UDP mcast_addr="${jboss.partition.udpGroup:228.1.2.3}" mcast_port="22222"
+               ip_ttl="8" ip_mcast="true"
+               mcast_send_buf_size="800000" mcast_recv_buf_size="150000"
+               ucast_send_buf_size="800000" ucast_recv_buf_size="150000"
+               loopback="false"/>
+            <PING timeout="2000" num_initial_members="3"
+               up_thread="true" down_thread="true"/>
+            <MERGE2 min_interval="10000" max_interval="20000"/>
+            <FD_SOCK down_thread="false" up_thread="false"/>
+            <FD shun="true" up_thread="true" down_thread="true"
+               timeout="20000" max_tries="5"/>
+            <VERIFY_SUSPECT timeout="3000" num_msgs="3"
+               up_thread="true" down_thread="true"/>
+            <pbcast.NAKACK gc_lag="50" retransmit_timeout="300,600,1200,2400,4800"
+               max_xmit_size="8192"
+               up_thread="true" down_thread="true"/>
+            <UNICAST timeout="300,600,1200,2400,4800" window_size="100" min_threshold="10"
+               down_thread="true"/>
+            <pbcast.STABLE desired_avg_gossip="20000"
+               up_thread="true" down_thread="true"/>
+            <FRAG frag_size="8192"
+               down_thread="true" up_thread="true"/>
+            <pbcast.GMS join_timeout="5000" join_retry_timeout="2000"
+               shun="true" print_local_addr="true"/>
+            <pbcast.STATE_TRANSFER up_thread="true" down_thread="true"/>
+         </Config>
+
+         <!-- Alternate TCP stack: customize it for your environment, change bind_addr and initial_hosts -->
+         <!--
+         <Config>
+            <TCP bind_addr="thishost" start_port="7800" loopback="true"/>
+            <TCPPING initial_hosts="thishost[7800],otherhost[7800]" port_range="3" timeout="3500"
+               num_initial_members="3" up_thread="true" down_thread="true"/>
+            <MERGE2 min_interval="5000" max_interval="10000"/>
+            <FD_SOCK down_thread="false" up_thread="false"/>
+            <FD shun="true" up_thread="true" down_thread="true"
+               timeout="20000" max_tries="5"/>
+            <VERIFY_SUSPECT timeout="1500" down_thread="false" up_thread="false" />
+            <pbcast.NAKACK down_thread="true" up_thread="true" gc_lag="100"
+               retransmit_timeout="3000"/>
+            <pbcast.STABLE desired_avg_gossip="20000" down_thread="false" up_thread="false" />
+            <pbcast.GMS join_timeout="5000" join_retry_timeout="2000" shun="false"
+               print_local_addr="true" down_thread="true" up_thread="true"/>
+            <pbcast.STATE_TRANSFER up_thread="true" down_thread="true"/>
+         </Config>
+         -->
+      </attribute>
+
+   </mbean>
+   
+   <mbean code="org.jboss.test.cluster.partition.BadHAPartitionStateTransfer"
+      name="jboss.test:service=BadHAPartitionStateTransfer,returnState=false">
+      
+      <depends optional-attribute-name="ClusterPartition"
+         proxy-type="attribute">jboss:service=BadProviderPartition</depends>
+         
+      <attribute name="ReturnState">false</attribute>
+      
+   </mbean>
+
+   <!-- ==================================================================== -->
+   <!-- Partition used for testing failure to integrate state                -->
+   <!-- ==================================================================== -->
+
+   <mbean code="org.jboss.test.cluster.partition.StartupTestClusterPartition"
+      name="jboss:service=BadStatePartition">      
+
+      <!-- Inject the JGroups multiplexed channel into the ClusterPartition service -->
+      <!-- comment out to disable multiplexer
+      <depends optional-attribute-name="Multiplexer"
+         proxy-type="attribute">jgroups.mux:name=Multiplexer</depends>
+      <attribute name="MultiplexerStack">fc-fast-minimalthreads</attribute>
+      -->
+      
+      <!-- Name of the partition being built -->
+      <attribute name="PartitionName">BadStatePartition</attribute>
+
+      <!-- The address used to determine the node name -->
+      <attribute name="NodeAddress">${jboss.bind.address}</attribute>
+
+      <!-- Determine if deadlock detection is enabled -->
+      <attribute name="DeadlockDetection">False</attribute>
+     
+      <!-- Keep this timeout short -->
+      <attribute name="StateTransferTimeout">2000</attribute>
+
+      <!-- The JGroups protocol configuration -->
+      <attribute name="PartitionConfig">
+         <!--
+         The default UDP stack:
+         - If you have a multihomed machine, set the UDP protocol's bind_addr attribute to the
+         appropriate NIC IP address, e.g bind_addr="192.168.0.2".
+         - On Windows machines, because of the media sense feature being broken with multicast
+         (even after disabling media sense) set the UDP protocol's loopback attribute to true
+         -->
+         <Config>
+            <UDP mcast_addr="${jboss.partition.udpGroup:228.1.2.3}" mcast_port="33333"
+               ip_ttl="8" ip_mcast="true"
+               mcast_send_buf_size="800000" mcast_recv_buf_size="150000"
+               ucast_send_buf_size="800000" ucast_recv_buf_size="150000"
+               loopback="false"/>
+            <PING timeout="2000" num_initial_members="3"
+               up_thread="true" down_thread="true"/>
+            <MERGE2 min_interval="10000" max_interval="20000"/>
+            <FD_SOCK down_thread="false" up_thread="false"/>
+            <FD shun="true" up_thread="true" down_thread="true"
+               timeout="20000" max_tries="5"/>
+            <VERIFY_SUSPECT timeout="3000" num_msgs="3"
+               up_thread="true" down_thread="true"/>
+            <pbcast.NAKACK gc_lag="50" retransmit_timeout="300,600,1200,2400,4800"
+               max_xmit_size="8192"
+               up_thread="true" down_thread="true"/>
+            <UNICAST timeout="300,600,1200,2400,4800" window_size="100" min_threshold="10"
+               down_thread="true"/>
+            <pbcast.STABLE desired_avg_gossip="20000"
+               up_thread="true" down_thread="true"/>
+            <FRAG frag_size="8192"
+               down_thread="true" up_thread="true"/>
+            <pbcast.GMS join_timeout="5000" join_retry_timeout="2000"
+               shun="true" print_local_addr="true"/>
+            <pbcast.STATE_TRANSFER up_thread="true" down_thread="true"/>
+         </Config>
+
+         <!-- Alternate TCP stack: customize it for your environment, change bind_addr and initial_hosts -->
+         <!--
+         <Config>
+            <TCP bind_addr="thishost" start_port="7800" loopback="true"/>
+            <TCPPING initial_hosts="thishost[7800],otherhost[7800]" port_range="3" timeout="3500"
+               num_initial_members="3" up_thread="true" down_thread="true"/>
+            <MERGE2 min_interval="5000" max_interval="10000"/>
+            <FD_SOCK down_thread="false" up_thread="false"/>
+            <FD shun="true" up_thread="true" down_thread="true"
+               timeout="20000" max_tries="5"/>
+            <VERIFY_SUSPECT timeout="1500" down_thread="false" up_thread="false" />
+            <pbcast.NAKACK down_thread="true" up_thread="true" gc_lag="100"
+               retransmit_timeout="3000"/>
+            <pbcast.STABLE desired_avg_gossip="20000" down_thread="false" up_thread="false" />
+            <pbcast.GMS join_timeout="5000" join_retry_timeout="2000" shun="false"
+               print_local_addr="true" down_thread="true" up_thread="true"/>
+            <pbcast.STATE_TRANSFER up_thread="true" down_thread="true"/>
+         </Config>
+         -->
+      </attribute>
+
+   </mbean>
+   
+   <mbean code="org.jboss.test.cluster.partition.BadHAPartitionStateTransfer"
+      name="jboss.test:service=BadHAPartitionStateTransfer,returnState=true">
+      
+      <depends optional-attribute-name="ClusterPartition"
+         proxy-type="attribute">jboss:service=BadStatePartition</depends>
+         
+      <attribute name="ReturnState">true</attribute>
+      
+   </mbean>
+
+</server>

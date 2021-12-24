@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<application>
+    <display-name>isolationB</display-name>
+	<module>
+		<ejb>isolationB.jar</ejb>
+	</module>
+</application>
+

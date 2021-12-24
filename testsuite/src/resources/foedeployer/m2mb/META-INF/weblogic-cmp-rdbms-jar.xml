@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE weblogic-rdbms-jar PUBLIC "-//BEA Systems, Inc.//DTD WebLogic 6.0.0 EJB RDBMS Persistence//EN" "http://www.bea.com/servers/wls600/dtd/weblogic-rdbms20-persistence-600.dtd">
+
+<weblogic-rdbms-jar>
+   <weblogic-rdbms-bean>
+      <ejb-name>Project</ejb-name>
+      <data-source-name>java:/DefaultDS</data-source-name>
+      <table-name>project</table-name>
+      <field-map>
+         <cmp-field>name</cmp-field>
+         <dbms-column>name</dbms-column>
+      </field-map>
+
+   </weblogic-rdbms-bean>
+   <weblogic-rdbms-bean>
+      <ejb-name>Developer</ejb-name>
+      <data-source-name>java:/DefaultDS</data-source-name>
+      <table-name>developer</table-name>
+      <field-map>
+         <cmp-field>name</cmp-field>
+         <dbms-column>name</dbms-column>
+      </field-map>
+
+   </weblogic-rdbms-bean>
+
+   <weblogic-rdbms-relation>
+      <relation-name>Developer-Project</relation-name>
+      <table-name>developer_project</table-name>
+      <weblogic-relationship-role>
+
+         <relationship-role-name>Developer-Has-Projects</relationship-role-name>
+         <column-map>
+            <foreign-key-column>developer</foreign-key-column>
+            <key-column>name</key-column>
+         </column-map>
+      </weblogic-relationship-role>
+      <weblogic-relationship-role>
+         <relationship-role-name>Project-Has-Developers</relationship-role-name>
+         <column-map>
+            <foreign-key-column>project</foreign-key-column>
+            <key-column>name</key-column>
+         </column-map>
+      </weblogic-relationship-role>
+   </weblogic-rdbms-relation>
+
+   <create-default-dbms-tables>True</create-default-dbms-tables>
+
+</weblogic-rdbms-jar>

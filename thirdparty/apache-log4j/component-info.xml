@@ -1,0 +1,21 @@
+<project name="apache-log4j-component-info">
+   <!-- ============================================================ -->
+   <!-- Apache Log4j                                                 -->
+   <!-- ============================================================ -->
+   <component id="apache-log4j"
+              licenseType="apache-2.0"
+              version="1.2.14-brew"
+              projectHome="http://logging.apache.org/"
+              description="Java logging framework"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/log4j"
+              tag="log4j-1_2_14-1jpp_el4ep1_3">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="log4j.jar"/>
+      <import componentref="snmptrapappender">
+        <compatible version="1.2.8-brew"/>
+      </import>
+      <export>
+         <include input="log4j.jar"/>
+      </export>
+   </component>
+</project>

@@ -1,0 +1,21 @@
+<project name="jboss-serialization-info">
+   <!-- ============================================================ -->
+   <!-- JBossSerialization                                           -->
+   <!-- ============================================================ -->
+
+   <component id="jboss/serialization"
+              licenseType="lgpl"
+              version="1.0.3.GA"
+              projectHome="http://labs.jboss.com/serialization"
+         description="JBoss Alternative Serialization">
+      <artifact id="jboss-serialization.jar"/>
+      <import componentref="trove">
+          <compatible version="1.0.2"/>
+          <compatible version="1.0.2-brew"/>
+      </import>
+      <export>
+         <include input="jboss-serialization.jar"/>
+      </export>
+   </component>
+
+</project>

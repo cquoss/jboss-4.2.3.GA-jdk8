@@ -1,0 +1,24 @@
+<project name="sun-jaxb">
+  
+  <component 
+    id="sun-jaxb" 
+    version="2.1.4" 
+    licenseType="cddl" 
+    projectHome="https://jaxb.dev.java.net/" 
+    description="The JAXB 2.1 implementation">
+    
+    <artifact id="jaxb-api.jar"/>
+    <artifact id="jaxb-xjc.jar"/>
+    <artifact id="jaxb-impl.jar"/>
+  
+    <import componentref="sun-jaf">
+      <compatible version="1.1"/>
+      <compatible version="1.1.0-brew"/>
+    </import>
+
+    <export>
+      <include input="jaxb-api.jar"/>
+    </export>
+  </component>
+  
+</project>

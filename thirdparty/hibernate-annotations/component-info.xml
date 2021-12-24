@@ -1,0 +1,22 @@
+<project name="hibernate-annotations-component-info">
+   <component id="hibernate-annotations"
+               licenseType="lgpl"
+               version="3.2.1.GA"
+               projectHome="http://annotations.hibernate.org"
+      description="Annotations for Hibernate/EJB3"
+    >
+      <artifact id="hibernate-annotations.jar"/>
+      <import componentref="hibernate">
+         <compatible version="3.2.0.GA"/>
+         <compatible version="3.2.1.GA"/>
+         <compatible version="3.2.3.GA"/>
+         <compatible version="3.2.4.SP1"/>         
+         <compatible version="3.2.4.SP1_CP01-brew"/>         
+      </import>
+      <export>
+         <include input="hibernate-annotations.jar"/>         
+      </export>
+      
+   </component>
+
+</project>

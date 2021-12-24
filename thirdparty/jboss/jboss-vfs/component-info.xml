@@ -1,0 +1,14 @@
+<project name="jboss-vfs-component-info">
+
+   <component id="jboss/jboss-vfs"
+              version="1.0.0.GA"
+              licenseType="lgpl"
+              description="A VFS library"
+   >
+      <artifact id="jboss-vfs.jar"/>
+      <artifact id="jboss-vfs-sources.jar"/>
+      <export>
+         <include input="jboss-vfs.jar"/>
+      </export>
+   </component>
+</project>

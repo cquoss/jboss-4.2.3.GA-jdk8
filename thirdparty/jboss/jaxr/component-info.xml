@@ -1,0 +1,26 @@
+<project name="jboss/jbossws-component-info">
+
+   <component id="jboss/jaxr"
+              licenseType="lgpl"
+              version="1.2.0.SP1"
+              description="JBoss JAXR implementation">
+
+      <artifact id="juddi-service.sar"/>
+      <artifact id="juddi-saaj.jar"/>
+
+      <import componentref="apache-scout">
+      	<compatible version="0.7rc2"/>
+      </import>
+      <import componentref="juddi">
+      	<compatible version="0.9RC4"/>
+      	<compatible version="0.9RC4-brew"/>
+      	<compatible version="2.0rc5-brew"/>
+      </import>
+
+      <export>
+        <include input="juddi-saaj.jar"/>
+      </export>
+
+   </component>
+
+</project>

@@ -1,0 +1,23 @@
+<project name="sun-jsf-component-info">
+  
+  <!-- ============================================================ -->
+  <!-- JSF 1.2                                                      -->
+  <!-- ============================================================ -->
+  
+  <component 
+    id="sun-jsf" 
+    version="1.2_09-b01"
+    licenseType="cddl" 
+    projectHome="https://javaserverfaces.dev.java.net/" 
+    description="The JSF 1.2 implementation">
+    
+    <artifact id="jsf-api.jar"/>
+    <artifact id="jsf-impl.jar"/>
+    
+    <export>
+      <include input="jsf-api.jar"/>
+      <include input="jsf-impl.jar"/>
+    </export>
+  </component>
+  
+</project>

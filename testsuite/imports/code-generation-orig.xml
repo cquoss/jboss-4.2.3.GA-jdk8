@@ -1,0 +1,734 @@
+<!-- 
+  An ant project fragement imported into the main testsuite build that defines the code generation compile targets.
+   
+  $Id: code-generation-orig.xml 45264 2006-05-26 05:08:39Z asaldhana $
+-->
+<project name="code-generation" default="help">
+  <target name="init-code-generation" depends="compile-resources">
+    <mkdir dir="${build.gen-src}"/>
+    <mkdir dir="${build.resources}"/>
+    <mkdir dir="${build.reports}"/>
+
+    <copy todir="${build.resources}" file="${source.resources}/log4j.xml" />
+
+    <taskdef name="ejbdoclet" classname="xdoclet.modules.ejb.EjbDocletTask" classpathref="xdoclet.task.classpath"/>
+
+  </target>
+
+  <!-- Compile EJB beans with XDoclet -->
+  <target name="compile-bean-sources" depends="init-code-generation" unless="noxdoclet">
+
+    <!--ejbconf-->
+    <mkdir dir="${build.resources}/ejb-conf/readonly/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/ejb-conf/readonly">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/ejbconf/beans/**/*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <!--session/-->
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/ejbconf/readonly/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.0"
+        destdir="${build.resources}/ejbconf/readonly/META-INF"
+        mergedir="${source.resources}/ejbconf/readonly/"
+        Datasource="java:/DefaultDS"
+        Typemapping="Hypersonic SQL"
+        />
+    </ejbdoclet>
+
+    <!--eardeployment, SessionA-->
+    <mkdir dir="${build.resources}/jmx/eardeployment/a/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/eardeployment/a">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/jmx/eardeployment/a/ejb/*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <!--session/-->
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/jmx/eardeployment/a/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.0"
+        destdir="${build.resources}/jmx/eardeployment/a/META-INF"
+        mergedir="${source.resources}/jmx/eardeployment/a/"/>
+    </ejbdoclet>
+
+    <!--eardeployment, SessionB-->
+    <mkdir dir="${build.resources}/jmx/eardeployment/b/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/eardeployment/b">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/jmx/eardeployment/b/ejb/*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <!--session/-->
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/jmx/eardeployment/b/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.0"
+        destdir="${build.resources}/jmx/eardeployment/b/META-INF"
+        mergedir="${source.resources}/jmx/eardeployment/b/"/>
+    </ejbdoclet>
+
+    <!-- eardepends Dependent[A/B] -->
+    <mkdir dir="${build.resources}/jmx/eardepends/depend/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/eardepends/dependent/META-INF">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/jmx/eardepends/dependent/ejb/*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <homeinterface/>
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/jmx/eardepends/dependent/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.2"
+        destdir="${build.resources}/jmx/eardepends/dependent/META-INF"
+        mergedir="${source.resources}/jmx/eardepends/dependent/META-INF"/>
+    </ejbdoclet>
+
+    <!-- eardepends Independent -->
+    <mkdir dir="${build.resources}/jmx/eardepends/independent/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/eardepends/independent/META-INF">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/jmx/eardepends/independent/ejb/*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <homeinterface/>
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/jmx/eardepends/independent/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.2"
+        destdir="${build.resources}/jmx/eardepends/independent/META-INF"
+        mergedir="${source.resources}/jmx/eardepends/independent/META-INF"/>
+    </ejbdoclet>
+
+    <!-- cmr written after post create -->
+    <mkdir dir="${build.resources}/cmp2/cmr/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/cmp2/cmr">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/cmp2/cmr/ejb/*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <!--session/-->
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/cmp2/cmr/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.0"
+        destdir="${build.resources}/cmp2/cmr/META-INF"
+        mergedir="${source.resources}/cmp2/cmr/"
+        Datasource="java:/DefaultDS"
+        Typemapping="Hypersonic SQL"/>
+    </ejbdoclet>
+
+    <!-- cmrtree -->
+    <mkdir dir="${build.resources}/cmp2/cmrtree/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.etc}/cmp2/cmrtree">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/cmp2/cmrtree/ejb/*Bean.java"/>
+      </fileset>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <entitypk/>
+      <utilobject cacheHomes="true" includeGUID="false"/>
+      <!--session/-->
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/cmp2/cmrtree/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.2"
+        preferredrelationmapping="foreign-key"
+        destdir="${build.resources}/cmp2/cmrtree/META-INF"/>
+    </ejbdoclet>
+
+    <!-- cmp2 passivation integrity test -->
+    <mkdir dir="${build.resources}/cmp2/passivation/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/cmp2/passivation">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/cmp2/passivation/ejb/*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <deploymentdescriptor
+        destdir="${build.resources}/cmp2/passivation/META-INF"
+        validatexml="${validatexml}"/>
+      <jboss
+        version="3.2"
+        xmlencoding="UTF-8"
+        destdir="${build.resources}/cmp2/passivation/META-INF"
+        validatexml="${validatexml}"
+        mergedir="${source.resources}/cmp2/passivation"/>
+    </ejbdoclet>
+
+    <!-- optimistic lock test -->
+    <mkdir dir="${build.resources}/cmp2/optimisticlock/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/cmp2/optimisticlock">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/cmp2/optimisticlock/ejb/*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+    </ejbdoclet>
+
+    <!-- foreign key mapping tests -->
+    <mkdir dir="${build.resources}/cmp2/fkmapping/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.etc}/cmp2/fkmapping">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/cmp2/fkmapping/ejb/*Bean.java"/>
+      </fileset>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <entitypk/>
+      <utilobject cacheHomes="true" includeGUID="false"/>
+      <entitycmp/>
+      <session/>
+      <deploymentdescriptor
+        destdir="${build.resources}/cmp2/fkmapping/META-INF"
+        validatexml="${validatexml}"/>
+      <jboss
+        version="3.2"
+        xmlencoding="UTF-8"
+        destdir="${build.resources}/cmp2/fkmapping/META-INF"
+        validatexml="${validatexml}"/>
+    </ejbdoclet>
+
+    <!-- foreign key mapping stack overflow error tests -->
+    <mkdir dir="${build.resources}/cmp2/fkstackoverflow/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.etc}/cmp2/fkstackoverflow">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/cmp2/fkstackoverflow/ejb/*Bean.java"/>
+      </fileset>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <entitypk/>
+      <utilobject cacheHomes="true" includeGUID="false"/>
+      <entitycmp/>
+      <session/>
+      <deploymentdescriptor
+        destdir="${build.resources}/cmp2/fkstackoverflow/META-INF"
+        validatexml="${validatexml}"/>
+      <jboss
+        version="3.2"
+        xmlencoding="UTF-8"
+        destdir="${build.resources}/cmp2/fkstackoverflow/META-INF"
+        validatexml="${validatexml}"/>
+    </ejbdoclet>
+
+    <!-- dbindex and post-table-create tests -->
+    <mkdir dir="${build.resources}/cmp2/idxandusersql/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.etc}/cmp2/idxandusersql">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/cmp2/idxandusersql/ejb/*Bean.java"/>
+      </fileset>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <entitypk/>
+      <utilobject cacheHomes="true" includeGUID="false"/>
+      <entitycmp/>
+      <session/>
+      <!--  Don't build the DD, haswe have our own one
+            prepared. Can change in the future if the
+            jboss-xdoclet supports dbindex etc.
+      <deploymentdescriptor
+         destdir="${build.resources}/cmp2/idxandusersql/META-INF"
+         validatexml="${validatexml}"/>
+      <jboss
+         version="3.2"
+         xmlencoding="UTF-8"
+         destdir="${build.resources}/cmp2/idxandusersql/META-INF"
+         validatexml="${validatexml}"/>
+      -->
+    </ejbdoclet>
+
+    <!-- ejbselect tests -->
+    <mkdir dir="${build.resources}/cmp2/ejbselect/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.etc}/cmp2/ejbselect">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/cmp2/ejbselect/*Bean.java"/>
+      </fileset>
+      <localinterface/>
+      <localhomeinterface/>
+      <entitypk/>
+      <utilobject cacheHomes="true" includeGUID="false"/>
+      <entitycmp/>
+      <session/>
+      <deploymentdescriptor
+        destdir="${build.resources}/cmp2/ejbselect/META-INF"
+        validatexml="${validatexml}"/>
+      <jboss
+        version="3.2"
+        xmlencoding="UTF-8"
+        destdir="${build.resources}/cmp2/ejbselect/META-INF"
+        validatexml="${validatexml}"/>
+    </ejbdoclet>
+
+    <!-- cmp2 relationship stress tests -->
+    <mkdir dir="${build.resources}/cmp2/cmrstress/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/cmp2/cmrstress">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/cmp2/cmrstress/ejb/*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <utilobject cacheHomes="true" includeGUID="false" kind="physical"/>
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/cmp2/cmrstress/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.0"
+        destdir="${build.resources}/cmp2/cmrstress/META-INF"
+        datasource="java:/DefaultDS"
+        datasourceMapping="Hypersonic SQL"
+        />
+    </ejbdoclet>
+
+    <!-- cmp2 enum tests -->
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/cmp2/enums">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/cmp2/enums/ejb/*Bean.java"/>
+      </fileset>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <utilobject cacheHomes="true" includeGUID="false" kind="physical"/>
+    </ejbdoclet>
+
+    <!--undeploy of broken packages-->
+    <mkdir dir="${build.resources}/jmx/undeploy/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author">
+      <!--mergedir="${source.resources}/jmx/ejb"-->
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/jmx/ejb/Entity*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <!--session/-->
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/jmx/undeploy/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.0"
+        destdir="${build.resources}/jmx/undeploy/META-INF"
+        mergedir="${source.resources}/jmx/undeploy/"
+        Datasource="java:/DefaultDS"
+        Typemapping="Hypersonic SQL"
+        />
+    </ejbdoclet>
+
+    <!-- Foe-Deployer: Simple Test -->
+    <mkdir dir="${build.resources}/foedeployer/simple/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/foedeployer/ejb/simple/*Bean.java"/>
+      </fileset>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/foedeployer/simple/META-INF"/>
+      <weblogic version="6.1"
+        xmlencoding="UTF-8"
+        destdir="${build.resources}/foedeployer/simple/META-INF"
+        validatexml="true"
+        createtables="True"
+        datasource="java:/DefaultDS"
+        mergedir="${source.resources}/foedeployer/"/>
+      <!-- No JBoss DD generation here because that is what we can to use FoeDeployer for -->
+    </ejbdoclet>
+
+    <!-- Foe-Deployer: Message Test -->
+    <mkdir dir="${build.resources}/foedeployer/message/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/foedeployer/ejb/message/*Bean.java"/>
+      </fileset>
+
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/foedeployer/message/META-INF"/>
+      <weblogic version="6.1"
+        xmlencoding="UTF-8"
+        destdir="${build.resources}/foedeployer/message/META-INF"
+        validatexml="true"
+        datasource="java:/DefaultDS"
+        mergedir="${source.resources}/foedeployer/"/>
+      <!-- No JBoss DD generation here because that is what we can to use FoeDeployer for -->
+    </ejbdoclet>
+
+    <!-- Foe-Deployer: O2MB Test -->
+    <mkdir dir="${build.resources}/foedeployer/o2mb/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/foedeployer/ejb/o2mb/*Bean.java"/>
+      </fileset>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/foedeployer/o2mb/META-INF"/>
+      <weblogic version="6.1"
+        xmlencoding="UTF-8"
+        destdir="${build.resources}/foedeployer/o2mb/META-INF"
+        validatexml="true"
+        createtables="True"
+        datasource="java:/DefaultDS"
+        mergedir="${source.resources}/foedeployer/"/>
+      <!-- No JBoss DD generation here because that is what we can to use FoeDeployer for -->
+    </ejbdoclet>
+
+    <!-- Foe-Deployer: M2MB Test -->
+    <mkdir dir="${build.resources}/foedeployer/m2mb/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/foedeployer/ejb/m2mb/*Bean.java"/>
+      </fileset>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/foedeployer/m2mb/META-INF"/>
+      <weblogic version="6.1"
+        xmlencoding="UTF-8"
+        destdir="${build.resources}/foedeployer/m2mb/META-INF"
+        validatexml="true"
+        createtables="True"
+        datasource="java:/DefaultDS"
+        mergedir="${source.resources}/foedeployer/"/>
+      <!-- No JBoss DD generation here because that is what we can to use FoeDeployer for -->
+    </ejbdoclet>
+
+    <!-- Foe-Deployer: QL Test -->
+    <mkdir dir="${build.resources}/foedeployer/ql/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/foedeployer/ejb/ql/*Bean.java"/>
+      </fileset>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/foedeployer/ql/META-INF"/>
+      <weblogic version="6.1"
+        xmlencoding="UTF-8"
+        destdir="${build.resources}/foedeployer/ql/META-INF"
+        validatexml="true"
+        createtables="True"
+        datasource="java:/DefaultDS"
+        mergedir="${source.resources}/foedeployer/"/>
+      <!-- No JBoss DD generation here because that is what we can to use FoeDeployer for -->
+    </ejbdoclet>
+
+    <!-- cpmanifest test -->
+    <mkdir dir="${build.resources}/jmx/loading/cpmanifest/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/jmx/loading/ConcreteBean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <homeinterface/>
+      <!--session/-->
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/jmx/loading/cpmanifest/META-INF"/>
+    </ejbdoclet>
+
+    <!-- entity test -->
+    <mkdir dir="${build.resources}/entity/entity/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/entity/entity">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/entity/beans/*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="beans" substituteWith="interfaces"/>
+      <valueobject/>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <entitycmp/>
+      <utilobject kind="physical"/>
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/entity/entity/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.0"
+        datasource="java:/DefaultDS"
+        typemapping="Hypersonic SQL"
+        destdir="${build.resources}/entity/entity/META-INF"/>
+    </ejbdoclet>
+
+    <!-- aop test -->
+    <mkdir dir="${build.resources}/aop/simpleejb/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/aop/simpleejb/SimpleBean.java"/>
+      </fileset>
+      <remoteinterface/>
+      <homeinterface/>
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/aop/simpleejb/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.0"
+        destdir="${build.resources}/aop/simpleejb/META-INF"/>
+    </ejbdoclet>
+
+    <!-- aop xdoclet test - ->
+    <taskdef name="aopdoclet"
+             classname="xdoclet.modules.jboss.aop.JBossAopTask"
+             classpathref="tests.classpath"/>
+    <aopdoclet destdir="${build.resources}/aop/xdoclet/Advised">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/aop/xdoclet/Advised.java"/>
+      </fileset>
+      <jbossaop/>
+    </aopdoclet>
+    <aopdoclet destdir="${build.resources}/aop/xdoclet/ClassMetaData">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/aop/xdoclet/ClassMetaData.java"/>
+      </fileset>
+      <jbossaop/>
+    </aopdoclet>
+    <aopdoclet destdir="${build.resources}/aop/xdoclet/Intercepted">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/aop/xdoclet/Intercepted.java"/>
+        <include name="org/jboss/test/aop/xdoclet/BasicInterceptor.java"/>
+        <include name="org/jboss/test/aop/xdoclet/XmlLoadingInterceptor.java"/>
+        <include name="org/jboss/test/aop/xdoclet/XmlInterceptorFactory.java"/>
+      </fileset>
+      <jbossaop/>
+    </aopdoclet>
+    <aopdoclet destdir="${build.resources}/aop/xdoclet/NewIntercepted">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/aop/xdoclet/NewIntercepted.java"/>
+      </fileset>
+      <jbossaop/>
+    </aopdoclet>
+    <aopdoclet destdir="${build.resources}/aop/xdoclet/Introduced">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/aop/xdoclet/Introduced.java"/>
+      </fileset>
+      <jbossaop/>
+    </aopdoclet>
+    <aopdoclet destdir="${build.resources}/aop/xdoclet/NotAdvised">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/aop/xdoclet/NotAdvised.java"/>
+      </fileset>
+      <jbossaop/>
+    </aopdoclet>
+    <aopdoclet destdir="${build.resources}/aop/xdoclet/Secured">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/aop/xdoclet/Secured.java"/>
+      </fileset>
+      <configParam name="RunAs" value="Andy"/>
+      <jbossaop/>
+    </aopdoclet>
+    <aopdoclet destdir="${build.resources}/aop/xdoclet/Stack">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/aop/xdoclet/Stack.java"/>
+      </fileset>
+      <jbossaop/>
+    </aopdoclet>
+    <aopdoclet destdir="${build.resources}/aop/xdoclet/Transacted">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/aop/xdoclet/Transacted.java"/>
+      </fileset>
+      <jbossaop/>
+    </aopdoclet>
+    -->
+
+    <!-- cache test -->
+    <mkdir dir="${build.resources}/cache/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/cache/bean/*Bean.java"/>
+      </fileset>
+      <remoteinterface/>
+      <homeinterface/>
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/cache/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.0"
+        destdir="${build.resources}/cache/META-INF"/>
+    </ejbdoclet>
+
+    <!-- webservice/marshalltest test -->
+    <mkdir dir="${build.resources}/webservice/marshalltest/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/webservice/marshalltest/*BeanImpl.java"/>
+      </fileset>
+      <remoteinterface/>
+      <homeinterface/>
+    </ejbdoclet>
+  </target>
+
+  <target name="compile-mbean-sources" unless="noxdoclet">
+    <taskdef name="jmxdoclet" classname="xdoclet.modules.jmx.JMXDocletTask" classpathref="xdoclet.task.classpath"/>
+
+    <mkdir dir="${build.gen-src}"/>
+    <jmxdoclet destdir="${build.gen-src}"
+      force="true"
+      excludedtags="@version,@author">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/jmx/deployer/*.java"/>
+        <include name="org/jboss/test/jmx/invoker/*.java"/>
+        <include name="org/jboss/test/jmx/mbean/*.java"/>
+        <include name="org/jboss/test/jmx/missingclass/*.java"/>
+      </fileset>
+      <mbeaninterface mergedir="${project.tools}/etc/xdoclet/templates"/>
+      <!--mbeaninterface mergedir="${xdoclet.mergedir}"/-->
+    </jmxdoclet>
+  </target>
+
+  <target name="compile-xmbean-dds" unless="noxdoclet">
+    <taskdef name="jmxdoclet" classname="xdoclet.modules.jmx.JMXDocletTask" classpathref="xdoclet.task.classpath"/>
+    <echo message="xdoclet.mergedir: ${xdoclet.mergedir}"/>
+    <mkdir dir="${build.resources}/jmx/xmbean"/>
+    <jmxdoclet destdir="${build.resources}/jmx/xmbean"
+      force="true"
+      excludedtags="@version,@author">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/jmx/xmbean/*.java"/>
+      </fileset>
+      <jbossxmbean/>
+    </jmxdoclet>
+
+  </target>
+
+  <target name="compile-proxycompiler-bean-sources" unless="noxdoclet">
+    <taskdef name="ejbdoclet" classname="xdoclet.modules.ejb.EjbDocletTask" classpathref="xdoclet.task.classpath"/>
+
+    <mkdir dir="${build.gen-src}"/>
+
+    <mkdir dir="${build.resources}/proxycompiler/META-INF"/>
+    <ejbdoclet destdir="${build.gen-src}"
+      ejbspec="2.0"
+      excludedtags="@version,@author"
+      mergedir="${source.resources}/proxycompiler">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/test/proxycompiler/beans/**/*Bean.java"/>
+      </fileset>
+      <packageSubstitution packages="ejb" substituteWith="interfaces"/>
+      <remoteinterface/>
+      <localinterface/>
+      <homeinterface/>
+      <localhomeinterface/>
+      <!--session/-->
+      <deploymentdescriptor xmlencoding="UTF-8"
+        destdir="${build.resources}/proxycompiler/META-INF"/>
+      <jboss xmlencoding="UTF-8"
+        version="3.0"
+        destdir="${build.resources}/proxycompiler/META-INF"
+        mergedir="${source.resources}/proxycompiler"/>
+    </ejbdoclet>
+
+  </target>
+
+  <target name="help">
+    <echo message="The project fragment which defines the jboss server configs"/>
+  </target>
+
+</project>

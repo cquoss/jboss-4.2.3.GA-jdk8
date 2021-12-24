@@ -1,0 +1,770 @@
+<!-- antlr -->
+<property name="antlr.antlr.root" value="${project.thirdparty}/antlr"/>
+<property name="antlr.antlr.lib" value="${antlr.antlr.root}/lib/"/>
+<property name="antlr.antlr.resources" value="${antlr.antlr.root}/resources/"/>
+<path id="antlr.antlr.classpath">
+   <pathelement path="${antlr.antlr.lib}/antlr.jar"/>
+</path>
+
+<!-- apache-avalon -->
+<property name="apache.avalon.root" value="${project.thirdparty}/apache-avalon"/>
+<property name="apache.avalon.lib" value="${apache.avalon.root}/lib/"/>
+<property name="apache.avalon.resources" value="${apache.avalon.root}/resources/"/>
+<path id="apache.avalon.classpath">
+   <pathelement path="${apache.avalon.lib}/avalon-framework.jar"/>
+</path>
+
+<!-- apache-avalon-logkit -->
+<property name="apache.avalon.logkit.root" value="${project.thirdparty}/apache-avalon-logkit"/>
+<property name="apache.avalon.logkit.lib" value="${apache.avalon.logkit.root}/lib/"/>
+<property name="apache.avalon.logkit.resources" value="${apache.avalon.logkit.root}/resources/"/>
+<path id="apache.avalon.logkit.classpath">
+   <pathelement path="${apache.avalon.logkit.lib}/logkit.jar"/>
+</path>
+
+<!-- apache-bcel -->
+<property name="apache.bcel.root" value="${project.thirdparty}/apache-bcel"/>
+<property name="apache.bcel.lib" value="${apache.bcel.root}/lib/"/>
+<property name="apache.bcel.resources" value="${apache.bcel.root}/resources/"/>
+<path id="apache.bcel.classpath">
+   <pathelement path="${apache.bcel.lib}/bcel.jar"/>
+</path>
+
+<!-- apache-beanutils -->
+<property name="apache.beanutils.root" value="${project.thirdparty}/apache-beanutils"/>
+<property name="apache.beanutils.lib" value="${apache.beanutils.root}/lib/"/>
+<property name="apache.beanutils.resources" value="${apache.beanutils.root}/resources/"/>
+<path id="apache.beanutils.classpath">
+   <pathelement path="${apache.beanutils.lib}/commons-beanutils.jar"/>
+</path>
+
+<!-- apache-bsf -->
+<property name="apache.bsf.root" value="${project.thirdparty}/apache-bsf"/>
+<property name="apache.bsf.lib" value="${apache.bsf.root}/lib/"/>
+<property name="apache.bsf.resources" value="${apache.bsf.root}/resources/"/>
+<path id="apache.bsf.classpath">
+   <pathelement path="${apache.bsf.lib}/bsf.jar"/>
+</path>
+
+<!-- apache-codec -->
+<property name="apache.codec.root" value="${project.thirdparty}/apache-codec"/>
+<property name="apache.codec.lib" value="${apache.codec.root}/lib/"/>
+<property name="apache.codec.resources" value="${apache.codec.root}/resources/"/>
+<path id="apache.codec.classpath">
+   <pathelement path="${apache.codec.lib}/commons-codec.jar"/>
+</path>
+
+<!-- apache-collections -->
+<property name="apache.collections.root" value="${project.thirdparty}/apache-collections"/>
+<property name="apache.collections.lib" value="${apache.collections.root}/lib/"/>
+<property name="apache.collections.resources" value="${apache.collections.root}/resources/"/>
+<path id="apache.collections.classpath">
+   <pathelement path="${apache.collections.lib}/commons-collections.jar"/>
+</path>
+
+<!-- apache-digester -->
+<property name="apache.digester.root" value="${project.thirdparty}/apache-digester"/>
+<property name="apache.digester.lib" value="${apache.digester.root}/lib/"/>
+<property name="apache.digester.resources" value="${apache.digester.root}/resources/"/>
+<path id="apache.digester.classpath">
+   <pathelement path="${apache.digester.lib}/commons-digester.jar"/>
+</path>
+
+<!-- apache-discovery -->
+<property name="apache.discovery.root" value="${project.thirdparty}/apache-discovery"/>
+<property name="apache.discovery.lib" value="${apache.discovery.root}/lib/"/>
+<property name="apache.discovery.resources" value="${apache.discovery.root}/resources/"/>
+<path id="apache.discovery.classpath">
+   <pathelement path="${apache.discovery.lib}/commons-discovery.jar"/>
+</path>
+
+<!-- apache-fileupload -->
+<property name="apache.fileupload.root" value="${project.thirdparty}/apache-fileupload"/>
+<property name="apache.fileupload.lib" value="${apache.fileupload.root}/lib/"/>
+<property name="apache.fileupload.resources" value="${apache.fileupload.root}/resources/"/>
+<path id="apache.fileupload.classpath">
+   <pathelement path="${apache.fileupload.lib}/commons-fileupload.jar"/>
+</path>
+
+<!-- apache-httpclient -->
+<property name="apache.httpclient.root" value="${project.thirdparty}/apache-httpclient"/>
+<property name="apache.httpclient.lib" value="${apache.httpclient.root}/lib/"/>
+<property name="apache.httpclient.resources" value="${apache.httpclient.root}/resources/"/>
+<path id="apache.httpclient.classpath">
+   <pathelement path="${apache.httpclient.lib}/commons-httpclient.jar"/>
+</path>
+
+<!-- apache-jaxme -->
+<property name="apache.jaxme.root" value="${project.thirdparty}/apache-jaxme"/>
+<property name="apache.jaxme.lib" value="${apache.jaxme.root}/lib/"/>
+<property name="apache.jaxme.resources" value="${apache.jaxme.root}/resources/"/>
+<path id="apache.jaxme.classpath">
+   <pathelement path="${apache.jaxme.lib}/jaxmexs.jar"/>
+</path>
+
+<!-- apache-log4j -->
+<property name="apache.log4j.root" value="${project.thirdparty}/apache-log4j"/>
+<property name="apache.log4j.lib" value="${apache.log4j.root}/lib/"/>
+<property name="apache.log4j.resources" value="${apache.log4j.root}/resources/"/>
+<path id="apache.log4j.classpath">
+   <pathelement path="${apache.log4j.lib}/log4j.jar"/>
+</path>
+
+<!-- apache-logging -->
+<property name="apache.logging.root" value="${project.thirdparty}/apache-logging"/>
+<property name="apache.logging.lib" value="${apache.logging.root}/lib/"/>
+<property name="apache.logging.resources" value="${apache.logging.root}/resources/"/>
+<path id="apache.logging.classpath">
+   <pathelement path="${apache.logging.lib}/commons-logging.jar"/>
+</path>
+
+<!-- apache-scout -->
+<property name="apache.scout.root" value="${project.thirdparty}/apache-scout"/>
+<property name="apache.scout.lib" value="${apache.scout.root}/lib/"/>
+<property name="apache.scout.resources" value="${apache.scout.root}/resources/"/>
+<path id="apache.scout.classpath">
+   <pathelement path="${apache.scout.lib}/scout.jar"/>
+</path>
+
+<!-- apache-slide -->
+<property name="apache.slide.root" value="${project.thirdparty}/apache-slide"/>
+<property name="apache.slide.lib" value="${apache.slide.root}/lib/"/>
+<property name="apache.slide.resources" value="${apache.slide.root}/resources/"/>
+<path id="apache.slide.classpath">
+   <pathelement path="${apache.slide.lib}/jakarta-slide-webdavlib.jar"/>
+</path>
+
+<!-- apache-velocity -->
+<property name="apache.velocity.root" value="${project.thirdparty}/apache-velocity"/>
+<property name="apache.velocity.lib" value="${apache.velocity.root}/lib/"/>
+<property name="apache.velocity.resources" value="${apache.velocity.root}/resources/"/>
+<path id="apache.velocity.classpath">
+   <pathelement path="${apache.velocity.lib}/velocity.jar"/>
+</path>
+
+<!-- apache-xalan -->
+<property name="apache.xalan.root" value="${project.thirdparty}/apache-xalan"/>
+<property name="apache.xalan.lib" value="${apache.xalan.root}/lib/"/>
+<property name="apache.xalan.resources" value="${apache.xalan.root}/resources/"/>
+<path id="apache.xalan.classpath">
+   <pathelement path="${apache.xalan.lib}/xalan.jar"/>
+   <pathelement path="${apache.xalan.lib}/serializer.jar"/>
+</path>
+
+<!-- apache-xerces -->
+<property name="apache.xerces.root" value="${project.thirdparty}/apache-xerces"/>
+<property name="apache.xerces.lib" value="${apache.xerces.root}/lib/"/>
+<property name="apache.xerces.resources" value="${apache.xerces.root}/resources/"/>
+<path id="apache.xerces.classpath">
+   <pathelement path="${apache.xerces.lib}/xercesImpl.jar"/>
+</path>
+
+<!-- apache-xmlsec -->
+<property name="apache.xmlsec.root" value="${project.thirdparty}/apache-xmlsec"/>
+<property name="apache.xmlsec.lib" value="${apache.xmlsec.root}/lib/"/>
+<property name="apache.xmlsec.resources" value="${apache.xmlsec.root}/resources/"/>
+<path id="apache.xmlsec.classpath">
+   <pathelement path="${apache.xmlsec.lib}/xmlsec.jar"/>
+</path>
+
+<!-- beanshell -->
+<property name="beanshell.beanshell.root" value="${project.thirdparty}/beanshell"/>
+<property name="beanshell.beanshell.lib" value="${beanshell.beanshell.root}/lib/"/>
+<property name="beanshell.beanshell.resources" value="${beanshell.beanshell.root}/resources/"/>
+<path id="beanshell.beanshell.classpath">
+   <pathelement path="${beanshell.beanshell.lib}/bsh.jar"/>
+</path>
+
+<!-- cglib -->
+<property name="cglib.cglib.root" value="${project.thirdparty}/cglib"/>
+<property name="cglib.cglib.lib" value="${cglib.cglib.root}/lib/"/>
+<property name="cglib.cglib.resources" value="${cglib.cglib.root}/resources/"/>
+<path id="cglib.cglib.classpath">
+   <pathelement path="${cglib.cglib.lib}/cglib.jar"/>
+</path>
+
+<!-- dom4j -->
+<property name="dom4j.dom4j.root" value="${project.thirdparty}/dom4j"/>
+<property name="dom4j.dom4j.lib" value="${dom4j.dom4j.root}/lib/"/>
+<property name="dom4j.dom4j.resources" value="${dom4j.dom4j.root}/resources/"/>
+<path id="dom4j.dom4j.classpath">
+   <pathelement path="${dom4j.dom4j.lib}/dom4j.jar"/>
+</path>
+
+<!-- gnu-getopt -->
+<property name="gnu.getopt.root" value="${project.thirdparty}/gnu-getopt"/>
+<property name="gnu.getopt.lib" value="${gnu.getopt.root}/lib/"/>
+<property name="gnu.getopt.resources" value="${gnu.getopt.root}/resources/"/>
+<path id="gnu.getopt.classpath">
+   <pathelement path="${gnu.getopt.lib}/getopt.jar"/>
+</path>
+
+<!-- hibernate -->
+<property name="hibernate.hibernate.root" value="${project.thirdparty}/hibernate"/>
+<property name="hibernate.hibernate.lib" value="${hibernate.hibernate.root}/lib/"/>
+<property name="hibernate.hibernate.resources" value="${hibernate.hibernate.root}/resources/"/>
+<path id="hibernate.hibernate.classpath">
+   <pathelement path="${hibernate.hibernate.lib}/hibernate3.jar"/>
+</path>
+
+<!-- hibernate-annotations -->
+<property name="hibernate.annotations.root" value="${project.thirdparty}/hibernate-annotations"/>
+<property name="hibernate.annotations.lib" value="${hibernate.annotations.root}/lib/"/>
+<property name="hibernate.annotations.resources" value="${hibernate.annotations.root}/resources/"/>
+<path id="hibernate.annotations.classpath">
+   <pathelement path="${hibernate.annotations.lib}/hibernate-annotations.jar"/>
+</path>
+
+<!-- hibernate-entitymanager -->
+<property name="hibernate.entitymanager.root" value="${project.thirdparty}/hibernate-entitymanager"/>
+<property name="hibernate.entitymanager.lib" value="${hibernate.entitymanager.root}/lib/"/>
+<property name="hibernate.entitymanager.resources" value="${hibernate.entitymanager.root}/resources/"/>
+<path id="hibernate.entitymanager.classpath">
+   <pathelement path="${hibernate.entitymanager.lib}/hibernate-entitymanager.jar"/>
+   <pathelement path="${hibernate.entitymanager.lib}/ejb3-persistence.jar"/>
+</path>
+
+<!-- hsqldb -->
+<property name="hsqldb.hsqldb.root" value="${project.thirdparty}/hsqldb"/>
+<property name="hsqldb.hsqldb.lib" value="${hsqldb.hsqldb.root}/lib/"/>
+<property name="hsqldb.hsqldb.resources" value="${hsqldb.hsqldb.root}/resources/"/>
+<path id="hsqldb.hsqldb.classpath">
+   <pathelement path="${hsqldb.hsqldb.lib}/hsqldb.jar"/>
+</path>
+
+<!-- jacorb -->
+<property name="jacorb.jacorb.root" value="${project.thirdparty}/jacorb"/>
+<property name="jacorb.jacorb.lib" value="${jacorb.jacorb.root}/lib/"/>
+<property name="jacorb.jacorb.resources" value="${jacorb.jacorb.root}/resources/"/>
+<path id="jacorb.jacorb.classpath">
+   <pathelement path="${jacorb.jacorb.lib}/jacorb.jar"/>
+   <pathelement path="${jacorb.jacorb.lib}/jacorb_g.jar"/>
+   <pathelement path="${jacorb.jacorb.lib}/idl.jar"/>
+</path>
+
+<!-- javassist -->
+<property name="javassist.javassist.root" value="${project.thirdparty}/javassist"/>
+<property name="javassist.javassist.lib" value="${javassist.javassist.root}/lib/"/>
+<property name="javassist.javassist.resources" value="${javassist.javassist.root}/resources/"/>
+<path id="javassist.javassist.classpath">
+   <pathelement path="${javassist.javassist.lib}/javassist.jar"/>
+</path>
+
+<!-- jaxen -->
+<property name="jaxen.jaxen.root" value="${project.thirdparty}/jaxen"/>
+<property name="jaxen.jaxen.lib" value="${jaxen.jaxen.root}/lib/"/>
+<property name="jaxen.jaxen.resources" value="${jaxen.jaxen.root}/resources/"/>
+<path id="jaxen.jaxen.classpath">
+   <pathelement path="${jaxen.jaxen.lib}/jaxen.jar"/>
+</path>
+
+<!-- jboss/aop -->
+<property name="jboss.aop.root" value="${project.thirdparty}/jboss/aop"/>
+<property name="jboss.aop.lib" value="${jboss.aop.root}/lib/"/>
+<property name="jboss.aop.resources" value="${jboss.aop.root}/resources/"/>
+<path id="jboss.aop.classpath">
+   <pathelement path="${jboss.aop.lib}/common-softvaluehashmap.jar"/>
+   <pathelement path="${jboss.aop.lib}/jboss-aop-jdk50-client.jar"/>
+   <pathelement path="${jboss.aop.lib}/jboss-aop-jdk50.jar"/>
+   <pathelement path="${jboss.aop.lib}/jboss-aop.jar"/>
+   <pathelement path="${jboss.aop.lib}/jdk14-pluggable-instrumentor.jar"/>
+   <pathelement path="${jboss.aop.lib}/jrockit-pluggable-instrumentor.jar"/>
+   <pathelement path="${jboss.aop.lib}/pluggable-instrumentor.jar"/>
+</path>
+
+<!-- jboss/cache -->
+<property name="jboss.cache.root" value="${project.thirdparty}/jboss/cache"/>
+<property name="jboss.cache.lib" value="${jboss.cache.root}/lib/"/>
+<property name="jboss.cache.resources" value="${jboss.cache.root}/resources/"/>
+<path id="jboss.cache.classpath">
+   <pathelement path="${jboss.cache.lib}/jboss-cache-jdk50.jar"/>
+</path>
+
+<!-- jboss/common -->
+<property name="jboss.common.root" value="${project.thirdparty}/jboss/common"/>
+<property name="jboss.common.lib" value="${jboss.common.root}/lib/"/>
+<property name="jboss.common.resources" value="${jboss.common.root}/resources/"/>
+<path id="jboss.common.classpath">
+   <pathelement path="${jboss.common.lib}/namespace.jar"/>
+   <pathelement path="${jboss.common.lib}/jboss-common.jar"/>
+   <pathelement path="${jboss.common.lib}/jboss-common-client.jar"/>
+</path>
+
+<!-- jboss/dom4j-jarjar -->
+<property name="jboss.dom4j.jarjar.root" value="${project.thirdparty}/jboss/dom4j-jarjar"/>
+<property name="jboss.dom4j.jarjar.lib" value="${jboss.dom4j.jarjar.root}/lib/"/>
+<property name="jboss.dom4j.jarjar.resources" value="${jboss.dom4j.jarjar.root}/resources/"/>
+<path id="jboss.dom4j.jarjar.classpath">
+   <pathelement path="${jboss.dom4j.jarjar.lib}/dom4j-jarjar.jar"/>
+</path>
+
+<!-- jboss/jaxr -->
+<property name="jboss.jaxr.root" value="${project.thirdparty}/jboss/jaxr"/>
+<property name="jboss.jaxr.lib" value="${jboss.jaxr.root}/lib/"/>
+<property name="jboss.jaxr.resources" value="${jboss.jaxr.root}/resources/"/>
+<path id="jboss.jaxr.classpath">
+   <pathelement path="${jboss.jaxr.lib}/juddi-saaj.jar"/>
+</path>
+
+<!-- jboss/jbossts14 -->
+<property name="jboss.jbossts14.root" value="${project.thirdparty}/jboss/jbossts14"/>
+<property name="jboss.jbossts14.lib" value="${jboss.jbossts14.root}/lib/"/>
+<property name="jboss.jbossts14.resources" value="${jboss.jbossts14.root}/resources/"/>
+<path id="jboss.jbossts14.classpath">
+   <pathelement path="${jboss.jbossts14.lib}/jbossjta.jar"/>
+   <pathelement path="${jboss.jbossts14.lib}/jbossjta-integration.jar"/>
+   <pathelement path="${jboss.jbossts14.lib}/jbossts-common.jar"/>
+</path>
+
+<!-- jboss/jboss-vfs -->
+<property name="jboss.jboss.vfs.root" value="${project.thirdparty}/jboss/jboss-vfs"/>
+<property name="jboss.jboss.vfs.lib" value="${jboss.jboss.vfs.root}/lib/"/>
+<property name="jboss.jboss.vfs.resources" value="${jboss.jboss.vfs.root}/resources/"/>
+<path id="jboss.jboss.vfs.classpath">
+   <pathelement path="${jboss.jboss.vfs.lib}/jboss-vfs.jar"/>
+</path>
+
+<!-- jboss/jbossws -->
+<property name="jboss.jbossws.root" value="${project.thirdparty}/jboss/jbossws"/>
+<property name="jboss.jbossws.lib" value="${jboss.jbossws.root}/lib/"/>
+<property name="jboss.jbossws.resources" value="${jboss.jbossws.root}/resources/"/>
+<path id="jboss.jbossws.classpath">
+   <pathelement path="${jboss.jbossws.lib}/jbossws-core.jar"/>
+   <pathelement path="${jboss.jbossws.lib}/jboss-jaxrpc.jar"/>
+   <pathelement path="${jboss.jbossws.lib}/jboss-jaxws.jar"/>
+   <pathelement path="${jboss.jbossws.lib}/jboss-jaxws-ext.jar"/>
+   <pathelement path="${jboss.jbossws.lib}/jboss-saaj.jar"/>
+</path>
+
+<!-- jboss/jbossxb -->
+<property name="jboss.jbossxb.root" value="${project.thirdparty}/jboss/jbossxb"/>
+<property name="jboss.jbossxb.lib" value="${jboss.jbossxb.root}/lib/"/>
+<property name="jboss.jbossxb.resources" value="${jboss.jbossxb.root}/resources/"/>
+<path id="jboss.jbossxb.classpath">
+   <pathelement path="${jboss.jbossxb.lib}/jboss-xml-binding.jar"/>
+</path>
+
+<!-- jboss/microcontainer -->
+<property name="jboss.microcontainer.root" value="${project.thirdparty}/jboss/microcontainer"/>
+<property name="jboss.microcontainer.lib" value="${jboss.microcontainer.root}/lib/"/>
+<property name="jboss.microcontainer.resources" value="${jboss.microcontainer.root}/resources/"/>
+<path id="jboss.microcontainer.classpath">
+   <pathelement path="${jboss.microcontainer.lib}/jboss-container.jar"/>
+   <pathelement path="${jboss.microcontainer.lib}/jboss-dependency.jar"/>
+   <pathelement path="${jboss.microcontainer.lib}/jboss-microcontainer.jar"/>
+</path>
+
+<!-- jboss/profiler/jvmti -->
+<property name="jboss.profiler.jvmti.root" value="${project.thirdparty}/jboss/profiler/jvmti"/>
+<property name="jboss.profiler.jvmti.lib" value="${jboss.profiler.jvmti.root}/lib/"/>
+<property name="jboss.profiler.jvmti.resources" value="${jboss.profiler.jvmti.root}/resources/"/>
+<path id="jboss.profiler.jvmti.classpath">
+   <pathelement path="${jboss.profiler.jvmti.lib}/jboss-profiler-jvmti.jar"/>
+</path>
+
+<!-- jboss/remoting -->
+<property name="jboss.remoting.root" value="${project.thirdparty}/jboss/remoting"/>
+<property name="jboss.remoting.lib" value="${jboss.remoting.root}/lib/"/>
+<property name="jboss.remoting.resources" value="${jboss.remoting.root}/resources/"/>
+<path id="jboss.remoting.classpath">
+   <pathelement path="${jboss.remoting.lib}/jboss-remoting.jar"/>
+</path>
+
+<!-- jboss/serialization -->
+<property name="jboss.serialization.root" value="${project.thirdparty}/jboss/serialization"/>
+<property name="jboss.serialization.lib" value="${jboss.serialization.root}/lib/"/>
+<property name="jboss.serialization.resources" value="${jboss.serialization.root}/resources/"/>
+<path id="jboss.serialization.classpath">
+   <pathelement path="${jboss.serialization.lib}/jboss-serialization.jar"/>
+</path>
+
+<!-- jboss/web -->
+<property name="jboss.web.root" value="${project.thirdparty}/jboss/web"/>
+<property name="jboss.web.lib" value="${jboss.web.root}/lib/"/>
+<property name="jboss.web.resources" value="${jboss.web.root}/resources/"/>
+<path id="jboss.web.classpath">
+   <pathelement path="${jboss.web.lib}/el-api.jar"/>
+   <pathelement path="${jboss.web.lib}/jasper-jdt.jar"/>
+   <pathelement path="${jboss.web.lib}/jbossweb.jar"/>
+   <pathelement path="${jboss.web.lib}/jbossweb-extras.jar"/>
+   <pathelement path="${jboss.web.lib}/jsp-api.jar"/>
+   <pathelement path="${jboss.web.lib}/servlet-api.jar"/>
+</path>
+
+<!-- jfreechart -->
+<property name="jfreechart.jfreechart.root" value="${project.thirdparty}/jfreechart"/>
+<property name="jfreechart.jfreechart.lib" value="${jfreechart.jfreechart.root}/lib/"/>
+<property name="jfreechart.jfreechart.resources" value="${jfreechart.jfreechart.root}/resources/"/>
+<path id="jfreechart.jfreechart.classpath">
+   <pathelement path="${jfreechart.jfreechart.lib}/jfreechart.jar"/>
+   <pathelement path="${jfreechart.jfreechart.lib}/jcommon.jar"/>
+</path>
+
+<!-- jgroups -->
+<property name="jgroups.jgroups.root" value="${project.thirdparty}/jgroups"/>
+<property name="jgroups.jgroups.lib" value="${jgroups.jgroups.root}/lib/"/>
+<property name="jgroups.jgroups.resources" value="${jgroups.jgroups.root}/resources/"/>
+<path id="jgroups.jgroups.classpath">
+   <pathelement path="${jgroups.jgroups.lib}/jgroups.jar"/>
+</path>
+
+<!-- joesnmp -->
+<property name="joesnmp.joesnmp.root" value="${project.thirdparty}/joesnmp"/>
+<property name="joesnmp.joesnmp.lib" value="${joesnmp.joesnmp.root}/lib/"/>
+<property name="joesnmp.joesnmp.resources" value="${joesnmp.joesnmp.root}/resources/"/>
+<path id="joesnmp.joesnmp.classpath">
+   <pathelement path="${joesnmp.joesnmp.lib}/joesnmp.jar"/>
+</path>
+
+<!-- juddi -->
+<property name="juddi.juddi.root" value="${project.thirdparty}/juddi"/>
+<property name="juddi.juddi.lib" value="${juddi.juddi.root}/lib/"/>
+<property name="juddi.juddi.resources" value="${juddi.juddi.root}/resources/"/>
+<path id="juddi.juddi.classpath">
+   <pathelement path="${juddi.juddi.lib}/juddi.jar"/>
+   <pathelement path="${juddi.juddi.lib}/juddi.war"/>
+</path>
+
+<!-- junit -->
+<property name="junit.junit.root" value="${project.thirdparty}/junit"/>
+<property name="junit.junit.lib" value="${junit.junit.root}/lib/"/>
+<property name="junit.junit.resources" value="${junit.junit.root}/resources/"/>
+<path id="junit.junit.classpath">
+   <pathelement path="${junit.junit.lib}/junit.jar"/>
+</path>
+
+<!-- objectweb-joramtests -->
+<property name="objectweb.joramtests.root" value="${project.thirdparty}/objectweb-joramtests"/>
+<property name="objectweb.joramtests.lib" value="${objectweb.joramtests.root}/lib/"/>
+<property name="objectweb.joramtests.resources" value="${objectweb.joramtests.root}/resources/"/>
+<path id="objectweb.joramtests.classpath">
+   <pathelement path="${objectweb.joramtests.lib}/joram-tests.jar"/>
+</path>
+
+<!-- odmg -->
+<property name="odmg.odmg.root" value="${project.thirdparty}/odmg"/>
+<property name="odmg.odmg.lib" value="${odmg.odmg.root}/lib/"/>
+<property name="odmg.odmg.resources" value="${odmg.odmg.root}/resources/"/>
+<path id="odmg.odmg.classpath">
+   <pathelement path="${odmg.odmg.lib}/odmg.jar"/>
+</path>
+
+<!-- oswego-concurrent -->
+<property name="oswego.concurrent.root" value="${project.thirdparty}/oswego-concurrent"/>
+<property name="oswego.concurrent.lib" value="${oswego.concurrent.root}/lib/"/>
+<property name="oswego.concurrent.resources" value="${oswego.concurrent.root}/resources/"/>
+<path id="oswego.concurrent.classpath">
+   <pathelement path="${oswego.concurrent.lib}/concurrent.jar"/>
+</path>
+
+<!-- qdox -->
+<property name="qdox.qdox.root" value="${project.thirdparty}/qdox"/>
+<property name="qdox.qdox.lib" value="${qdox.qdox.root}/lib/"/>
+<property name="qdox.qdox.resources" value="${qdox.qdox.root}/resources/"/>
+<path id="qdox.qdox.classpath">
+   <pathelement path="${qdox.qdox.lib}/qdox.jar"/>
+</path>
+
+<!-- quartz -->
+<property name="quartz.quartz.root" value="${project.thirdparty}/quartz"/>
+<property name="quartz.quartz.lib" value="${quartz.quartz.root}/lib/"/>
+<property name="quartz.quartz.resources" value="${quartz.quartz.root}/resources/"/>
+<path id="quartz.quartz.classpath">
+   <pathelement path="${quartz.quartz.lib}/quartz-all.jar"/>
+   <pathelement path="${quartz.quartz.lib}/quartz.jar"/>
+</path>
+
+<!-- stax-api -->
+<property name="stax.api.root" value="${project.thirdparty}/stax-api"/>
+<property name="stax.api.lib" value="${stax.api.root}/lib/"/>
+<property name="stax.api.resources" value="${stax.api.root}/resources/"/>
+<path id="stax.api.classpath">
+   <pathelement path="${stax.api.lib}/stax-api.jar"/>
+</path>
+
+<!-- sun-jaf -->
+<property name="sun.jaf.root" value="${project.thirdparty}/sun-jaf"/>
+<property name="sun.jaf.lib" value="${sun.jaf.root}/lib/"/>
+<property name="sun.jaf.resources" value="${sun.jaf.root}/resources/"/>
+<path id="sun.jaf.classpath">
+   <pathelement path="${sun.jaf.lib}/activation.jar"/>
+</path>
+
+<!-- sun-javacc -->
+<property name="sun.javacc.root" value="${project.thirdparty}/sun-javacc"/>
+<property name="sun.javacc.lib" value="${sun.javacc.root}/lib/"/>
+<property name="sun.javacc.resources" value="${sun.javacc.root}/resources/"/>
+<path id="sun.javacc.classpath">
+   <pathelement path="${sun.javacc.lib}/javacc.jar"/>
+</path>
+
+<!-- sun-javamail -->
+<property name="sun.javamail.root" value="${project.thirdparty}/sun-javamail"/>
+<property name="sun.javamail.lib" value="${sun.javamail.root}/lib/"/>
+<property name="sun.javamail.resources" value="${sun.javamail.root}/resources/"/>
+<path id="sun.javamail.classpath">
+   <pathelement path="${sun.javamail.lib}/mail.jar"/>
+</path>
+
+<!-- sun-jsf -->
+<property name="sun.jsf.root" value="${project.thirdparty}/sun-jsf"/>
+<property name="sun.jsf.lib" value="${sun.jsf.root}/lib/"/>
+<property name="sun.jsf.resources" value="${sun.jsf.root}/resources/"/>
+<path id="sun.jsf.classpath">
+   <pathelement path="${sun.jsf.lib}/jsf-api.jar"/>
+   <pathelement path="${sun.jsf.lib}/jsf-impl.jar"/>
+</path>
+
+<!-- sun-jstl -->
+<property name="sun.jstl.root" value="${project.thirdparty}/sun-jstl"/>
+<property name="sun.jstl.lib" value="${sun.jstl.root}/lib/"/>
+<property name="sun.jstl.resources" value="${sun.jstl.root}/resources/"/>
+<path id="sun.jstl.classpath">
+   <pathelement path="${sun.jstl.lib}/jstl.jar"/>
+</path>
+
+<!-- sun-servlet -->
+<property name="sun.servlet.root" value="${project.thirdparty}/sun-servlet"/>
+<property name="sun.servlet.lib" value="${sun.servlet.root}/lib/"/>
+<property name="sun.servlet.resources" value="${sun.servlet.root}/resources/"/>
+<path id="sun.servlet.classpath">
+   <pathelement path="${sun.servlet.lib}/servlet-api.jar"/>
+   <pathelement path="${sun.servlet.lib}/jsp-api.jar"/>
+</path>
+
+<!-- trove -->
+<property name="trove.trove.root" value="${project.thirdparty}/trove"/>
+<property name="trove.trove.lib" value="${trove.trove.root}/lib/"/>
+<property name="trove.trove.resources" value="${trove.trove.root}/resources/"/>
+<path id="trove.trove.classpath">
+   <pathelement path="${trove.trove.lib}/trove.jar"/>
+</path>
+
+<!-- woodstox -->
+<property name="woodstox.woodstox.root" value="${project.thirdparty}/woodstox"/>
+<property name="woodstox.woodstox.lib" value="${woodstox.woodstox.root}/lib/"/>
+<property name="woodstox.woodstox.resources" value="${woodstox.woodstox.root}/resources/"/>
+<path id="woodstox.woodstox.classpath">
+   <pathelement path="${woodstox.woodstox.lib}/wstx.jar"/>
+</path>
+
+<!-- codehaus-jettison -->
+<property name="codehaus.jettison.root" value="${project.thirdparty}/codehaus-jettison"/>
+<property name="codehaus.jettison.lib" value="${codehaus.jettison.root}/lib/"/>
+<property name="codehaus.jettison.resources" value="${codehaus.jettison.root}/resources/"/>
+<path id="codehaus.jettison.classpath">
+   <pathelement path="${codehaus.jettison.lib}/jettison.jar"/>
+</path>
+
+<!-- xdoclet -->
+<property name="xdoclet.xdoclet.root" value="${project.thirdparty}/xdoclet"/>
+<property name="xdoclet.xdoclet.lib" value="${xdoclet.xdoclet.root}/lib/"/>
+<property name="xdoclet.xdoclet.resources" value="${xdoclet.xdoclet.root}/resources/"/>
+<path id="xdoclet.xdoclet.classpath">
+   <pathelement path="${xdoclet.xdoclet.lib}/xdoclet-ejb-module.jar"/>
+   <pathelement path="${xdoclet.xdoclet.lib}/xdoclet-hibernate-module.jar"/>
+   <pathelement path="${xdoclet.xdoclet.lib}/xdoclet-java-module.jar"/>
+   <pathelement path="${xdoclet.xdoclet.lib}/xdoclet-jboss-module.jar"/>
+   <pathelement path="${xdoclet.xdoclet.lib}/xdoclet-jmx-module.jar"/>
+   <pathelement path="${xdoclet.xdoclet.lib}/xdoclet-portlet-module.jar"/>
+   <pathelement path="${xdoclet.xdoclet.lib}/xdoclet-web-module.jar"/>
+   <pathelement path="${xdoclet.xdoclet.lib}/xdoclet-xdoclet-module.jar"/>
+   <pathelement path="${xdoclet.xdoclet.lib}/xjavadoc.jar"/>
+   <pathelement path="${xdoclet.xdoclet.lib}/xdoclet.jar"/>
+</path>
+
+<!-- snmptrapappender -->
+<property name="snmptrapappender.snmptrapappender.root" value="${project.thirdparty}/snmptrapappender"/>
+<property name="snmptrapappender.snmptrapappender.lib" value="${snmptrapappender.snmptrapappender.root}/lib/"/>
+<property name="snmptrapappender.snmptrapappender.resources" value="${snmptrapappender.snmptrapappender.root}/resources/"/>
+<path id="snmptrapappender.snmptrapappender.classpath">
+   <pathelement path="${snmptrapappender.snmptrapappender.lib}/snmpTrapAppender.jar"/>
+</path>
+
+<!-- apache-xml-commons -->
+<property name="apache.xml.commons.root" value="${project.thirdparty}/apache-xml-commons"/>
+<property name="apache.xml.commons.lib" value="${apache.xml.commons.root}/lib/"/>
+<property name="apache.xml.commons.resources" value="${apache.xml.commons.root}/resources/"/>
+<path id="apache.xml.commons.classpath">
+   <pathelement path="${apache.xml.commons.lib}/resolver.jar"/>
+   <pathelement path="${apache.xml.commons.lib}/xml-apis.jar"/>
+</path>
+
+<!-- jboss/jaxbintros -->
+<property name="jboss.jaxbintros.root" value="${project.thirdparty}/jboss/jaxbintros"/>
+<property name="jboss.jaxbintros.lib" value="${jboss.jaxbintros.root}/lib/"/>
+<property name="jboss.jaxbintros.resources" value="${jboss.jaxbintros.root}/resources/"/>
+<path id="jboss.jaxbintros.classpath">
+</path>
+
+<!-- jboss/jbossws-common -->
+<property name="jboss.jbossws.common.root" value="${project.thirdparty}/jboss/jbossws-common"/>
+<property name="jboss.jbossws.common.lib" value="${jboss.jbossws.common.root}/lib/"/>
+<property name="jboss.jbossws.common.resources" value="${jboss.jbossws.common.root}/resources/"/>
+<path id="jboss.jbossws.common.classpath">
+   <pathelement path="${jboss.jbossws.common.lib}/jbossws-common.jar"/>
+</path>
+
+<!-- jboss/jbossws-framework -->
+<property name="jboss.jbossws.framework.root" value="${project.thirdparty}/jboss/jbossws-framework"/>
+<property name="jboss.jbossws.framework.lib" value="${jboss.jbossws.framework.root}/lib/"/>
+<property name="jboss.jbossws.framework.resources" value="${jboss.jbossws.framework.root}/resources/"/>
+<path id="jboss.jbossws.framework.classpath">
+   <pathelement path="${jboss.jbossws.framework.lib}/jbossws-framework.jar"/>
+</path>
+
+<!-- jboss/jbossws-spi -->
+<property name="jboss.jbossws.spi.root" value="${project.thirdparty}/jboss/jbossws-spi"/>
+<property name="jboss.jbossws.spi.lib" value="${jboss.jbossws.spi.root}/lib/"/>
+<property name="jboss.jbossws.spi.resources" value="${jboss.jbossws.spi.root}/resources/"/>
+<path id="jboss.jbossws.spi.classpath">
+   <pathelement path="${jboss.jbossws.spi.lib}/jbossws-spi.jar"/>
+</path>
+
+<!-- ibm-wsdl4j -->
+<property name="ibm.wsdl4j.root" value="${project.thirdparty}/ibm-wsdl4j"/>
+<property name="ibm.wsdl4j.lib" value="${ibm.wsdl4j.root}/lib/"/>
+<property name="ibm.wsdl4j.resources" value="${ibm.wsdl4j.root}/resources/"/>
+<path id="ibm.wsdl4j.classpath">
+   <pathelement path="${ibm.wsdl4j.lib}/wsdl4j.jar"/>
+</path>
+
+<!-- sun-fi -->
+<property name="sun.fi.root" value="${project.thirdparty}/sun-fi"/>
+<property name="sun.fi.lib" value="${sun.fi.root}/lib/"/>
+<property name="sun.fi.resources" value="${sun.fi.root}/resources/"/>
+<path id="sun.fi.classpath">
+   <pathelement path="${sun.fi.lib}/FastInfoset.jar"/>
+   <pathelement path="${sun.fi.lib}/FastInfosetUtilities.jar"/>
+</path>
+
+<!-- sun-jaxb -->
+<property name="sun.jaxb.root" value="${project.thirdparty}/sun-jaxb"/>
+<property name="sun.jaxb.lib" value="${sun.jaxb.root}/lib/"/>
+<property name="sun.jaxb.resources" value="${sun.jaxb.root}/resources/"/>
+<path id="sun.jaxb.classpath">
+   <pathelement path="${sun.jaxb.lib}/jaxb-api.jar"/>
+</path>
+
+<!-- sun-jaxws -->
+<property name="sun.jaxws.root" value="${project.thirdparty}/sun-jaxws"/>
+<property name="sun.jaxws.lib" value="${sun.jaxws.root}/lib/"/>
+<property name="sun.jaxws.resources" value="${sun.jaxws.root}/resources/"/>
+<path id="sun.jaxws.classpath">
+   <pathelement path="${sun.jaxws.lib}/jaxws-api.jar"/>
+   <pathelement path="${sun.jaxws.lib}/jsr181-api.jar"/>
+</path>
+
+<!-- wscommons-policy -->
+<property name="wscommons.policy.root" value="${project.thirdparty}/wscommons-policy"/>
+<property name="wscommons.policy.lib" value="${wscommons.policy.root}/lib/"/>
+<property name="wscommons.policy.resources" value="${wscommons.policy.root}/resources/"/>
+<path id="wscommons.policy.classpath">
+   <pathelement path="${wscommons.policy.lib}/policy.jar"/>
+</path>
+
+<!-- wutka-dtdparser -->
+<property name="wutka.dtdparser.root" value="${project.thirdparty}/wutka-dtdparser"/>
+<property name="wutka.dtdparser.lib" value="${wutka.dtdparser.root}/lib/"/>
+<property name="wutka.dtdparser.resources" value="${wutka.dtdparser.root}/resources/"/>
+<path id="wutka.dtdparser.classpath">
+   <pathelement path="${wutka.dtdparser.lib}/dtdparser.jar"/>
+</path>
+
+<!-- list of aliases used to bridge gap between buildmagic defs and jbossbuild -->
+
+
+<path id="apache.commons.classpath">
+  <pathelement path="${apache.collections.lib}/commons-collections.jar"/>
+  <pathelement path="${apache.logging.lib}/commons-logging.jar"/>
+  <pathelement path="${apache.httpclient.lib}/commons-httpclient.jar"/>
+  <pathelement path="${apache.codec.lib}/commons-codec.jar"/>
+  <pathelement path="${apache.discovery.lib}/commons-discovery.jar"/>
+  <pathelement path="${apache.fileupload.lib}/commons-fileupload.jar"/>
+  <pathelement path="${apache.lang.lib}/commons-lang.jar"/>  
+</path>
+
+<path id="sax.classpath">
+  <pathelement path="${xml-sax.classpath}"/>
+</path>
+ 
+<property name="xdoclet-xdoclet.lib" value="${xdoclet.xdoclet.lib}"/>
+<path id="xdoclet.task.classpath">
+  <path refid="xdoclet.xdoclet.classpath"/>
+</path>
+   
+<property name="gjt.jpl-util.lib" value="${gjt.jpl.util.lib}"/>   
+<path id="gjt.jpl-util.classpath">
+   <path refid="gjt.jpl.util.classpath"/>
+</path>   
+
+<property name="opennms.joesnmp.lib" value="${joesnmp.joesnmp.lib}"/>   
+<path id="opennms.joesnmp.classpath">
+   <path refid="joesnmp.joesnmp.classpath"/>
+</path>   
+
+<path id="jacorb.idl.classpath">
+   <path refid="apache.avalon.logkit.classpath"/>
+   <pathelement path="${jacorb.jacorb.lib}/idl.jar"/>
+</path>
+
+<property name="jacorb.idl.include" value="${jacorb.jacorb.resources}"/>
+<property name="jacorb.jacorb.properties" value="${jacorb.jacorb.resources}"/>
+  
+<property name="sleepycat.lib" value="${sleepycat.sleepycat.lib}"/>
+<path id="sleepycat.classpath">
+   <path refid="sleepycat.sleepycat.classpath"/>
+</path>
+  
+<property name="apache.tomcat55.root" value="${apache.tomcat.root}"/>
+<property name="apache.tomcat55.lib" value="${apache.tomcat.lib}"/>
+<path id="apache.tomcat55.classpath">
+   <path refid="apache.tomcat.classpath"/>
+</path>
+  
+<property name="trove.lib" value="${trove.trove.lib}"/>  
+<path id="trove.classpath">
+   <path refid="trove.trove.classpath"/>
+</path>
+  
+<path id="qdox.classpath">
+   <path refid="qdox.qdox.classpath"/>
+</path>
+  
+<property name="javassist.lib" value="${javassist.javassist.lib}"/>
+<path id="javassist.classpath">
+  <path refid="javassist.javassist.classpath"/>
+</path>
+  
+<property name="hibernate.lib" value="${hibernate.hibernate.lib}"/>  
+<path id="hibernate3.classpath">
+  <path refid="hibernate.hibernate.classpath"/>
+</path>
+
+<property name="odmg.lib" value="${odmg.odmg.lib}"/>
+<path id="odmg.classpath">
+  <path refid="odmg.odmg.classpath"/>
+</path>
+
+<property name="cglib.lib" value="${cglib.cglib.lib}"/>
+<path id="cglib.classpath">
+  <path refid="cglib.cglib.classpath"/>  
+</path>
+
+<path id="ejb3-persistence.classpath">
+   <path refid="hibernate.annotations.classpath"/>
+   <path refid="hibernate.entitymanager.classpath"/>
+</path>
+
+
+
+<!-- Ant -->
+<property name="apache.ant.root" value="${project.tools}"/>
+<property name="apache.ant.lib" value="${apache.ant.root}/lib"/>
+<path id="apache.ant.classpath">
+  <pathelement path="${apache.ant.lib}/ant.jar"/>
+</path>
+<path id="apache.ant.junit.classpath">
+  <pathelement path="${apache.ant.lib}/ant-junit.jar"/>
+</path>
+  

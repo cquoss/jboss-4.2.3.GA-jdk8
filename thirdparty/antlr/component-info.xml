@@ -1,0 +1,16 @@
+<project name="antlr-component-info">
+   <component id="antlr"
+              licenseType="antlr"
+              version="2.7.6-brew"
+              projectHome="http://www.antlr.org/"
+              description="ANother Tool for Language Recognition"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/antlr"
+              tag="antlr-2_7_6-3jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="antlr.jar"/>
+      <export>
+         <include input="antlr.jar"/>
+      </export>
+   </component>
+
+</project>

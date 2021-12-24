@@ -1,0 +1,15 @@
+<project name="apache-xmlsec-component-info">
+   <component id="apache-xmlsec"
+              licenseType="apache-2.0"
+              version="1.3.0-brew"
+              projectHome="http://xml.apache.org/security/index.html"
+              description="implementation of security standards for XML"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/xml-security"
+              tag="xml-security-1_3_0-1jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="xmlsec.jar"/>
+      <export>
+         <include input="xmlsec.jar"/>
+      </export>
+   </component>
+</project>

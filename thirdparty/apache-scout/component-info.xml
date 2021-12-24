@@ -1,0 +1,20 @@
+<project name="apache-scout-component-info">
+
+   <!-- ============================================================ -->
+   <!-- Scout                                                        -->
+   <!-- ============================================================ -->
+
+   <component id="apache-scout"
+              version="0.7rc2"
+              licenseType="apache-2.0"
+              projectHome="http://ws.apache.org/scout/"
+              description="An implementation of the JAXR spec"
+   >
+      <artifact id="scout.jar"/>
+      <export>
+         <include input="scout.jar"/>
+      </export>
+   </component>
+
+
+</project>

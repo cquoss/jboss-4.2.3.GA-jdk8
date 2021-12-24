@@ -1,0 +1,24 @@
+<project name="apache-xerces-component-info">
+
+   <!-- ============================================================ -->
+   <!-- Apache Xerces                                                -->
+   <!-- ============================================================ -->
+
+   <component id="apache-xml-commons"
+              licenseType="apache-2.0"
+              version="1.3.03-brew"
+              projectHome="http://xml.apache.org/commons/"
+              description="Common code for XML projects"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/xml-commons"
+              tag="xml-commons-1_3_03-7jpp_ep1_3">
+      <!-- Build using JDK 1.4 -->
+      <artifact id="resolver.jar"/>
+      <artifact id="xml-apis.jar"/>      
+       
+      <export>
+         <include input="resolver.jar"/>
+         <include input="xml-apis.jar"/>
+      </export>
+   </component>
+
+</project>

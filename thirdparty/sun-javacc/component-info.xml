@@ -1,0 +1,15 @@
+<project name="sun-javacc-component-info">
+
+   <component id="sun-javacc"
+              version="3.2"
+              licenseType="bsd"
+              projectHome="https://javacc.dev.java.net/"
+              description="JavaCC is a parser/scanner generator for java"
+   >
+      <artifact id="javacc.jar"/>
+      <export>
+         <include input="javacc.jar"/>
+      </export>
+   </component>
+
+</project>

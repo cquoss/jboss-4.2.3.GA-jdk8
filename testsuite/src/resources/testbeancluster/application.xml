@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<application>
+   <display-name>CIF test ear</display-name>
+   <module>
+      <ejb>test-cif.jar</ejb>
+   </module>
+</application>

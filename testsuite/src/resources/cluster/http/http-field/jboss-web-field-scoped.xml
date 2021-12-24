@@ -1,0 +1,6 @@
+<jboss-web>
+   <replication-config>
+      <replication-granularity>FIELD</replication-granularity>
+      <replication-field-batch-mode>TRUE</replication-field-batch-mode>
+   </replication-config>
+</jboss-web>

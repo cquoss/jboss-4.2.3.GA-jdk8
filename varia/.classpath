@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="org/jboss/jaxr/ebxmlrr/|org/jboss/tm/plugins/tyrex/|org/jboss/jdo/castor/" kind="src" path="src/main"/>
+	<classpathentry kind="src" path="/system"/>
+	<classpathentry kind="src" path="/jmx"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/common/lib/jboss-common.jar"/>
+	<classpathentry kind="src" path="/cluster"/>
+	<classpathentry kind="src" path="/j2ee"/>
+	<classpathentry kind="src" path="/server"/>
+	<classpathentry kind="src" path="/messaging"/>
+	<classpathentry kind="src" path="/transaction"/>
+	<classpathentry kind="src" path="/security"/>
+	<classpathentry kind="src" path="/naming"/>
+	<classpathentry kind="src" path="/jaxrpc"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-bsf/lib/bsf.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-log4j/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/hsqldb/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-javamail/lib/mail.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/joesnmp/lib/joesnmp.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-httpclient/lib/commons-httpclient.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-servlet/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/oswego-concurrent/lib/concurrent.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/beanshell/lib/bsh.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-velocity/lib/velocity.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-xalan/lib/xalan.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-logging/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-scout/lib/scout.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/juddi/lib/juddi.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-container.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-dependency.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-microcontainer.jar"/>
+	<classpathentry kind="lib" path="/tools/lib/ant.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/remoting/lib/jboss-remoting.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossxb/lib/jboss-xml-binding.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/junit/lib/junit.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws/lib/jboss-jaxrpc.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws/lib/jboss-saaj.jar"/>
+	<classpathentry kind="output" path="output/eclipse-classes"/>
+</classpath>

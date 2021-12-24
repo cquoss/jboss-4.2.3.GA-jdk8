@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+
+<project name="main.build"
+          default="synchronize"
+          basedir=".">
+
+   <!-- Property File definitions -->
+   <property file="local.properties"/>
+   <property file="synchronize.properties"/>
+   <property environment="env"/>
+   <!-- Allow jbossbuild.repository to be set from (in order or priority)
+      + Command line -Djbossbuild.repository=...
+      + synchronize.properties jbossbuild.repository setting
+      + JBOSS_REPOSITORY environment variable
+   -->
+   <condition property="jbossbuild.repository" value="${env.JBOSS_REPOSITORY}">
+      <isset property="env.JBOSS_REPOSITORY"/>
+   </condition>
+   <!-- Fall back to default -->
+   <property name="jbossbuild.repository" value="http://repository.jboss.com"/>
+
+   <!-- Property Definitions -->
+   <property name="generatedLibrariesFiles" value="../thirdparty/testsuite-libraries.ent"/>
+
+   <!-- File Imports -->
+   <import file="../tools/etc/jbossbuild/tasks.xml"/>
+
+   <!-- Proxy Configuration for HTTP get operations
+   <setproxy proxyhost="<your.proxy.host>" proxyport="<your.proxy.port>"/>
+   -->
+
+   <!-- Main Definition of dependencies -->
+   <build id="jbossas-thirdparty"
+      impltitle="JBossAS"
+      implversion="4.0.4GA"
+      implvendor="JBoss Inc."
+      implurl="http://www.jboss.org"
+      description="JBoss Application Server"
+      cvsroot="${cvs.prefix}@cvs.forge.jboss.com:/cvsroot/jboss"
+      thirdpartypath="../thirdparty/"
+      location="${jbossbuild.repository}"
+      targetdefs="targets">
+
+      <!--
+        The repository is in CVS under the module repository.jboss.com whose contents
+        are pushed to the http://repository.jboss.com site.
+      -->
+      
+      <componentref name="jbpm" version="3.1"/> 
+      
+
+    </build>
+
+   <synchronizeinfo/>
+
+   <!-- Generate the targets -->
+   <generate generate="jbossas-thirdparty"/>
+
+
+   <target name="generate-lib-file"
+      description="generate testsuite-libraries.ent" 
+      depends="synchronize">
+         <gen-lib-file filename="${generatedLibrariesFiles}" />
+    </target>
+	
+	<!-- Create jbpm server configuration -->
+	<target name="create.jbpm.server.config">
+		
+      <property name="jboss.server.dir" value="../build/output/jboss-4.0.4.CR2" />
+      <property name="jboss.source.server.config" value="all" />
+      <property name="local.repo.dir" value="../thirdparty" />
+      	
+	  <mkdir dir="${jboss.server.dir}/server/jbpm" />
+      <copy todir="${jboss.server.dir}/server/jbpm">
+      	<fileset dir="${jboss.server.dir}/server/${jboss.source.server.config}" />
+      </copy>
+	  <unzip src="${local.repo.dir}/jbpm/lib/jbpm.sar" dest="${jboss.server.dir}/server/jbpm/deploy/jbpm.sar" />
+	</target>
+
+</project>

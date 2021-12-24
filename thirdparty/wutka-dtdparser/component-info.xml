@@ -1,0 +1,18 @@
+<project name="wutka-dtdparser-component-info">
+   <!-- ============================================================ -->
+   <!-- Wutka DTD Parser                                             -->
+   <!-- ============================================================ -->
+   <component id="wutka-dtdparser"
+              licenseType="lgpl"
+              version="1.21-brew"
+              projectHome="http://www.wutka.com/dtdparser.html"
+              description="DTD parser for Java"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/dtdparser"
+              tag="dtdparser-1_21-2jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="dtdparser.jar"/>
+      <export>
+         <include input="dtdparser.jar"/>
+      </export>
+   </component>
+</project>

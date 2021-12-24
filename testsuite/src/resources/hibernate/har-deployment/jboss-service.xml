@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server>
+
+<server>
+  <mbean code="org.jboss.cache.TreeCache" name="jboss.har:service=HarSecondLevelCache">
+    <depends>jboss:service=Naming</depends>
+    <depends>jboss:service=TransactionManager</depends>
+    <attribute name="TransactionManagerLookupClass">org.jboss.cache.JBossTransactionManagerLookup</attribute>
+    <attribute name="IsolationLevel">REPEATABLE_READ</attribute>
+    <attribute name="CacheMode">LOCAL</attribute>
+    <attribute name="ClusterName">HAR-Cluster</attribute>
+    <attribute name="ClusterConfig">
+      <config>
+        <UDP mcast_addr="230.1.2.3" mcast_port="35666"
+          ip_ttl="64" ip_mcast="true"
+          mcast_send_buf_size="150000" mcast_recv_buf_size="80000"
+          ucast_send_buf_size="150000" ucast_recv_buf_size="80000"
+          loopback="false"/>
+        <PING timeout="2000" num_initial_members="3"
+          up_thread="false" down_thread="false"/>
+        <MERGE2 min_interval="10000" max_interval="20000"/>
+        <FD_SOCK/>
+        <VERIFY_SUSPECT timeout="1500"
+          up_thread="false" down_thread="false"/>
+        <pbcast.NAKACK gc_lag="50" retransmit_timeout="600,1200,2400,4800"
+          max_xmit_size="8192" up_thread="false" down_thread="false"/>
+        <UNICAST timeout="600,1200,2400" window_size="100" min_threshold="10"
+          down_thread="false"/>
+        <pbcast.STABLE desired_avg_gossip="20000"
+          up_thread="false" down_thread="false"/>
+        <FRAG frag_size="8192"
+          down_thread="false" up_thread="false"/>
+        <pbcast.GMS join_timeout="5000" join_retry_timeout="2000"
+          shun="true" print_local_addr="true"/>
+        <pbcast.STATE_TRANSFER up_thread="true" down_thread="true"/>
+      </config>
+    </attribute>
+    <attribute name="LockAcquisitionTimeout">15000</attribute>
+  </mbean>
+
+  <mbean code="org.jboss.hibernate.jmx.Hibernate" name="jboss.har:service=Hibernate">
+    <depends>jboss:service=Naming</depends>
+    <depends>jboss:service=TransactionManager</depends>
+    <depends optional-attribute-name="DeployedTreeCacheObjectName">jboss.har:service=HarSecondLevelCache</depends>
+
+    <attribute name="DatasourceName">java:/DefaultDS</attribute>
+    <attribute name="SessionFactoryName">java:/hibernate/SessionFactory</attribute>
+    <attribute name="Dialect">org.hibernate.dialect.HSQLDialect</attribute>
+    <!--
+      I've had off-and-on problems with HSQL and batching.  The HSQLDialect enables
+      batching by default; uncomment this if there is trouble batching against
+      HSQLDB.
+    <attribute name="JdbcBatchSize">0</attribute>
+    -->
+    <attribute name="CacheProviderClass">org.jboss.hibernate.cache.DeployedTreeCacheProvider</attribute>
+    <attribute name="SessionFactoryInterceptor">org.jboss.test.hibernate.SimpleInterceptor</attribute>
+    <attribute name="Hbm2ddlAuto">create-drop</attribute>
+  </mbean>
+
+</server>
+

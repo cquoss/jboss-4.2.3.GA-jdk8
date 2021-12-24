@@ -1,0 +1,17 @@
+<project name="jboss/microcontainer-component-info">
+
+   <component id="jboss/microcontainer"
+              licenseType="lgpl"
+              version="1.0.2"
+              >
+      <artifact id="jboss-container.jar"/>
+      <artifact id="jboss-dependency.jar"/>
+      <artifact id="jboss-microcontainer.jar"/>      
+      <export>
+         <include input="jboss-container.jar"/>
+         <include input="jboss-dependency.jar"/>
+         <include input="jboss-microcontainer.jar"/>         
+      </export>
+   </component>
+
+</project>

@@ -1,0 +1,88 @@
+<project name="build-jboss-head" default="build">
+<!-- $Id: build-jboss-head.xml 20915 2004-05-02 19:34:42Z kimptoc $ -->
+
+    <target name="build" depends="set-branch-head, build-windows, build-unix">
+        <echo message="All done!"/>
+    </target>
+
+    <target name="build-3.2" depends="set-branch-3.2, build-windows, build-unix">
+        <echo message="All done!"/>
+    </target>
+
+    <target name="build-3.0" depends="set-branch-3.0, build-windows, build-unix">
+        <echo message="All done!"/>
+    </target>
+
+    <!-- used for testing - causes only build to be done - no checkout from cvs -->
+    <target name="build-nocheckout" depends="nocheckout, build-windows, build-unix">
+        <echo message="All done!"/>
+    </target>
+
+    <target name="nocheckout">
+        <property name="cvsco.yn" value="N"/>
+    </target>
+
+    <target name="set-branch-head">
+        <property name="cvsco.branch" value="HEAD"/>
+        <property name="cvsco.module" value="jboss-head"/>
+    </target>
+
+    <target name="set-branch-3.2">
+        <property name="cvsco.branch" value="Branch_3_2"/>
+        <property name="cvsco.module" value="jboss-3.2"/>
+    </target>
+
+    <target name="set-branch-3.0">
+        <property name="cvsco.branch" value="Branch_3_0"/>
+        <property name="cvsco.module" value="jboss-3.0"/>
+    </target>
+
+    <target name="env">
+        <!-- not currently used - so file is not present -->
+        <property file="project.properties"/>
+        <property name="build.log.file" value="./logbuild/build.log" />
+
+        <!-- JDK Detection -->
+        <available classname="java.lang.StackTraceElement" property="HAVE_JDK_1.4"/>
+        <fail unless="HAVE_JDK_1.4">
+  Unsupported Java version: You need at least JDK1.4 to build JBoss4
+        </fail>
+
+        <mkdir dir="logbuild"/>
+    </target>
+
+    <target name="check-os" depends="env">
+        <condition property="os.is.unix">
+            <os family="unix"/>
+        </condition>
+        <condition property="os.is.win32">
+            <or>
+                <os family="windows"/>
+                <os family="dos"/>
+            </or>
+        </condition>
+    </target>
+
+    <target name="build-windows" depends="check-os" if="os.is.win32">
+        <echo message="Building on windows"/>
+        <exec dir="." executable="cmd" failonerror="true" >
+            <arg value="/c"/>
+            <arg value="bash"/>
+            <arg value="do_build.sh"/>
+            <arg value="${cvsco.yn}"/>
+            <arg value="${cvsco.branch}"/>
+            <arg value="${cvsco.module}"/>
+        </exec>
+    </target>
+
+    <target name="build-unix" depends="check-os" if="os.is.unix">
+        <echo message="Building on unix"/>
+        <exec dir="." executable="bash" failonerror="true" >
+            <arg value="do_build.sh"/>
+            <arg value="${cvsco.yn}"/>
+            <arg value="${cvsco.branch}"/>
+            <arg value="${cvsco.module}"/>
+        </exec>
+    </target>
+
+</project>

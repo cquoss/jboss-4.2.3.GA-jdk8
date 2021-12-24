@@ -1,0 +1,376 @@
+<project name="tests-cluster-jars">
+   <target name="_jars-cluster" depends="compile-resources">
+      <war warfile="${build.lib}/dist-ss.war"
+         webxml="${build.resources}/cluster/web/web.xml">
+         <classes dir="${build.classes}">
+            <include name="org/jboss/test/cluster/web/*"/>
+         </classes>
+      </war>
+
+      <jar destfile="${build.lib}/ds-tests.sar">
+         <metainf dir="${build.resources}/cluster/ds">
+            <include name="jboss-service.xml"/>
+         </metainf>
+         <fileset dir="${build.classes}">
+            <include name="org/jboss/test/cluster/ds/*"/>
+            <include name="org/jboss/test/cluster/test/*_Stub.class"/>
+         </fileset>
+      </jar>
+
+      <jar destfile="${build.lib}/drm-tests.sar">
+         <metainf dir="${build.resources}/cluster/drm">
+            <include name="jboss-service.xml"/>
+         </metainf>
+         <fileset dir="${build.classes}">
+            <include name="org/jboss/test/cluster/drm/*"/>
+            <include name="org/jboss/test/cluster/test/*_Stub.class"/>
+         </fileset>
+      </jar>
+
+    <jar destfile="${build.lib}/badstatetransfer.sar">
+       <metainf dir="${build.resources}/cluster/partition">
+          <include name="jboss-service.xml"/>
+       </metainf>
+       <fileset dir="${build.classes}">
+          <include name="org/jboss/test/cluster/partition/*"/>
+       </fileset>
+    </jar>
+    
+    <!-- mbeans for testing HASingletonElectionPolicy -->
+   	<copy todir="${build.lib}"
+   	   file="${build.resources}/ha/electionpolicy/ha-electionpolicy-service.xml"
+   	   overwrite="true"/>
+   	   
+    <!-- mbeans for testing HASingleton ExtendedElectionPolicy -->
+   	<copy todir="${build.lib}"
+   	   file="${build.resources}/ha/electionpolicy/extended-ha-electionpolicy-service.xml"
+   	   overwrite="true"/>   	   
+
+      <!-- build httpsessionreplication.jar -->
+      <war warfile="${build.lib}/http-sr.war"
+         webxml="${build.resources}/cluster/http/http-sr/WEB-INF/web.xml">
+         <webinf dir="${build.resources}/cluster/http/http-sr/WEB-INF">
+            <include name="jboss-web.xml"/>
+         </webinf>
+         <fileset dir="${build.resources}/cluster/http">
+            <include name="*.jsp"/>
+         </fileset>
+         <classes dir="${build.classes}">
+            <include
+               name="org/jboss/test/cluster/web/BindingListener.class"/>
+            <include name="org/jboss/test/cluster/web/CacheHelper.class"/>
+         </classes>
+      </war>
+
+      <!-- build http-jk.jar -->
+      <war warfile="${build.lib}/http-jk.war"
+         webxml="${build.resources}/cluster/http/http-jk/WEB-INF/web.xml">
+         <webinf dir="${build.resources}/cluster/http/http-jk/WEB-INF">
+            <include name="jboss-web.xml"/>
+            <include name="context.xml"/>
+         </webinf>
+         <fileset dir="${build.resources}/cluster/http/http-jk">
+            <include name="*.jsp"/>
+         </fileset>
+      </war>
+
+      <!-- build http-scoped.jar -->
+      <copy
+         tofile="${build.resources}/cluster/http/http-scoped/WEB-INF/jboss-web.xml"
+         file="${build.resources}/cluster/http/http-scoped/jboss-web.xml"
+         overwrite="true"/>
+
+      <war warfile="${build.lib}/http-scoped.war"
+         webxml="${build.resources}/cluster/http/http-scoped/WEB-INF/web.xml">
+         <webinf dir="${build.resources}/cluster/http/http-scoped/WEB-INF">
+            <include name="jboss-web.xml"/>
+         </webinf>
+         <classes dir="${build.classes}">
+            <include name="org/jboss/test/cluster/web/Person.class"/>
+            <include name="org/jboss/test/cluster/web/CacheHelper.class"/>
+            <include
+               name="org/jboss/test/cluster/web/BindingListener.class"/>
+         </classes>
+
+         <fileset dir="${build.resources}/cluster/http/http-scoped">
+            <include name="*.jsp"/>
+            <include name="*.html"/>
+         </fileset>
+      </war>
+
+      <!-- build http-scoped-attr.jar -->
+      <copy
+         tofile="${build.resources}/cluster/http/http-scoped/WEB-INF/jboss-web.xml"
+         file="${build.resources}/cluster/http/http-scoped/jboss-web-attr-based.xml"
+         overwrite="true"/>
+
+      <war warfile="${build.lib}/http-scoped-attr.war"
+         webxml="${build.resources}/cluster/http/http-scoped/WEB-INF/web.xml">
+         <webinf dir="${build.resources}/cluster/http/http-scoped/WEB-INF">
+            <include name="jboss-web.xml"/>
+         </webinf>
+         <classes dir="${build.classes}">
+            <include name="org/jboss/test/cluster/web/Person.class"/>
+            <include name="org/jboss/test/cluster/web/CacheHelper.class"/>
+            <include
+               name="org/jboss/test/cluster/web/BindingListener.class"/>
+         </classes>
+
+         <fileset dir="${build.resources}/cluster/http/http-scoped">
+            <include name="*.jsp"/>
+            <include name="*.html"/>
+         </fileset>
+      </war>
+
+      <!-- build http-scoped-set.jar -->
+      <copy
+         tofile="${build.resources}/cluster/http/http-scoped/WEB-INF/jboss-web.xml"
+         file="${build.resources}/cluster/http/http-scoped/jboss-web-set-trigger.xml"
+         overwrite="true"/>
+
+      <war warfile="${build.lib}/http-scoped-set.war"
+         webxml="${build.resources}/cluster/http/http-scoped/WEB-INF/web.xml">
+         <webinf dir="${build.resources}/cluster/http/http-scoped/WEB-INF">
+            <include name="jboss-web.xml"/>
+         </webinf>
+         <classes dir="${build.classes}">
+            <include name="org/jboss/test/cluster/web/Person.class"/>
+            <include name="org/jboss/test/cluster/web/CacheHelper.class"/>
+            <include
+               name="org/jboss/test/cluster/web/BindingListener.class"/>
+         </classes>
+
+         <fileset dir="${build.resources}/cluster/http/http-scoped">
+            <include name="*.jsp"/>
+            <include name="*.html"/>
+         </fileset>
+      </war>
+
+      <!-- build http-scoped-set-attr.jar -->
+      <copy
+         tofile="${build.resources}/cluster/http/http-scoped/WEB-INF/jboss-web.xml"
+         file="${build.resources}/cluster/http/http-scoped/jboss-web-attr-set.xml"
+         overwrite="true"/>
+
+      <war warfile="${build.lib}/http-scoped-set-attr.war"
+         webxml="${build.resources}/cluster/http/http-scoped/WEB-INF/web.xml">
+         <webinf dir="${build.resources}/cluster/http/http-scoped/WEB-INF">
+            <include name="jboss-web.xml"/>
+         </webinf>
+         <classes dir="${build.classes}">
+            <include name="org/jboss/test/cluster/web/Person.class"/>
+            <include name="org/jboss/test/cluster/web/CacheHelper.class"/>
+            <include
+               name="org/jboss/test/cluster/web/BindingListener.class"/>
+         </classes>
+
+         <fileset dir="${build.resources}/cluster/http/http-scoped">
+            <include name="*.jsp"/>
+            <include name="*.html"/>
+         </fileset>
+      </war>
+
+
+      <!-- pre-compile the aop classes. We are using 1.4 annotation so annoc and aopc are required -->
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC"
+         classpathref="jboss.aop.classpath"/>
+      <path id="aop.task.classpath">
+         <path refid="javassist.classpath"/>
+         <path refid="qdox.classpath"/>
+         <path refid="trove.classpath"/>
+         <path refid="jboss.aop.classpath"/>
+         <path refid="jboss.common.classpath"/>
+      </path>
+      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC"
+         classpathref="jboss.aop.classpath"/>
+
+      <annotationc compilerclasspathref="aop.task.classpath" bytecode="true">
+         <classpath refid="thirdparty.classpath"/>
+         <classpath refid="jboss.tomcat.classpath"/>
+         <classpath path="${build.classes}"/>
+         <src path="${source.java}"/>
+         <include name="org/jboss/test/cluster/web/aop/deprec/Student.java"/>
+         <include name="org/jboss/test/cluster/web/aop/deprec/Person.java"/>
+         <include name="org/jboss/test/cluster/web/aop/deprec/Address.java"/>
+         <include name="org/jboss/test/cluster/web/aop/deprec/Course.java"/>
+      </annotationc>
+
+      <!-- Temporarily disabled, breaks testsuite build -->
+      <aopc compilerclasspathref="aop.task.classpath" verbose="true">
+         <classpath refid="thirdparty.classpath"/>
+         <classpath path="${build.classes}"/>
+         <classpath refid="jboss.tomcat.classpath"/>
+         <src path="${build.classes}"/>
+         <include name="org/jboss/test/cluster/web/aop/**"/>
+      	 <!-- aopc seems to pick up jboss-web-cluster.aop's file, from jboss.tomcat.classpath and fails if we add another
+         <aoppath path="${source.resources}/cluster/http/jboss-aop.xml"/>
+         -->
+      </aopc>
+      
+
+      <!-- build http-scoped-field.war -->
+      <copy
+         tofile="${build.resources}/cluster/http/http-field/WEB-INF/jboss-web.xml"
+         file="${build.resources}/cluster/http/http-field/jboss-web-field-scoped.xml"
+         overwrite="true"/>
+
+      <war warfile="${build.lib}/http-scoped-field.war"
+         webxml="${build.resources}/cluster/http/http-field/WEB-INF/web.xml">
+         <webinf dir="${build.resources}/cluster/http/http-field/WEB-INF">
+            <include name="jboss-web.xml"/>
+         </webinf>
+         <classes dir="${build.classes}">
+            <include name="org/jboss/test/cluster/web/aop/*.class"/>
+            <include name="org/jboss/test/cluster/web/CacheHelper.class"/>
+            <include
+               name="org/jboss/test/cluster/web/BindingListener.class"/>
+         </classes>
+
+         <fileset dir="${build.resources}/cluster/http/http-field">
+            <include name="*.jsp"/>
+            <include name="*.html"/>
+         </fileset>
+
+        <fileset dir="${build.resources}/cluster/http/http-field/base">
+           <include name="*.jsp"/>
+           <include name="*.html"/>
+        </fileset>
+      </war>
+
+      <!-- build http-field.war -->
+      <copy
+         tofile="${build.resources}/cluster/http/http-field/WEB-INF/jboss-web.xml"
+         file="${build.resources}/cluster/http/http-field/jboss-web-field.xml"
+         overwrite="true"/>
+
+      <war warfile="${build.lib}/http-field.war"
+         webxml="${build.resources}/cluster/http/http-field/WEB-INF/web.xml">
+         <webinf dir="${build.resources}/cluster/http/http-field/WEB-INF">
+            <include name="jboss-web.xml"/>
+         </webinf>
+         <classes dir="${build.classes}">
+            <include name="org/jboss/test/cluster/web/aop/*.class"/>
+            <include name="org/jboss/test/cluster/web/CacheHelper.class"/>
+            <include
+               name="org/jboss/test/cluster/web/BindingListener.class"/>
+         </classes>
+
+         <fileset dir="${build.resources}/cluster/http/http-field">
+            <include name="*.jsp"/>
+            <include name="*.html"/>
+         </fileset>
+
+        <fileset dir="${build.resources}/cluster/http/http-field/base">
+           <include name="*.jsp"/>
+           <include name="*.html"/>
+        </fileset>
+      </war>
+
+    <!-- build http-field-deprec.war -->
+    <copy
+       tofile="${build.resources}/cluster/http/http-field/WEB-INF/jboss-web.xml"
+       file="${build.resources}/cluster/http/http-field/jboss-web-field.xml"
+       overwrite="true"/>
+
+    <war warfile="${build.lib}/http-field-deprec.war"
+       webxml="${build.resources}/cluster/http/http-field/WEB-INF/web.xml">
+       <webinf dir="${build.resources}/cluster/http/http-field/WEB-INF">
+          <include name="jboss-web.xml"/>
+       </webinf>
+       <classes dir="${build.classes}">
+          <include name="org/jboss/test/cluster/web/aop/deprec/*.class"/>
+          <include name="org/jboss/test/cluster/web/CacheHelper.class"/>
+          <include
+             name="org/jboss/test/cluster/web/BindingListener.class"/>
+       </classes>
+
+       <fileset dir="${build.resources}/cluster/http/http-field">
+          <include name="*.jsp"/>
+          <include name="*.html"/>
+       </fileset>
+
+        <fileset dir="${build.resources}/cluster/http/http-field/deprec">
+           <include name="*.jsp"/>
+           <include name="*.html"/>
+        </fileset>
+    </war>
+    
+    <!-- build http-cross-ctx-first.jar -->
+    <war warfile="${build.lib}/http-cross-ctx-first.war"
+       webxml="${build.resources}/cluster/http/http-cross-ctx-first/WEB-INF/web.xml">
+       <webinf dir="${build.resources}/cluster/http/http-cross-ctx-first/WEB-INF">
+          <include name="jboss-web.xml"/>
+          <include name="context.xml"/>
+       </webinf>
+        <classes dir="${build.classes}">
+           <include name="org/jboss/test/cluster/web/Person.class"/>
+           <include name="org/jboss/test/cluster/web/CacheHelper.class"/>
+           <include
+              name="org/jboss/test/cluster/web/BindingListener.class"/>
+        </classes>
+       <fileset dir="${build.resources}/cluster/http/http-cross-ctx-first">
+          <include name="*.jsp"/>
+       </fileset>
+    </war>
+    
+    <!-- build http-cross-ctx-second.jar -->
+    <war warfile="${build.lib}/http-cross-ctx-second.war"
+       webxml="${build.resources}/cluster/http/http-cross-ctx-second/WEB-INF/web.xml">
+       <webinf dir="${build.resources}/cluster/http/http-cross-ctx-second/WEB-INF">
+          <include name="jboss-web.xml"/>
+          <include name="context.xml"/>
+       </webinf>
+        <classes dir="${build.classes}">
+           <include name="org/jboss/test/cluster/web/Person.class"/>
+           <include name="org/jboss/test/cluster/web/CacheHelper.class"/>
+           <include
+              name="org/jboss/test/cluster/web/BindingListener.class"/>
+        </classes>
+       <fileset dir="${build.resources}/cluster/http/http-cross-ctx-second">
+          <include name="*.jsp"/>
+       </fileset>
+    </war>
+    
+    <!-- build http-cross-ctx-third.jar -->
+    <war warfile="${build.lib}/http-cross-ctx-third.war"
+       webxml="${build.resources}/cluster/http/http-cross-ctx-third/WEB-INF/web.xml">
+       <webinf dir="${build.resources}/cluster/http/http-cross-ctx-third/WEB-INF">
+          <include name="jboss-web.xml"/>
+          <include name="context.xml"/>
+       </webinf>
+        <classes dir="${build.classes}">
+           <include name="org/jboss/test/cluster/web/Person.class"/>
+           <include name="org/jboss/test/cluster/web/CacheHelper.class"/>
+           <include
+              name="org/jboss/test/cluster/web/BindingListener.class"/>
+        </classes>
+       <fileset dir="${build.resources}/cluster/http/http-cross-ctx-third">
+          <include name="*.jsp"/>
+       </fileset>
+    </war>
+   	
+    <ear earfile="${build.lib}/http-cross-ctx.ear"
+       appxml="${build.resources}/cluster/http/application.xml">
+       <fileset dir="${build.lib}">
+          <include name="http-cross-ctx-first.war"/>
+          <include name="http-cross-ctx-second.war"/>
+          <include name="http-cross-ctx-third.war"/>
+       </fileset>
+    </ear>
+
+      <!-- The cross-server.jar ejb jar -->
+      <zip destfile="${build.lib}/cross-server.jar">
+         <zipfileset dir="${build.resources}/cluster/cross-server"
+            prefix="META-INF"/>
+         <fileset dir="${build.classes}">
+            <include name="org/jboss/test/cluster/ejb/*"/>
+         </fileset>
+      </zip>
+   	
+    <!-- JBAS-4406 -->
+   	<copy todir="${build.lib}"
+   	   file="${build.resources}/cluster/partition/jbas4406-service.xml"
+   	   overwrite="true"/>
+   	
+   </target>
+</project>

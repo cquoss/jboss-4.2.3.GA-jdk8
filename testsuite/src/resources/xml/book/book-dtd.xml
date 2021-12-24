@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//DTD Books//EN" "resources/xml/book/books.dtd">
+
+<book isbn="0836217462">
+   <title>Being a Dog Is a Full-Time Job</title>
+   <author>Charles M. Schulz</author>
+   <character>
+      <name>Snoopy</name>
+      <friend-of>Peppermint Patty</friend-of>
+      <since>1950-10-04</since>
+      <qualification>extroverted beagle</qualification>
+   </character>
+   <character>
+      <name>Peppermint Patty</name>
+      <since>1966-08-22</since>
+      <qualification>bold, brash and tomboyish</qualification>
+   </character>
+</book>

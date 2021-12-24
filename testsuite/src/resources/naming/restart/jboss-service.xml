@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id: jboss-service.xml 65552 2007-09-22 05:24:57Z bstansberry@jboss.com $ -->
+
+<!-- ===================================================================== -->
+<!--  JBoss Server Configuration                                           -->
+<!-- ===================================================================== -->
+
+<server>
+
+   <!-- ==================================================================== -->
+   <!-- JNDI                                                                 -->
+   <!-- ==================================================================== -->
+   
+   <mbean code="org.jboss.test.naming.restart.RestartNamingBean"
+      name="jboss:service=RestartNamingBean">
+      
+      <!-- IMPORTANT Ensure we use our own NamingServer and don't screw up the
+           static ref to the std one in the server-side NamingContext class -->
+      <attribute name="UseGlobalService">false</attribute>      
+      <attribute name="InstallGlobalService">false</attribute>
+   </mbean>
+
+   <!-- Use our own NamingService subclass that unexports the NamingServer
+        in stopService().  This better simulates a server shutdown. 
+        We don't really want to test a non-shutdown redeploy of the naming
+        service as that is a highly unlikely usage. -->
+   <mbean code="org.jboss.test.naming.restart.RestartNamingService"
+      name="jboss:service=RestartNaming">
+      
+      <!-- IMPORTANT Ensure we use our own NamingServer and don't screw up the
+           static ref to the std one in the server-side NamingContext class -->
+      <attribute name="UseGlobalService">false</attribute>      
+      <attribute name="InstallGlobalService">false</attribute>
+      
+      <attribute name="CallByValue">false</attribute>
+      <attribute name="Port">19099</attribute>
+      <attribute name="BindAddress">${jboss.bind.address}</attribute>
+      <!-- Use 0 == anonymous to minimize port conflict chances in test runs -->
+      <attribute name="RmiPort">0</attribute>
+      <attribute name="RmiBindAddress">${jboss.bind.address}</attribute>
+      <depends optional-attribute-name="LookupPool"
+         proxy-type="attribute">jboss.system:service=ThreadPool</depends>
+         
+      <depends optional-attribute-name="Naming"
+         proxy-type="attribute">jboss:service=RestartNamingBean</depends>
+   </mbean>
+
+   <!-- Our own HA-JNDI that we can redeploy.  Subclasses std HA-JNDI service
+        to ensure we don't pollute static ref to the std HA-JNDI in the 
+        server-side NamingContext class -->
+   <mbean code="org.jboss.test.naming.restart.RestartHANamingService"
+      name="jboss:service=RestartHAJNDI">
+      
+	  <depends optional-attribute-name="ClusterPartition"
+         proxy-type="attribute">jboss:service=${jboss.partition.name:DefaultPartition}</depends>
+      <attribute name="BindAddress">${jboss.bind.address}</attribute>
+      <!-- Port on which the HA-JNDI stub is made available -->
+      <attribute name="Port">19100</attribute>
+      <!-- Use 0 == anonymous to minimize port conflict chances in test runs -->
+      <attribute name="RmiPort">0</attribute>
+      <attribute name="Backlog">50</attribute>
+      
+      <depends optional-attribute-name="LookupPool"
+         proxy-type="attribute">jboss.system:service=ThreadPool</depends>
+         
+      <attribute name="DiscoveryDisabled">false</attribute>
+      <attribute name="AutoDiscoveryBindAddress">${jboss.bind.address}</attribute>
+      <!-- Use a custom Multicast Address and group port for auto-discovery -->
+      <attribute name="AutoDiscoveryAddress">230.9.9.9</attribute>
+      <attribute name="AutoDiscoveryGroup">19102</attribute>
+      <!-- The TTL (time-to-live) for autodiscovery IP multicast packets -->
+      <attribute name="AutoDiscoveryTTL">1</attribute>
+      
+      <attribute name="LoadBalancePolicy">org.jboss.ha.framework.interfaces.RoundRobin</attribute>
+
+   </mbean>
+   
+   <!-- Binds an object in the above two naming services for remote lookup
+        by the test client -->
+   <mbean code="org.jboss.test.naming.restart.ObjectBinder"
+      name="jboss:service=RestartNamingObjectBinder">
+      
+      <depends optional-attribute-name="NamingService"
+         proxy-type="attribute">jboss:service=RestartNaming</depends>
+   </mbean>
+   
+
+</server>

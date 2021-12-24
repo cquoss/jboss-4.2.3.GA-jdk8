@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema
+   targetNamespace="http://example.org/ns/person/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:p="http://example.org/ns/person/" 
+   elementFormDefault="qualified"
+   attributeFormDefault="unqualified">
+
+  <xsd:element name="person">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="first-name" type="xsd:string"/>
+        <xsd:element name="last-name" type="xsd:string"/>
+        <xsd:element name="date-of-birth" type="xsd:string"/>
+        <xsd:element name="phones" minOccurs="0">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="phone" type="xsd:string" maxOccurs="unbounded"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="addresses" minOccurs="0">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="address" minOccurs="0" maxOccurs="unbounded">
+                 <xsd:complexType>
+                    <xsd:sequence>
+                       <xsd:element name="street" type="xsd:string"/>
+                    </xsd:sequence>
+                 </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

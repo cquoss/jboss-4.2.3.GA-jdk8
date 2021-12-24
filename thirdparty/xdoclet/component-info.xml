@@ -1,0 +1,40 @@
+<project name="xdoclet-component-info">
+   <component id="xdoclet"
+   	      licenseType="xdoclet"
+	      version="1.2.3-brew"
+	      projectHome="http://xdoclet.sourceforge.net/xdoclet/index.html"
+              description="Open source code generation engine"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/xdoclet"
+              tag="xdoclet-1_2_3-7jpp_el4ep1_3">
+      <!-- Built using JDK 1.4 -->               
+      <artifact id="xdoclet-ejb-module.jar"/>
+      <artifact id="xdoclet-hibernate-module.jar"/>
+      <artifact id="xdoclet-java-module.jar"/>
+      <artifact id="xdoclet-jboss-module.jar"/>
+      <artifact id="xdoclet-jmx-module.jar"/>
+      <artifact id="xdoclet-portlet-module.jar"/>
+      <artifact id="xdoclet-web-module.jar"/>
+      <artifact id="xdoclet-xdoclet-module.jar"/>
+      <artifact id="xjavadoc.jar"/>
+      <artifact id="xdoclet.jar"/>
+<!--
+      <import componentref="xjavadoc">
+          <compatible version="1.1-brew"/>
+      </import>
+-->      
+      <export>
+          <include input="xdoclet-ejb-module.jar"/>
+	  <include input="xdoclet-hibernate-module.jar"/>
+	  <include input="xdoclet-java-module.jar"/>
+	  <include input="xdoclet-jboss-module.jar"/>
+	  <include input="xdoclet-jmx-module.jar"/>
+	  <include input="xdoclet-portlet-module.jar"/>
+	  <include input="xdoclet-web-module.jar"/>
+	  <include input="xdoclet-xdoclet-module.jar"/>
+          <include input="xjavadoc.jar"/>
+	  <include input="xdoclet.jar"/>          
+      </export>
+      
+   </component>
+
+</project>

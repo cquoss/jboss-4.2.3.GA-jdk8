@@ -1,0 +1,461 @@
+<!-- JBoss Release Build Script
+$Id: build-release.xml 62103 2007-04-04 20:50:14Z rrajesh $
+
+Structure: This script creates a self contained release structure rooted
+under a directory corresponding to the release version number. Under this
+are the cvs source tree and dist binaries. The structure for the jboss-4.0.1
+release would be:
+
+4.0.1
++ jboss-4.0 - the cvs source tree tagged with JBoss_4_0_1
++ dist - the release binaries
+
+Prequisites:
+1. The cvs branch to build the release for must have been tagged with the
+release tag, for example, JBoss_4_0_1, JBoss_4_0_1_RC1 etc:
+
+[starksm@cvs releases]$ cvs rtag -r Branch_4_0 JBoss_4_0_1 jboss-4.0
+
+Steps:
+1a. Take the build/build-release.xml file from the branch cvs tree
+and move it to the parent directory which will contain the release
+build. For example /usr/jboss/releases.
+
+1b. If you don't have the release cvs branch, you can co just the
+build-release.xml using a co like:
+
+cvs co -r Branch_4_0 _jboss_build/build-release.xml
+
+Now you need to create a release.properties file containing the version
+properties to use for the release branch checkout. For example, the
+JBoss_4_0_4_GA release properties would be:
+
+# The release version properties. These will be validated against
+# the corresponding version.major, version.minor, version.revision,
+# and version.tag as seen in the source tree version-info.xml 
+release.version.major=4
+release.version.minor=0
+release.version.revision=4
+# Only set for non-final releases
+release.version.tag=GA
+
+2. Optionally checkout the tagged cvs release branch using the
+cvs-co target. If you have already have the correct working dir
+checked out under the release number (4.0.1/jboss-4.0 using tag
+JBoss_4_0_4_GA for example) then cvs-co target needs not be done.
+
+3. Build the distribution using the build-dist target
+
+4. Run the testsuite to create the reports to include in dist docs/tests
+
+5. Run the release target to create the release binaries in the x.y.z/dist
+directory for upload to the release server.
+
+-->
+<project name="Build Release" default="release">
+   <!-- Pickup the expected release version properties -->
+   <property file="release.properties"/>
+   <!-- Validate the release.properties values -->
+   <fail unless="release.version.major">
+   The release.version.major is not defined. Create a release.properties with:
+# The release version properties. These will be validated against
+# the corresponding version.major, version.minor, version.revision,
+# and version.tag as seen in the source tree build-common.xml 
+release.version.major=X
+release.version.minor=Y
+release.version.revision=X
+release.version.tag=T
+   </fail>
+
+   <!-- Include the environment properties -->
+   <property environment="env"/>
+   <!-- The cvs top level module name -->
+   <property name="cvs.module" value="jboss-4.2.x"/>
+   <!-- Set the cvs.tag based on the release.version.* properties -->
+   <!-- Set the cvs.tag based on the release.version.* properties -->
+   <condition property="cvs.tag" value="JBoss_${release.version.major}_${release.version.minor}_${release.version.revision}_${release.version.tag}">
+      <isset property="release.version.tag"/>
+   </condition>
+   <condition property="version" value="${release.version.major}.${release.version.minor}.${release.version.revision}.${release.version.tag}">
+      <isset property="release.version.tag"/>
+   </condition>
+   <condition property="cvs.tag" value="JBoss_${release.version.major}_${release.version.minor}_${release.version.revision}">
+      <not>
+         <isset property="release.version.tag"/>
+      </not>
+   </condition>
+   <condition property="version" value="${release.version.major}.${release.version.minor}.${release.version.revision}">
+      <not>
+         <isset property="release.version.tag"/>
+      </not>
+   </condition>
+   <condition property="release.version.tag" value="">
+      <not>
+         <isset property="release.version.tag"/>
+      </not>
+   </condition>
+
+
+   <!-- The root versioned name -->
+   <property name="jboss.id" value="jboss-${version}"/>
+   <!-- The name of the repository snapshot -->
+   <property name="jboss.repository.id" value="jbossas-repo-${version}"/>
+   <!-- The name of the repository jars snapshot -->
+   <property name="jboss.repository.jars.id" value="jbossas-jars-${version}"/>
+  <!-- The cvs module root dir to create the dist from -->
+  <property name="jboss.cvs.dir"
+     value="${version}/${cvs.module}"/>
+   <!-- The cvs module build dir to create the dist from -->
+   <property name="jboss.build.dir"
+      value="${jboss.cvs.dir}/build"/>
+   <!-- The development dist structure to create the release dist from -->
+   <property name="jboss.dist"
+      value="${jboss.build.dir}/output/jboss-${version}"/>
+   <!-- The cvs module unit tests report contents -->
+   <property name="jboss.tests"
+      value="${version}/${cvs.module}/testsuite/output/reports/html"/>
+   <!-- The cvs module thirdparty root -->
+   <property name="jboss.thirdparty"
+      value="${version}/${cvs.module}/thirdparty"/>
+
+   <patternset id="source.ignore">
+      <exclude name="**/output/**"/>
+      <exclude name="**/CVS/**"/>
+      <exclude name="**/local.properties"/>
+   </patternset>
+
+   <target name="cvs-co"
+      description="Checkout the release cvs cvs.module using the env CVSROOT">
+      <echo message="Checking out ${cvs.module} on branch ${cvs.tag}"/>
+      <echo message="CVSROOT=${env.CVSROOT}, CVS_RSH=${env.CVS_RSH}"/>
+      <cvs command="checkout"
+         cvsRoot="${env.CVSROOT}" cvsRsh="${env.CVS_RSH}"
+         package="${cvs.module}"
+         tag="${cvs.tag}"
+         dest="${version}"
+         error="cvs.error" output="cvs.log"/>
+   </target>
+
+   <!-- Validate the source tree version properties against the release.properties -->
+   <import file="${version}/${cvs.module}/tools/etc/buildmagic/version-info.xml"
+      optional="true"/>
+   <target name="build-dist"
+      description="Builds the dist">
+      <fail>
+         <condition>
+            <not>
+               <and>
+                  <equals arg1="${release.version.major}" arg2="${version.major}"/>
+                  <equals arg1="${release.version.minor}" arg2="${version.minor}"/>
+                  <equals arg1="${release.version.revision}" arg2="${version.revision}"/>
+                  <equals arg1="${release.version.tag}" arg2="${version.tag}"/>
+               </and>
+            </not>
+         </condition>
+        The release.version.* properties to not match the version.* values:
+        release.version.major (${release.version.major}) != version.major (${version.major})
+        release.version.minor (${release.version.minor}) != version.minor (${version.minor})
+        release.version.revision (${release.version.revision}) != version.revision (${version.revision})
+        release.version.tag (${release.version.tag}) != version.tag (${version.tag})
+        Check the ${version}/${cvs.module}/tools/etc/buildmagic/version-info.xml
+      </fail>
+      <ant antfile="build.xml"
+         dir="${version}/${cvs.module}/build"/>
+      <antcall target="version-release"/>
+   </target>
+
+   <target name="version-release"
+      description="Versions the dist jars and creates a jars-release.version.xml">
+      <javac destdir=".">
+         <src path="${jboss.build.dir}"/>
+         <classpath>
+            <pathelement location="${jboss.dist}/server/all/lib/dom4j.jar"/>
+         </classpath>
+         <include name="VersionRelease.java"/>
+      </javac>
+      <echo message="Versioning: jboss-${version}"/>
+      <java classname="VersionRelease">
+         <arg value="${jboss.dist}"/>
+         <classpath>
+            <pathelement location="."/>
+            <pathelement location="${jboss.dist}/server/all/lib/dom4j.jar"/>
+         </classpath>
+         <syspropertyset>
+            <propertyref prefix="version"/>
+            <propertyref prefix="specification"/>
+            <propertyref prefix="implementation"/>
+         </syspropertyset>
+      </java>
+   </target>
+
+   <target name="release"
+      depends="bundle-docs, bin-tgz, bin-zip, source-tgz, repository-zip, repository-jars-zip"
+      description="Creates the release binary and source archives from the dist"
+      >
+      <!-- Build a war of the release DTDs -->
+      <war destfile="${version}/dist/dtds.war"
+         webxml="${jboss.build.dir}/etc/web.xml">
+         <webinf dir="${jboss.build.dir}/etc">
+            <include name="jboss-web.xml"/>
+         </webinf>
+         <fileset dir="${jboss.dist}/docs">
+            <include name="dtd/**"/>
+         </fileset>
+      </war>
+   </target>
+
+   <target name="bundle-docs"
+      description="Include license, readme, etc">
+      <!-- Copy the thirdparty/licenses to docs/licenses -->
+      <copy todir="${jboss.dist}/docs/licenses">
+         <fileset dir="${jboss.thirdparty}/licenses"/>
+      </copy>
+      <!-- Copy the build/docs to the dist root, including the jboss EULA -->
+      <copy todir="${jboss.dist}">
+         <fileset dir="${jboss.build.dir}/docs"/>
+      </copy>
+   </target>
+
+   <target name="bin-tgz"
+      description="Build .tar.gz and .tar.bz2 archives">
+      <mkdir dir="${version}/dist"/>
+      <mkdir dir="${jboss.tests}"/>
+
+      <tar destfile="${version}/dist/${jboss.id}.tar.gz"
+         longfile="gnu" compression="gzip">
+         <tarfileset dir="${jboss.dist}"
+            prefix="${jboss.id}">
+            <exclude name="**/data/**"/>
+            <exclude name="**/log/**"/>
+            <exclude name="**/tmp/**"/>
+            <exclude name="**/work/**"/>
+            <exclude name="bin/*"/>
+         </tarfileset>
+         <tarfileset dir="${jboss.dist}"
+            prefix="${jboss.id}" mode="755">
+            <include name="bin/*"/>
+         </tarfileset>
+         <tarfileset dir="${jboss.tests}"
+            prefix="${jboss.id}/docs/tests">
+         </tarfileset>
+      </tar>
+      <checksum file="${version}/dist/${jboss.id}.tar.gz"/>
+      <checksum file="${version}/dist/${jboss.id}.tar.gz" algorithm="SHA-256" />
+
+      <tar destfile="${version}/dist/${jboss.id}.tar.bz2"
+         longfile="gnu" compression="bzip2">
+         <tarfileset dir="${jboss.dist}"
+            prefix="${jboss.id}">
+            <exclude name="**/data/**"/>
+            <exclude name="**/log/**"/>
+            <exclude name="**/tmp/**"/>
+            <exclude name="**/work/**"/>
+            <exclude name="bin/*"/>
+         </tarfileset>
+         <tarfileset dir="${jboss.dist}"
+            prefix="${jboss.id}" mode="755">
+            <include name="bin/*"/>
+         </tarfileset>
+         <tarfileset dir="${jboss.tests}"
+            prefix="${jboss.id}/docs/tests">
+         </tarfileset>
+      </tar>
+      <checksum file="${version}/dist/${jboss.id}.tar.bz2"/>
+      <checksum file="${version}/dist/${jboss.id}.tar.bz2" algorithm="SHA-256" />
+   </target>
+
+   <target name="bin-zip" description="Build zip archive">
+      <mkdir dir="${version}/dist"/>
+      <zip destfile="${version}/dist/${jboss.id}.zip">
+         <zipfileset dir="${jboss.dist}/bin"
+            prefix="${jboss.id}/bin" filemode="755">
+            <include name="*.sh" />
+         </zipfileset>
+         <zipfileset dir="${jboss.dist}/bin"
+            prefix="${jboss.id}/bin">
+            <exclude name="*.sh" />
+         </zipfileset>
+         <zipfileset dir="${jboss.dist}"
+            prefix="${jboss.id}">
+            <exclude name="bin/**"/>
+            <exclude name="**/data/**"/>
+            <exclude name="**/log/**"/>
+            <exclude name="**/tmp/**"/>
+            <exclude name="**/work/**"/>
+            <exclude name="tmp/**"/>
+         </zipfileset>
+         <zipfileset dir="${jboss.tests}"
+            prefix="${jboss.id}/docs/tests">
+         </zipfileset>
+      </zip>
+      <checksum file="${version}/dist/${jboss.id}.zip"/>
+      <checksum file="${version}/dist/${jboss.id}.zip" algorithm="SHA-256" />
+   </target>
+
+   <target name="source-tgz">
+      <tar destfile="${version}/dist/${jboss.id}-src.tar.gz"
+         longfile="gnu" compression="gzip">
+         <tarfileset dir="${version}/${cvs.module}"
+            prefix="${jboss.id}-src">
+            <patternset refid="source.ignore"/>
+            <exclude name="tools/bin/*"/>
+         </tarfileset>
+         <tarfileset dir="${version}/${cvs.module}"
+            prefix="${jboss.id}-src" mode="755">
+            <patternset refid="source.ignore"/>
+            <include name="tools/bin/*"/>
+         </tarfileset>
+      </tar>
+      <checksum file="${version}/dist/${jboss.id}-src.tar.gz"/>
+      <checksum file="${version}/dist/${jboss.id}-src.tar.gz" algorithm="SHA-256" />
+
+      <tar destfile="${version}/dist/${jboss.id}-src.tar.bz2"
+         longfile="gnu" compression="bzip2">
+         <tarfileset dir="${version}/${cvs.module}"
+            prefix="${jboss.id}-src">
+            <patternset refid="source.ignore"/>
+            <exclude name="tools/bin/*"/>
+         </tarfileset>
+         <tarfileset dir="${version}/${cvs.module}"
+            prefix="${jboss.id}-src" mode="755">
+            <patternset refid="source.ignore"/>
+            <include name="tools/bin/*"/>
+         </tarfileset>
+      </tar>
+      <checksum file="${version}/dist/${jboss.id}-src.tar.bz2"/>
+      <checksum file="${version}/dist/${jboss.id}-src.tar.bz2" algorithm="SHA-256" />
+   </target>
+
+  <!-- This takes a dist build and creates a canonical representation
+  that can be uploaded into the repository for use by projects like
+  the installer, ide, etc.
+  -->
+   <target name="repository-zip"
+     description="Create a canonical binaries for the repository">
+     <mkdir dir="${version}/repository" />
+     <echo message="jboss.dist=${jboss.dist}" />
+     <!-- Create a unified server/lib directory -->
+     
+     <copy todir="${jboss.dist}/server/lib" overwrite="true">
+       <fileset dir="${jboss.dist}/server/minimal/lib" />
+       <fileset dir="${jboss.dist}/server/default/lib" />
+       <fileset dir="${jboss.dist}/server/all/lib" />
+       <!-- Include the prematurely added quartz stuff for ejb3 config -->
+       <fileset dir="${jboss.thirdparty}/quartz/lib">
+          <include name="quartz.jar"/>
+       </fileset>
+     </copy>
+     <!-- Create a unified server/deploy directory -->
+     <copy todir="${jboss.dist}/server/deploy" overwrite="true">
+       <fileset dir="${jboss.dist}/server/default/deploy" />
+       <fileset dir="${jboss.dist}/server/all/deploy">
+         <exclude name="jms/**" />
+       </fileset>
+       <!-- Include the prematurely added quartz stuff for ejb3 config -->
+       <fileset dir="${jboss.cvs.dir}/connector/output/lib">
+         <include name="quartz-ra.rar" />
+       </fileset>
+     </copy>
+     <copy todir="${jboss.dist}/server/deploy-ha" overwrite="true">
+       <fileset dir="${jboss.dist}/server/all">
+         <include name="deploy/jms/**" />
+         <include name="deploy-hasingleton/**" />
+         <include name="farm/**" />
+       </fileset>
+     </copy>
+
+     <!-- Copy the jbossbuild component-info.xml to dist -->
+     <copy todir="${version}/repository" file="${jboss.build.dir}/etc/component-info.xml" />
+     <!-- Create the canonical zip archive -->
+     <zip destfile="${version}/repository/${jboss.repository.id}.zip">
+       <zipfileset dir="${jboss.dist}/bin"
+          prefix="${jboss.id}/bin">
+       </zipfileset>
+       <zipfileset dir="${jboss.dist}/client"
+          prefix="${jboss.id}/client">
+       </zipfileset>
+       <zipfileset dir="${jboss.dist}/docs"
+          prefix="${jboss.id}/docs">
+       </zipfileset>
+       <zipfileset dir="${jboss.dist}"
+         prefix="${jboss.id}">
+         <include name="readme.html" />
+       </zipfileset>
+       <zipfileset dir="${jboss.dist}/lib"
+          prefix="${jboss.id}/lib">
+       </zipfileset>
+       <!-- Include the server all/conf as the base conf -->
+       <zipfileset dir="${jboss.dist}/server/all/conf"
+          prefix="${jboss.id}/server/conf">
+       </zipfileset>
+       <!-- Include the server deploy hot deployments -->
+       <zipfileset dir="${jboss.dist}/server/deploy"
+          prefix="${jboss.id}/server/deploy">
+       </zipfileset>
+       <!-- Include the server deploy-ha hot deployments -->
+       <zipfileset dir="${jboss.dist}/server/deploy-ha"
+          prefix="${jboss.id}/server/deploy-ha">
+       </zipfileset>       
+       <!-- Include the merged server lib -->
+       <zipfileset dir="${jboss.dist}/server/lib"
+          prefix="${jboss.id}/server/lib">
+       </zipfileset>
+     </zip>
+     <checksum file="${version}/repository/${jboss.repository.id}.zip"/>
+     <checksum file="${version}/repository/${jboss.repository.id}.zip" algorithm="SHA-256" />     
+   </target>
+
+   <target name="repository-jars-zip"
+     description="Create a binary for the core server jars for the repository">
+     <mkdir dir="${version}/repository" />
+     <echo message="jboss.dist=${jboss.dist}" />
+      <zip destfile="${version}/repository/${jboss.repository.jars.id}.zip">
+         <zipfileset dir="${jboss.build.dir}/etc" fullpath="component-info.xml">
+            <include name="core-jars-component-info.xml" />
+         </zipfileset>
+         <zipfileset dir="${jboss.dist}/lib">
+           <include name="jboss-common.jar" />
+           <include name="jboss-jmx.jar" />
+           <include name="jboss-xml-binding.jar" />
+           <include name="jboss-system.jar" />
+        </zipfileset>
+        <zipfileset dir="${jboss.dist}/server/default/lib">
+          <include name="jboss-j2ee.jar" />
+       </zipfileset>
+      </zip>
+   </target>
+
+   <!-- This is just a test target that allows one to take a cvs workspace
+   dev build and fake a release build. It should not be used to create any
+   release.
+   -->
+   <target name="copy-dev-build-to-dist"
+     description="utility task to copy the dev build into a release build for testing">
+     <mkdir dir="${version}/dist" />
+     <mkdir dir="${jboss.build.dir}/etc" />
+     <mkdir dir="${jboss.build.dir}/output/${jboss.id}" />
+     <copy todir="${jboss.build.dir}/output/${jboss.id}">
+       <fileset dir="output/${jboss.id}" />
+     </copy>
+     <!-- Add the release-zip component-info.xml -->
+     <copy todir="${jboss.build.dir}/etc" file="etc/component-info.xml" />
+     <!-- Add the release readme.html -->
+     <copy todir="${jboss.build.dir}/output/${jboss.id}" file="docs/readme.html" />
+     <!-- Hack to pull in the quartz stuff not included in the standard
+     dev dist build into the fake release structure
+     -->
+     <mkdir dir="${jboss.thirdparty}/quartz" />
+     <copy todir="${jboss.thirdparty}/quartz">
+       <fileset dir="../thirdparty/quartz" />
+     </copy>
+     <mkdir dir="${jboss.cvs.dir}/connector/output/lib" />
+     <copy todir="${jboss.cvs.dir}/connector/output/lib">
+       <fileset dir="../connector/output/lib">
+        <include name="quartz-ra.rar" />
+       </fileset>
+     </copy>
+   </target>
+
+   <target name="clean">
+   </target>
+</project>

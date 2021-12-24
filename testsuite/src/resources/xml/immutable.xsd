@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   targetNamespace="http://www.jboss.org/test/xml/immutable/"
+   elementFormDefault="qualified">
+
+   <xsd:element name="parent">
+      <xsd:complexType>
+        <xsd:sequence>
+
+           <xsd:element name="child1">
+              <xsd:complexType>
+                 <xsd:sequence>
+                    <xsd:element name="name" type="xsd:string"/>
+                 </xsd:sequence>
+              </xsd:complexType>
+           </xsd:element>
+
+           <xsd:element name="child2" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                 <xsd:sequence>
+                    <xsd:element name="name" type="xsd:string"/>
+                 </xsd:sequence>
+              </xsd:complexType>
+           </xsd:element>
+
+           <xsd:element name="other-children" minOccurs="0" maxOccurs="1">
+              <xsd:complexType>
+                 <xsd:sequence>
+                    <xsd:element name="child3" minOccurs="0" maxOccurs="unbounded">
+                       <xsd:complexType>
+                          <xsd:sequence>
+                             <xsd:element name="name" type="xsd:string"/>
+                          </xsd:sequence>
+                       </xsd:complexType>
+                    </xsd:element>
+                 </xsd:sequence>
+              </xsd:complexType>
+           </xsd:element>
+
+           <xsd:element name="immutable-choice" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                 <xsd:choice>
+                    <xsd:element name="choice1" type="xsd:string"/>
+                    <xsd:element name="child1">
+                       <xsd:complexType>
+                          <xsd:sequence>
+                             <xsd:element name="name" type="xsd:string"/>
+                          </xsd:sequence>
+                       </xsd:complexType>
+                    </xsd:element>
+                 </xsd:choice>
+              </xsd:complexType>
+           </xsd:element>
+
+        </xsd:sequence>
+      </xsd:complexType>
+   </xsd:element>
+
+</xsd:schema>

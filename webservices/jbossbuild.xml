@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+
+<!--
+ JBoss, the OpenSource J2EE webOS
+ 
+ Distributable under LGPL license.
+ See terms of license at gnu.org.
+-->
+
+<!-- ================================================================== -->
+<!-- System component definition                                        -->
+<!-- ================================================================== -->
+
+<project name="project" 
+         default="build" 
+         basedir="."
+>
+   <import file="../tools/etc/jbossbuild/tasks.xml"/>
+   <import file="component-info.xml"/>
+
+   <!-- =============================================================== -->
+   <!-- The component definition                                        -->
+   <!-- =============================================================== -->
+
+   <componentdef component="system" description="JBoss System">
+
+      <!-- ============================================================ -->
+      <!-- The main source                                              -->
+      <!-- ============================================================ -->
+
+      <source id="main">
+         <include component="oswego-concurrent"/>
+         <include component="apache-log4j"/>
+         <include component="gnu-getopt"/>
+         <include component="apache-xerces"/>
+         <include component="dom4j"/>
+         <include component="junit"/>
+         <include component="common"/>
+         <include component="j2se"/>
+         <include component="mbeans"/>
+      </source>
+
+      <resource id="system-resources-root" path="."/>
+      
+
+      <!-- ============================================================ -->
+      <!-- jboss-system.jar                                             -->
+      <!-- ============================================================ -->
+
+      <artifactdef artifact="jboss-system.jar">
+         <include input="main"/>
+         <include input="system-resources-root">
+            <include pattern="dtd/*.dtd"/>
+         </include>
+      </artifactdef>
+
+      <!-- ============================================================ -->
+      <!-- jboss-system-client.jar                                      -->
+      <!-- ============================================================ -->
+
+      <artifactdef artifact="jboss-system-client.jar">
+         <include input="main">
+            <include pattern="org/jboss/deployment/DeploymentException*"/>
+            <include pattern="org/jboss/deployment/IncompleteDeploymentException*"/>
+            <include pattern="org/jboss/deployment/Deployer*"/>
+            <include pattern="org/jboss/system/Service.class"/>
+            <include pattern="org/jboss/system/server/ServerLoader*.class"/>
+            <include pattern="org/jboss/system/server/Server.class"/>
+            <include pattern="org/jboss/system/server/ServerConfig.class"/>
+            <include pattern="**/*MBean.class"/>
+         </include>
+      </artifactdef>
+
+      <!-- ============================================================ -->
+      <!-- jboss-boot.jar                                               -->
+      <!-- ============================================================ -->
+
+      <artifactdef artifact="jboss-boot.jar">
+         <include input="main">
+           <include pattern="org/jboss/system/server/NoAnnotationURLClassLoader.class"/>
+           <include pattern="org/jboss/system/server/ServerLoader*.class"/>
+           <include pattern="org/jboss/system/server/Server.class"/>
+           <include pattern="org/jboss/system/server/ServerConfig.class"/>
+         </include>
+      </artifactdef>
+
+      <!-- ============================================================ -->
+      <!-- run.jar                                                      -->
+      <!-- ============================================================ -->
+
+      <artifactdef artifact="run.jar">
+         <include input="main">
+           <include pattern="org/jboss/Version*.class"/>
+           <include pattern="org/jboss/Main*.class"/>
+           <include pattern="org/jboss/system/JBossRMIClassLoader.class"/>
+           <include pattern="org/jboss/system/server/NoAnnotationURLClassLoader.class"/>
+           <include pattern="org/jboss/system/server/ServerLoader*.class"/>
+           <include pattern="org/jboss/system/server/Server.class"/>
+           <include pattern="org/jboss/system/server/ServerConfig.class"/>
+           <include pattern="org/jboss/system/server/ServerConfigUtil.class"/>
+           <include pattern="org/jboss/system/server/jmx/*"/>
+           <include pattern="org/jboss/system/ORBSingleton.class"/>
+         </include>
+         <include input="system-resources-root">
+           <include pattern="log4j*.properties"/>
+           <include pattern="org/jboss/version.properties"/>
+         </include>
+         <include component="gnu-getopt" include="getopt.jar">
+           <include pattern="**"/>
+         </include>
+      </artifactdef>
+
+      <!-- ============================================================ -->
+      <!-- testsuite-support.jar                                        -->
+      <!-- ============================================================ -->
+
+      <artifactdef artifact="testsuite-support.jar">
+         <include input="main">
+            <include pattern="org/jboss/deployment/**"/>
+            <include pattern="org/jboss/system/Service.class"/>
+            <include pattern="org/jboss/system/ServiceMBean.class"/>
+            <include pattern="org/jboss/system/*MBeanSupport.class"/>
+            <include pattern="org/jboss/system/MBeanClassLoader*.class"/>
+            <include pattern="org/jboss/system/UnifiedClassLoader*.class"/>
+            <include pattern="org/jboss/system/ServiceLibraries*.class"/>
+            <include pattern="org/jboss/system/server/*MBean.class"/>
+            <include pattern="org/jboss/system/server/ServerConfigLocator.class"/>
+            <include pattern="org/jboss/system/server/ServerConfig.class"/>
+            <include pattern="org/jboss/system/server/Server.class"/>
+         </include>
+      </artifactdef>
+
+      <!-- ============================================================ -->
+      <!-- log4j-boot.jar                                               -->
+      <!-- ============================================================ -->
+    <!--
+       | Build log4j-boot.jar This is a minimal subset of the log4j
+       | classes that allow the boot process to use log4j but avoids
+       | loading log4j classes that depend on other features like
+       | JMS, JDBC, JavaMail, etc.
+     -->
+     <artifactdef artifact="log4j-boot.jar">
+        <include component="apache-log4j" include="log4j.jar">
+           <include pattern="org/apache/log4j/*"/>
+           <include pattern="org/apache/log4j/config/*"/>
+           <include pattern="org/apache/log4j/helpers/*"/>
+           <include pattern="org/apache/log4j/or/*"/>
+           <include pattern="org/apache/log4j/spi/*"/>
+        </include>
+     </artifactdef>
+
+     <artifactdef artifact="run.conf"/>
+     <artifactdef artifact="run.sh"/>
+     <artifactdef artifact="run.bat"/>
+     <artifactdef artifact="classpath.sh"/>
+   </componentdef>
+
+   <!-- Generate the targets -->   
+   <generate generate="system"/>
+
+</project>

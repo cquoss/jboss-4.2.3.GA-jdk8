@@ -1,0 +1,13 @@
+
+<MLET CODE=test.compliance.loading.support.Trivial3
+      NAME=test:name=Trivial
+      ARCHIVE=MyMBeans2.jar
+>
+</MLET>
+
+<MLET CODE=test.compliance.loading.support.Trivial4
+      NAME=test:name=Trivial2
+      ARCHIVE=MyMBeans2.jar
+>
+  <ARG TYPE=java.lang.String VALUE=foo>
+</MLET>

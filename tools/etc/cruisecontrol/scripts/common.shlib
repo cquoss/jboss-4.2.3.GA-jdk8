@@ -1,0 +1,455 @@
+#!/usr/bin/bash
+
+# $Id: common.shlib 20595 2004-04-20 21:13:14Z kimptoc $
+
+#
+
+[ -r build.conf ] && . ./build.conf
+
+export EMAILTO=chris@kimptoc.net
+#export EMAILTO=jboss-development@lists.sourceforge.net
+export EMAILTOADMIN=chris@kimptoc.net
+
+export WEBDIR=jbossci2/website/$PLATFORM
+export JBOSSDIR=jboss-head
+export JBOSSDIR_GOOD=jboss-head-good
+export JBOSSDIR_GOOD_OLD=jboss-head-good-old
+export JBOSSTEST=jboss-head-test
+export ROOTDIR=`pwd`
+export LOGDIR2=$ROOTDIR/logs
+
+####################################################
+check_os() 
+{
+    # OS specific support (must be 'true' or 'false').
+    CYGWIN=false
+    DARWIN=false
+    WIN32=false
+    export CYGWIN DARWIN WIN32
+
+    systype=`uname`
+    log "System Type: $systype"
+    if [ -z "$systype" ]; then
+	     log "Unable to determine system type; uname return null output."
+	     return 1
+    fi
+
+    case "$systype" in
+	CYGWIN*)
+	    CYGWIN=true
+	    WIN32=true
+	    log "Detected CYGWIN"
+	    ;;
+
+	Darwin*)
+	    DARWIN=true
+	    log "Detected DARWIN (MacOS X)"
+	    ;;
+
+	*)
+	    if [ ! -z "$COMSPEC" ]; then
+		WIN32=true
+		debug "Detected generic win32 environemnt"
+	    fi
+	    ;;
+    esac
+}
+####################################################
+setuplogdir() # $1 - log dir
+{
+LOG=$1
+export LOGDIR=$LOG
+echo LOGDIR = $LOGDIR
+
+if [ ! -d $LOG ]; then
+  mkdir $LOG
+fi
+
+cd $LOG
+rm -fr *
+cd -
+
+}
+
+####################################################
+recreatedir() # $1 - dir
+{
+THEDIR=$1
+if [ -d $THEDIR ]; then
+  rm -fr $THEDIR
+fi
+mkdir $THEDIR 
+}
+
+####################################################
+
+log()
+{
+  echo [`date`] $*
+}
+
+####################################################
+
+killjobs() # $1 - jobs to kill 
+{
+JOBPATT=$1
+JOBSTOKILL=`ps -eaf | grep jbossci | grep $JOBPATT | grep -v grep | awk '{ print $2; }'`
+while [ "$JOBSTOKILL" != "" ]; do
+  for JOB in $JOBSTOKILL ; do
+    log killing job $JOB
+    ps -leaf | grep $JOBPATT | grep $JOB | grep -v grep
+    kill -9 $JOB
+  done
+  JOBSTOKILL=`ps -eaf | grep jbossci | grep $JOBPATT | grep -v grep | awk '{ print $2; }'`
+done
+}
+
+####################################################
+
+mail()
+{
+  echo EMAIL DISABLED FOR NOW
+  return
+
+  SUBJECT="${1:-oops no subject}"
+  BODY="$2"
+  EMAILTOADDR="$3"
+  if [ -z "$EMAILTOADDR" ]; then
+    EMAILTOADDR=$EMAILTO
+  fi
+  TAILFLAG=${4:-Y}
+  
+  log Sending an email::
+  log SUBJECT: $SUBJECT
+  log BODY: file - $BODY
+  log TO: $EMAILTOADDR
+  log TAIL?: $TAILFLAG
+  
+  MSGBODY=/tmp/mailmsgbody.txt
+  #echo '' >$MSGBODY
+  
+  echo "To: $EMAILTOADDR" >$MSGBODY 2>&1
+  echo "From: kimptoc_mail@yahoo.com" >>$MSGBODY 2>&1
+  echo "Subject: $SUBJECT"       >>$MSGBODY 2>&1
+  echo ''                        >>$MSGBODY 2>&1
+  
+  cat $ROOTDIR/mailmsgheader.txt >>$MSGBODY 2>&1
+  date                           >>$MSGBODY 2>&1
+  cat $ROOTDIR/mailmsgline.txt   >>$MSGBODY 2>&1
+  echo 'HERE ARE THE LAST 100 LINES OF THE LOG:' >>$MSGBODY 2>&1
+  cat $ROOTDIR/mailmsgheader.txt >>$MSGBODY 2>&1
+  if [ "$BODY" -a -f $BODY ]; then
+  if [ "$TAILFLAG" = "Y" ]; then
+    log tailing file: $BODY
+    tail -100 $BODY                >>$MSGBODY 2>&1
+  else
+    log heading file: $BODY
+    head -100 $BODY                >>$MSGBODY 2>&1
+  fi
+  fi
+  echo ''                        >>$MSGBODY 2>&1
+  cat $ROOTDIR/mailmsgline.txt   >>$MSGBODY 2>&1
+  date                           >>$MSGBODY 2>&1
+  cat $ROOTDIR/mailmsgline.txt   >>$MSGBODY 2>&1
+  uname -a                       >>$MSGBODY 2>&1
+  cat $ROOTDIR/mailmsgline.txt   >>$MSGBODY 2>&1
+  echo java -version             >>$MSGBODY 2>&1
+  java -version                  >>$MSGBODY 2>&1
+ 
+  log about to send the email to $EMAILTOADDR using file $MSGBODY
+  /usr/sbin/ssmtp -t -v -d99 <$MSGBODY
+   
+ # mutt -s "$SUBJECT" "$EMAILTOADDR" <$MSGBODY
+  log email sent, hopefully [ret code $?]
+}
+
+
+####################################################
+
+jobchecker() # $1 - pid, $2 - log file, $3 - optional wait time, default 180 seconds
+{
+  JOBPID=$1
+  JOBLOGFILE=$2
+  WAITTIME=${3:-180}
+  echo PID = $JOBPID
+  echo LOG = $JOBLOGFILE
+  PSTEST=0
+  LOGSIZE=`wc -l <$JOBLOGFILE`
+  while [ "$PSTEST" == "0" ]; do
+    sleep $WAITTIME
+    ps -ae | grep $JOBPID >/dev/null 2>&1
+    PSTEST=$?
+    if [ "$PSTEST" == "0" ]; then
+      NEWLOGSIZE=`wc -l <$JOBLOGFILE`
+      if [ "$LOGSIZE" == "$NEWLOGSIZE" ]; then
+        log no change to job log file - so we will kill it!
+        PSTEST=1
+      fi
+      date >>$JOBLOGFILE
+      LOGSIZE=`wc -l <$JOBLOGFILE`
+    fi
+  done
+  ps -ae | grep $JOBPID >/dev/null 2>&1
+  PSTEST=$?
+  if [ "$PSTEST" == "0" ]; then
+    log job failed to finish - so killing it!
+    kill $JOBPID
+  else 
+    log job seemed to finish ok...
+  fi
+}
+
+####################################################
+
+cvsco() # $1 branch, defaults to HEAD, $2 module, defaults to jboss-head
+{
+CVSBRANCH=${1:-HEAD}
+CVSMODULE=${2:-jboss-head}
+TARGETDIR=${3:-.}
+
+OLDDIR=`pwd`
+
+JBOSSDIR=$CVSMODULE
+
+if [ "$CVSBRANCH" == "HEAD" ]; then
+  CVSBRANCHOPT=""
+else
+  CVSBRANCHOPT=" -r $CVSBRANCH"
+fi
+
+cd $TARGETDIR
+
+RETCODE=1
+let TRYCOUNT=1
+let MAXTRY=100
+while [ "$RETCODE" != "0" -a "$TRYCOUNT" -lt "$MAXTRY" ]; do
+
+  log remove old jboss
+  rm -fr $JBOSSDIR
+  RMCODE=$?
+  if [ "$RMCODE" != "0" ]; then
+    log error removing jboss directories
+    return 1
+  fi
+
+  if [ -d $JBOSSDIR ]; then
+    log error deleting jboss directories
+    return 2
+  fi
+
+  date >$LOGDIR/cvsco.log 2>&1
+  log checking out branch $CVSBRANCH of $CVSMODULE
+
+  CVSUSER=${CVSUSER:-jboss-build}
+  log Checking out from cvs using user $CVSUSER
+
+  cvs -z3 -q -d :ext:$CVSUSER@cvs.sourceforge.net:/cvsroot/jboss co $CVSBRANCHOPT -d $JBOSSDIR $CVSMODULE >>$LOGDIR/cvsco.log 2>&1 &
+#  cvs -z3 -q -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/jboss co $CVSBRANCHOPT -d $JBOSSDIR $CVSMODULE >>$LOGDIR/cvsco.log 2>&1 &
+  CVSPID=$!
+  echo cvs job pid is $CVSPID
+
+  jobchecker $CVSPID $LOGDIR/cvsco.log 600 >$LOGDIR/jobchecker.log 2>&1 &
+  JCPID=$!
+
+  wait $CVSPID
+  RETCODE=$?
+
+  ps -ae | grep $JCPID >/dev/null 2>&1
+  PSTEST=$?
+  if [ "$PSTEST" == "0" ]; then
+    log cvs job checker still running - so killing it!
+    kill $JCPID
+  fi
+
+  if [ "$RETCODE" != "0" ]; then
+    log error checking out cvs - will try again soon [ $TRYCOUNT of $MAXTRY ]
+#    mail "Error running cvs checkout" $LOGDIR/cvsco.log $EMAILTOADMIN
+    sleep 300
+  fi
+  let TRYCOUNT++
+
+done
+
+cd $OLDDIR
+
+if [ "$TRYCOUNT" -ge "$MAXTRY" ]; then
+  log cvs failed again - giving up!
+  mail "cvs failed too many times - giving up!" $LOGDIR/cvsco.log $EMAILTOADMIN
+  return 1
+else
+  log cvs checkout completed
+fi
+}
+
+####################################################
+
+dirmove() # $1 - from dir, $2 - to dir
+{
+  FROM_D=$1
+  TO_D=$2
+
+  if [ "$WIN32" == true ]; then
+      move $FROM_D $TO_D
+  else 
+      mv $FROM_D $TO_D
+  fi
+}
+
+####################################################
+
+sendtowebserver() # $1 - optional directory
+{
+SUBDIR=$1
+
+log send results to webserver
+
+senddirtowebserver $LOGDIR  Y $SUBDIR
+senddirtowebserver $LOGDIR2 N $SUBDIR
+
+}
+
+####################################################
+senddirtowebserver() # $1 - directory
+{
+DIRTOSEND=$1
+COMPRESS=${2:-N}
+TGTDIR=$WEBDIR/$3
+RETCODE=1
+
+if [ "$COMPRESS" == "Y" ]; then
+  gzip -r -f -v $DIRTOSEND
+fi
+
+while [ "$RETCODE" != "0" ]; do
+  echo TGTDIR = $TGTDIR
+  echo LOGDIR = $DIRTOSEND
+  ncftpput -f login.cfg -m -V -y -R  $TGTDIR $DIRTOSEND
+  RETCODE=$?
+  if [ "$RETCODE" != "0" ]; then
+    log problem doing ftp
+    sleep 30
+  fi
+done
+
+log ftp complete
+}
+
+####################################################
+compile_jboss() # $1 - some id for the compile
+{
+JOBID=${1:-1}
+export JAVA_HOME=$2
+TARGETDIR=${3:-.}
+
+JBOSSDIR=$4
+
+log JOBID = $JOBID, JAVA_HOME = $JAVA_HOME, TARGETDIR = $TARGETDIR
+
+OLDDIR=`pwd`
+
+#log path now is: $PATH
+
+export PATH=$JAVA_HOME/bin:$PATH_ORIG
+
+#log $PATH_ORIG
+#log $PATH
+
+log JAVA VERSION INFO
+java -version
+export JVER=`java -version 2>&1 | awk '{ print $3; }'| head -1 | sed 's/"//g'`
+
+if [ ! -d "$JAVA_HOME" ]; then
+  log java home not found
+  mail "[AUTOMATED] JBoss ($CVSBRANCH/$PLATFORM/$JVER) Compilation: java home not found" $LOGDIR/compile.log $EMAILTOADMIN
+  return 100
+fi
+
+cd $TARGETDIR
+
+log compile jboss
+
+if [ ! -d $JBOSSDIR/build ]; then
+  log No jboss directories - aborting
+  mail "[AUTOMATED] JBoss ($CVSBRANCH/$PLATFORM/$JVER) Compilation: No jboss directories - aborting" $LOGDIR/compile.log $EMAILTOADMIN
+  return 101
+fi
+
+cd $JBOSSDIR/build
+log build clean
+date >$LOGDIR/clean_$JOBID.log 2>&1
+bash build.sh clean >>$LOGDIR/clean_$JOBID.log 2>&1
+RETCODE=$?
+log clean RETCODE = $RETCODE
+
+log build release
+date +"%H:%M %b %d" >$LOGDIR/compile_$JOBID.log 2>&1
+java -version >>$LOGDIR/compile_$JOBID.log 2>&1
+bash build.sh -Dinstall.id=testbuild release >>$LOGDIR/compile_$JOBID.log 2>&1
+export COMPILERETCODE=$?
+log compile RETCODE = $COMPILERETCODE
+
+if [ "$COMPILERETCODE" -ne "0" ];then
+  log compile $JOBID failed!!!
+ 
+  cat $LOGDIR/compile_$JOBID.log | sed " /warning:/ { N;N;d; }"
+
+  return $COMPILERETCODE
+fi
+
+cd -
+
+cd $JBOSSDIR/testsuite
+./build.sh compile >>$LOGDIR/compile_$JOBID.log 2>&1
+export TCOMPILERETCODE=$?
+log tests compile RETCODE = $TCOMPILERETCODE
+
+if [ "$TCOMPILERETCODE" -ne "0" ];then
+  log testsuite compile $JOBID failed!!!
+
+  cat $LOGDIR/compile_$JOBID.log | sed " /warning:/ { N;N;d; }" 
+
+  return $TCOMPILERETCODE
+fi
+
+cd -
+
+grep -i deprecated $LOGDIR/compile_$JOBID.log >$LOGDIR/deprecated_$JOBID.log 2>&1
+
+return 0
+}
+
+####################################################
+
+get_test_blurb() # $1 file of results
+{
+  RESULTS=$1
+  
+  if [ -f $RESULTS ]; then
+  
+  let TESTS_TOTAL=`grep "Number of tests run:" $RESULTS | awk '{print $5;}' `
+  let TESTS_GOOD=`grep "Successful tests:" $RESULTS | awk '{print $3;}' `
+  let TESTS_RATE=$TESTS_GOOD*100/$TESTS_TOTAL
+  TESTS_STATUS="fantastic"
+  
+  echo TESTS TOTAL=$TESTS_TOTAL, TESTS GOOD=$TESTS_GOOD, TESTS RATE=$TESTS_RATE
+  
+  if   [ "$TESTS_TOTAL" -eq "0" ]; then TESTS_STATUS="Houston - we have a problem...";
+  elif [ "$TESTS_TOTAL" = ""  ]; then TESTS_STATUS="Houston - we have a problem...";
+  elif [ "$TESTS_RATE" -lt "20" ]; then TESTS_STATUS="anybody home?";
+  elif [ "$TESTS_RATE" -lt "40" ]; then TESTS_STATUS="this is the jboss project - right?";
+  elif [ "$TESTS_RATE" -lt "60" ]; then TESTS_STATUS="skipping class too much";
+  elif [ "$TESTS_RATE" -lt "80" ]; then TESTS_STATUS="could do better";
+  elif [ "$TESTS_RATE" -lt "95" ]; then TESTS_STATUS="come on - pull your finger out";
+  elif [ "$TESTS_RATE" -lt "100" ]; then TESTS_STATUS="nearly there - who is gonna get us to 100%!";
+  fi
+  
+  fi
+  
+  export TESTS_SCORE=" $TESTS_RATE % ( $TESTS_GOOD / $TESTS_TOTAL ) - $TESTS_STATUS";
+}
+
+####################################################
+
+####################################################
+
+check_os

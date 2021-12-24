@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE project [
+   <!ENTITY buildmagic SYSTEM "../tools/etc/buildmagic/buildmagic.ent">
+   <!ENTITY libraries SYSTEM "../thirdparty/libraries.ent">
+   <!ENTITY modules SYSTEM "../tools/etc/buildmagic/modules.ent">
+   <!ENTITY targets SYSTEM "../tools/etc/buildmagic/targets.ent">
+]>
+
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--  JBoss, the OpenSource J2EE webOS                                      -->
+<!--                                                                        -->
+<!--  Distributable under LGPL license.                                     -->
+<!--  See terms of license at http://www.gnu.org.                           -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+
+<!-- $Id: build.xml 41466 2006-02-24 13:38:54Z tdiesler $ -->
+
+<project default="main" name="JBoss/JAXRPC">
+
+  <!-- ================================================================== -->
+  <!-- Setup                                                              -->
+  <!-- ================================================================== -->
+
+  <!--
+     | Include the common Buildmagic elements.
+     |
+     | This defines several different targets, properties and paths.
+     | It also sets up the basic extention tasks amoung other things.
+   -->
+
+  &buildmagic;
+
+  <!--
+     | Include the normal targets.
+   -->
+  &targets;
+
+  <!-- ================================================================== -->
+  <!-- Configuration                                                      -->
+  <!-- ================================================================== -->
+
+  <!--
+     | Configure the build system.
+     |
+     | This target is invoked by the Buildmagic initialization logic and
+     | should contain module specific configuration elements.
+   -->
+
+  <target name="configure" unless="configure.disable">
+
+    <property name="javadoc.packages" value="org.apache.*"/>
+
+    <!-- =================== -->
+    <!-- Basic Configuration -->
+    <!-- =================== -->
+
+    <!-- Module name(s) & version -->
+    <property name="module.name" value="jaxrpc"/>
+    <property name="module.Name" value="JAXRPC"/>
+    <property name="module.version" value="DEV"/>
+
+    <!-- ========= -->
+    <!-- Libraries -->
+    <!-- ========= -->
+
+    &libraries;
+
+    <!-- The combined library classpath -->
+    <path id="library.classpath">
+      <path refid="apache.commons.classpath"/>
+      <path refid="apache.log4j.classpath"/>
+      <path refid="ibm.wsdl4j.classpath"/>
+      <path refid="sun.jaf.classpath"/>
+      <path refid="sun.javamail.classpath"/>
+      <path refid="sun.servlet.classpath"/>
+    </path>
+
+    <!-- ======= -->
+    <!-- Modules -->
+    <!-- ======= -->
+
+    &modules;
+
+    <!-- The combined dependent module classpath -->
+    <path id="dependentmodule.classpath">
+      <path refid="jboss.common.classpath"/>
+      <path refid="jboss.j2ee.classpath"/>
+    </path>
+
+    <!-- Override the compiler bootclasspath to use the dom2 parser apis -->
+    <path id="local.bootclasspath">
+      <path refid="apache.xerces.classpath"/>
+    </path>
+    <property name="local.bootclasspath" refid="local.bootclasspath"/>
+
+    <!-- ===== -->
+    <!-- Tasks -->
+    <!-- ===== -->
+
+    <!-- JDK-1.4 excludes -->
+    <available property="javac.excludes" classname="java.lang.StackTraceElement" value="dummy"/>
+
+    <!-- JDK-1.3 excludes -->
+    <property name="javac.excludes" value="
+      org/jboss/axis/components/net/JSSESocketFactory.java
+      org/jboss/axis/components/net/SunJSSESocketFactory.java
+      org/jboss/axis/components/net/SunFakeTrustSocketFactory.java"/>
+
+    <call target="_default:task-init"/>
+
+    <property name="source.java" value="${module.source}/main"/>
+
+  </target>
+
+
+  <!-- ================================================================== -->
+  <!-- Compile                                                            -->
+  <!-- ================================================================== -->
+
+  <!--
+     |  Compile everything.
+     |
+     |  This target should depend on other compile-* targets for each
+     |  different type of compile that needs to be performed, short of
+     |  documentation compiles.
+    -->
+
+  <target name="compile"
+    description="Compile all source files."
+    depends="_default:compile-classes">
+
+    <copy toDir="${build.classes}">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/axis/**/*.properties"/>
+      </fileset>
+    </copy>
+    <replace dir="${build.classes}">
+      <include name="org/jboss/axis/**/*.properties"/>
+      <replacefilter token="#jbossVersion#" value="${version.major}.${version.minor}.${version.revision}${version.tag}"/>
+      <replacefilter token="#today#" value="${TODAY}"/>
+    </replace>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Archives                                                           -->
+  <!-- ================================================================== -->
+
+  <!--
+     | Build all jar files.
+   -->
+
+  <target name="module-jars">
+
+    <!-- Build axis-ws4ee.jar -->
+    <jar jarfile="${build.lib}/axis-ws4ee.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/axis/**"/>
+        <include name="org/w3c/dom/**"/>
+      </fileset>
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <section name="axis-ws4ee">
+          <attribute name="Specification-Title" value="JBoss Axis"/>
+          <attribute name="Specification-Version" value="${version.major}.${version.minor}.${version.revision}${version.tag}"/>
+          <attribute name="Specification-Vendor" value="JBoss Inc"/>
+          <attribute name="Implementation-Title" value="JBoss Axis"/>
+          <attribute name="Implementation-Version" value="${version.major}.${version.minor}.${version.revision}${version.tag}"/> 
+          <attribute name="Implementation-Vendor" value="JBoss Inc"/>
+        </section>
+      </manifest>
+    </jar>
+
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Misc.                                                              -->
+  <!-- ================================================================== -->
+
+  <!-- Deploy the webservice stuff to the server specified like this: -Dserver=default  -->
+  <target name="deploy" depends="main">
+    <property name="server" value="default"/>
+    <property name="jboss.home" value="${module.root}/../build/output/jboss-${version.major}.${version.minor}.${version.revision}.${version.tag}"/>
+    <copy todir="${jboss.home}/client" file="${build.lib}/axis-ws4ee.jar" overwrite="true"/>
+    <copy todir="${jboss.home}/server/${server}/deploy/jboss-ws4ee.sar" file="${build.lib}/axis-ws4ee.jar" overwrite="true"/>
+  </target>
+
+</project>
+
+

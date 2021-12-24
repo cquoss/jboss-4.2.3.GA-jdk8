@@ -1,0 +1,10 @@
+The HOWTO guide is available in the following formats:
+
+PDF:
+docs/guide/build/en/pdf/jboss-docbook.pdf
+
+HTML (one file per chapter):
+docs/guide/build/en/html/index.html
+
+HTML (a single file):
+docs/guide/build/en/html_single/index.html

@@ -1,0 +1,65 @@
+<project name="tests-foedeployer-jars">
+   <!-- foe-deployer test -->
+   <target name="_jars-foedeployer">
+      <mkdir dir="${build.lib}"/>
+      
+      
+      <!-- First task is to copy the Foe-Deployer SAR to the current lib directory -->
+      <echo>${project.root}</echo>
+      <copy todir="${build.lib}" filtering="no">
+         <fileset dir="${project.root}/varia/output/lib">
+            <include name="foe-deployer-3.2.sar"/>
+         </fileset>
+      </copy>
+      
+      <!-- build foe-deployer-simple-test.wlar -->
+      <jar destfile="${build.lib}/foe-deployer-simple-test.wlar">
+         <fileset dir="${build.classes}">
+            <include name="org/jboss/test/foedeployer/ejb/simple/**"/>
+         </fileset>
+         <fileset dir="${build.resources}/foedeployer/simple/">
+            <include name="META-INF/**"/>
+         </fileset>
+      </jar>
+      
+      <!-- build foe-deployer-message-test.wlar -->
+      <jar destfile="${build.lib}/foe-deployer-message-test.wlar">
+         <fileset dir="${build.classes}">
+            <include name="org/jboss/test/foedeployer/ejb/message/**"/>
+         </fileset>
+         <fileset dir="${build.resources}/foedeployer/message/">
+            <include name="META-INF/**"/>
+         </fileset>
+      </jar>
+      
+      <!-- build foe-deployer-o2mb-test.wlar -->
+      <jar destfile="${build.lib}/foe-deployer-o2mb-test.wlar">
+         <fileset dir="${build.classes}">
+            <include name="org/jboss/test/foedeployer/ejb/o2mb/**"/>
+         </fileset>
+         <fileset dir="${build.resources}/foedeployer/o2mb/">
+            <include name="META-INF/**"/>
+         </fileset>
+      </jar>
+      
+      <!-- build foe-deployer-m2mb-test.wlar -->
+      <jar destfile="${build.lib}/foe-deployer-m2mb-test.wlar">
+         <fileset dir="${build.classes}">
+            <include name="org/jboss/test/foedeployer/ejb/m2mb/**"/>
+         </fileset>
+         <fileset dir="${build.resources}/foedeployer/m2mb/">
+            <include name="META-INF/**"/>
+         </fileset>
+      </jar>
+      
+      <!-- build foe-deployer-ql-test.wlar -->
+      <jar destfile="${build.lib}/foe-deployer-ql-test.wlar">
+         <fileset dir="${build.classes}">
+            <include name="org/jboss/test/foedeployer/ejb/ql/**"/>
+         </fileset>
+         <fileset dir="${build.resources}/foedeployer/ql/">
+            <include name="META-INF/**"/>
+         </fileset>
+      </jar>
+   </target>
+</project>

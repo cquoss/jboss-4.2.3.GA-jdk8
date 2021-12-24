@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossxb/lib/jboss-xml-binding.jar" sourcepath="/thirdparty/jboss/jbossxb/lib/jboss-xml-binding-src.zip"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-container.jar" sourcepath="/thirdparty/jboss/microcontainer/lib/jboss-container-sources.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-dependency.jar" sourcepath="/thirdparty/jboss/microcontainer/lib/jboss-dependency-soruces.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-xerces/lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jboss-vfs/lib/jboss-vfs.jar" sourcepath="/thirdparty/jboss/jboss-vfs/lib/jboss-vfs-sources.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/aop/lib/jboss-aop-jdk50.jar" sourcepath="/thirdparty/jboss/aop/lib/jboss-aop-src.zip"/>
+	<classpathentry kind="lib" path="/thirdparty/dom4j/lib/dom4j.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-servlet/lib/servlet-api.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ejb3"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/server"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/system"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tomcat"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws/lib/jboss-jaxrpc.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws/lib/jboss-jaxws.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws/lib/jboss-saaj.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws-common/lib/jbossws-common.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws-spi/lib/jbossws-spi.jar" sourcepath="/thirdparty/jboss/jbossws-spi/lib/jbossws-spi-src.zip"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/common/lib/jboss-common.jar" sourcepath="/thirdparty/jboss/common/lib/jboss-common-sources.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jmx"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/j2ee"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/security"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ejb3x"/>
+	<classpathentry kind="output" path="output/eclipse-classes"/>
+</classpath>

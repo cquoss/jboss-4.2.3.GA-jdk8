@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main"/>
+	<classpathentry kind="src" path="/aspects"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/common/lib/jboss-common.jar"/>
+	<classpathentry kind="src" path="/server"/>
+	<classpathentry kind="src" path="/system"/>
+	<classpathentry kind="src" path="/jmx"/>
+	<classpathentry kind="src" path="/security"/>
+	<classpathentry kind="src" path="/cluster"/>
+	<classpathentry kind="src" path="/j2ee"/>
+	<classpathentry kind="src" path="/connector"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-log4j/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-servlet/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-servlet/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jgroups/lib/jgroups.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-beanutils/lib/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-collections/lib/commons-collections.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-discovery/lib/commons-discovery.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-fileupload/lib/commons-fileupload.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-httpclient/lib/commons-httpclient.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-logging/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/oswego-concurrent/lib/concurrent.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/cache/lib/jboss-cache-jdk50.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/remoting/lib/jboss-remoting.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/aop/lib/jboss-aop.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/web/lib/jbossweb.jar" sourcepath="/thirdparty/jboss/web/lib/jbossweb-src.zip"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/web/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/web/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-jsf/lib/jsf-api.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-jsf/lib/jsf-impl.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/serialization/lib/jboss-serialization.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iiop"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws-common/lib/jbossws-common.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws-spi/lib/jbossws-spi.jar"/>
+	<classpathentry kind="output" path="output/eclipse-classes"/>
+</classpath>

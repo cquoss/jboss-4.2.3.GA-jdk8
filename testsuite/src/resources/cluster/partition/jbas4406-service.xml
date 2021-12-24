@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<server>
+
+   <!-- ==================================================================== -->
+   <!-- Partition used for testing channel and protocl JMX registrations     -->
+   <!-- ==================================================================== -->
+
+   <mbean code="org.jboss.ha.framework.server.ClusterPartition"
+      name="jboss:service=JBAS4406Partition">      
+
+      <!-- Name of the partition being built -->
+      <attribute name="PartitionName">JBAS4406Partition</attribute>
+
+      <!-- The address used to determine the node name -->
+      <attribute name="NodeAddress">${jboss.bind.address}</attribute>
+
+      <!-- Determine if deadlock detection is enabled -->
+      <attribute name="DeadlockDetection">False</attribute>
+     
+      <!-- Keep this timeout short -->
+      <attribute name="StateTransferTimeout">2000</attribute>
+
+      <!-- The JGroups protocol configuration -->
+      <attribute name="PartitionConfig">
+         <!--
+         IMPORTANT: These are bogus stacks, not intended for real use.
+         Key thing is that the UDP and TCP stacks both have 10 protocols,
+         as the unit test checks for 10 protocol mbean registrations!!!
+         -->
+         <Config>
+            <UDP mcast_addr="${jboss.partition.udpGroup:228.1.2.3}" mcast_port="23456"
+               ip_ttl="8" ip_mcast="true"
+               mcast_send_buf_size="800000" mcast_recv_buf_size="150000"
+               ucast_send_buf_size="800000" ucast_recv_buf_size="150000"
+               loopback="false"/>
+            <PING timeout="2000" num_initial_members="3"
+               up_thread="true" down_thread="true"/>
+            <MERGE2 min_interval="10000" max_interval="20000"/>
+            <FD_SOCK down_thread="false" up_thread="false"/>
+            <VERIFY_SUSPECT timeout="3000" num_msgs="3"
+               up_thread="true" down_thread="true"/>
+            <pbcast.NAKACK gc_lag="50" retransmit_timeout="300,600,1200,2400,4800"
+               max_xmit_size="8192"
+               up_thread="true" down_thread="true"/>
+            <UNICAST timeout="300,600,1200,2400,4800" window_size="100" min_threshold="10"
+               down_thread="true"/>
+            <pbcast.STABLE desired_avg_gossip="20000"
+               up_thread="true" down_thread="true"/>
+            <pbcast.GMS join_timeout="5000" join_retry_timeout="2000"
+               shun="true" print_local_addr="true"/>
+            <pbcast.STATE_TRANSFER up_thread="true" down_thread="true"/>
+         </Config>
+
+         <!-- Alternate TCP stack: customize it for your environment, change bind_addr and initial_hosts -->
+         <!--
+         <Config>
+            <TCP bind_addr="thishost" start_port="7800" loopback="true"/>
+            <TCPPING initial_hosts="thishost[7800],otherhost[7800]" port_range="3" timeout="3500"
+               num_initial_members="3" up_thread="true" down_thread="true"/>
+            <MERGE2 min_interval="5000" max_interval="10000"/>
+            <FD_SOCK down_thread="false" up_thread="false"/>
+            <FD shun="true" up_thread="true" down_thread="true"
+               timeout="20000" max_tries="5"/>
+            <VERIFY_SUSPECT timeout="1500" down_thread="false" up_thread="false" />
+            <pbcast.NAKACK down_thread="true" up_thread="true" gc_lag="100"
+               retransmit_timeout="3000"/>
+            <pbcast.STABLE desired_avg_gossip="20000" down_thread="false" up_thread="false" />
+            <pbcast.GMS join_timeout="5000" join_retry_timeout="2000" shun="false"
+               print_local_addr="true" down_thread="true" up_thread="true"/>
+            <pbcast.STATE_TRANSFER up_thread="true" down_thread="true"/>
+         </Config>
+         -->
+      </attribute>
+
+   </mbean>
+
+</server>

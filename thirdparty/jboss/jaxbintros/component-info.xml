@@ -1,0 +1,27 @@
+<project name="jboss/jaxbintros">
+
+  <component id="jboss/jaxbintros" description="JAXB introduction" version="1.0.0.beta2" licenseType="lgpl">
+
+    <artifact id="jboss-jaxb-intros.jar"/>
+
+    <!--import componentref="jboss/jbossws-native42">
+      <compatible version="2.0.1.GA"/>      
+    </import-->
+    
+    <import componentref="jboss/jbossws-spi">
+      <compatible version="1.0.0.GA"/>
+      <compatible version="1.0.1.GA"/>
+      <compatible version="1.0.2.GA"/>
+      <compatible version="snapshot"/>
+    </import>
+
+    <import componentref="sun-jaxb">
+      <compatible version="2.1.4"/>
+    </import>
+
+    <export>
+    </export>
+
+  </component>
+
+</project>

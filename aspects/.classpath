@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="org/jboss/aspects/Current.java|org/jboss/aspects/Injected.java|org/jboss/aspects/asynch/AsynchExecutor.java|org/jboss/aspects/asynch/Asynchronous.java|org/jboss/aspects/asynch/ThreadPoolExecutor.java|org/jboss/aspects/asynchronous/aspects/jboss/Asynchronous.java|org/jboss/aspects/dbc/Dbc.java|org/jboss/aspects/dbc/Invariant.java|org/jboss/aspects/dbc/PostCond.java|org/jboss/aspects/dbc/PreCond.java|org/jboss/aspects/dbc/StaticInvariant.java|org/jboss/aspects/jmx/MBean.java|org/jboss/aspects/patterns/readwritelock/readLockOperation.java|org/jboss/aspects/patterns/readwritelock/writeLockOperation.java|org/jboss/aspects/security/Exclude.java|org/jboss/aspects/security/Permissions.java|org/jboss/aspects/security/RunAs.java|org/jboss/aspects/security/SecurityDomain.java|org/jboss/aspects/security/Unchecked.java|org/jboss/aspects/tx/Tx.java|org/jboss/aspects/tx/TxLocal.java|org/jboss/aspects/tx/TxType.java|org/jboss/aspects/txlock/TxSynchronized.java" kind="src" path="src/main"/>
+	<classpathentry excluding="org/jboss/test/aop/classinfopool/|org/jboss/test/aop/test/AOPTestSetup.java|org/jboss/test/asynch/" kind="src" path="src/test"/>
+	<classpathentry kind="lib" path="src/resources"/>
+	<classpathentry kind="src" path="src/test50"/>
+	<classpathentry kind="src" path="src/jdk15"/>
+	<classpathentry kind="src" path="/system"/>
+	<classpathentry kind="src" path="/cluster"/>
+	<classpathentry kind="src" path="/server"/>
+	<classpathentry kind="src" path="/transaction"/>
+	<classpathentry kind="src" path="/j2ee"/>
+	<classpathentry kind="src" path="/jmx"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/naming"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/connector"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-log4j/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/oswego-concurrent/lib/concurrent.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/javassist/lib/javassist.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-logging/lib/commons-logging.jar" sourcepath="/thirdparty/apache-logging/lib/commons-logging-src.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/beanshell/lib/bsh.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/junit/lib/junit.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-servlet/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/aop/lib/jboss-aop.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/aop/lib/jboss-aop-jdk50.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/aop/lib/pluggable-instrumentor.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/remoting/lib/jboss-remoting.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/security"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/common/lib/jboss-common.jar"/>
+	<classpathentry kind="output" path="output/eclipse-classes"/>
+</classpath>

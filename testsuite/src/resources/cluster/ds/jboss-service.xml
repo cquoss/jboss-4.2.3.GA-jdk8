@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server
+    PUBLIC "-//JBoss//DTD MBean Service 3.2//EN"
+    "http://www.jboss.org/j2ee/dtd/jboss-service_3_2.dtd">
+
+<server>
+   <mbean code="org.jboss.test.cluster.ds.DistributedStateUser"
+      name="jboss.test:service=DistributedStateTestCase"
+      xmbean-dd="">
+      <xmbean>
+         <description>DistributedState XMBean</description>
+         <class>org.jboss.test.cluster.ds.DistributedStateUser</class>
+
+         <!-- Attributes -->
+         <attribute access="read-write" getMethod="getPartitionName" setMethod="setPartitionName">
+            <description>The cluster partition name</description>
+            <name>PartitionName</name>
+            <type>java.lang.String</type>
+            <descriptors>
+               <value value="DefaultPartition" />
+            </descriptors>
+         </attribute>
+         <attribute access="read-write" getMethod="getCategory" setMethod="setCategory">
+            <description>The category used with the DistributedState map</description>
+            <name>Category</name>
+            <type>java.lang.String</type>
+            <descriptors>
+               <value value="DistributedStateTestCase" />
+            </descriptors>
+         </attribute>
+
+         <!-- Operations -->
+         <operation>
+            <description>The start lifecycle operation</description>
+            <name>start</name>
+         </operation>
+         <operation>
+            <description>The stop lifecycle operation</description>
+            <name>stop</name>
+         </operation>
+
+         <operation>
+            <name>get</name>
+            <parameter>
+               <name>key</name>
+               <type>java.io.Serializable</type>
+            </parameter>
+            <return-type>java.io.Serializable</return-type>
+         </operation>
+         <operation>
+            <name>put</name>
+            <parameter>
+               <name>key</name>
+               <type>java.io.Serializable</type>
+            </parameter>
+            <parameter>
+               <name>value</name>
+               <type>java.io.Serializable</type>
+            </parameter>
+         </operation>
+         <operation>
+            <description>An operation that returns the current date prefixed by
+            the input argument</description>
+            <name>remove</name>
+            <parameter>
+               <name>key</name>
+               <type>java.io.Serializable</type>
+            </parameter>
+         </operation>
+         <operation>
+            <name>flush</name>
+         </operation>
+         <operation>
+            <name>size</name>
+            <return-type>int</return-type>
+         </operation>
+          <operation>
+            <name>listAllCategories</name>
+            <return-type>java.util.Collection</return-type>
+         </operation>
+         <operation>
+            <name>listAllKeys</name>
+            <parameter>
+               <name>category</name>
+               <type>java.lang.String</type>
+            </parameter>
+            <return-type>java.util.Collection</return-type>
+         </operation>
+        <operation>
+            <name>listAllValues</name>
+            <parameter>
+               <name>category</name>
+               <type>java.lang.String</type>
+            </parameter>
+            <return-type>java.util.Collection</return-type>
+         </operation>
+      </xmbean>
+   </mbean>
+
+</server>

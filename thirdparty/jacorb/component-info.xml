@@ -1,0 +1,34 @@
+<project name="jacorb-component-info">
+
+   <component id="jacorb"
+      licenseType="lgpl"
+      version="2.3.0jboss.patch5-brew"
+      projectHome="http://www.jacorb.org"
+      description="Java implementation of the OMG's CORBA standard."
+      scm=":ext:cvs.devel.redhat.com:/cvs/dist/jacorb"
+      tag="jacorb-2_3_0-1jpp_ep1_4">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="idl.jar"/>
+      <artifact id="idl_g.jar"/>
+      <artifact id="jacorb.jar"/>
+      <artifact id="jacorb_g.jar"/>
+      <artifact id="orb.idl"/>
+      <artifact id="CSI.idl"/>
+      <artifact id="CosTransactions.idl"/>
+      <artifact id="jacorb.properties"/>
+      <import componentref="apache-avalon">
+         <compatible version="4.1.5"/>
+         <compatible version="4.1.5-brew"/>
+      </import>
+      <import componentref="apache-avalon-logkit">
+         <compatible version="1.2"/>
+         <compatible version="1.2-brew"/>
+      </import>
+      <export>
+         <include input="jacorb.jar"/>
+         <include input="jacorb_g.jar"/>         
+         <include input="idl.jar"/>
+      </export>
+   </component>
+
+</project>

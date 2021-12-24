@@ -1,0 +1,15 @@
+<project name="dom4j-component-info">
+   <component id="dom4j"
+              licenseType="dom4j"
+              version="1.6.1-brew"
+              projectHome="http://dom4j.org/"
+              description="Library for XML, XPath and XSLT on the Java platform"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/dom4j"
+              tag="dom4j-1_6_1-2jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="dom4j.jar"/>
+      <export>
+         <include input="dom4j.jar"/>
+      </export>
+   </component>
+</project>

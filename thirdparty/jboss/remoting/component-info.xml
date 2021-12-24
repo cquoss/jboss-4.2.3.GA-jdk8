@@ -1,0 +1,36 @@
+<project name="jboss/remoting-component-info">
+
+   <!-- ============================================================ -->
+   <!-- JBOSS REMOTING                                               -->
+   <!-- ============================================================ -->
+
+   <component id="jboss/remoting"
+              licenseType="lgpl"
+              version="2.2.2.SP8"
+              projectHome="http://www.jboss.org/products/remoting"
+              description="a single API for most network based invocations and related service that uses pluggable transports and data marshallers">
+
+      <artifact id="jboss-remoting.jar"/>
+
+      <import componentref="jboss/serialization">
+         <compatible version="1.0.0.GA"/>
+         <compatible version="1.0.1.GA"/>
+         <compatible version="1.0.2.GA"/>
+         <compatible version="1.0.3.GA"/>
+         <compatible version="1.0.3.GA-brew"/>
+      </import>
+
+      <!-- Only need the apache-tomcat jars tomcat-apr.jar, tomcat-coyote.jar, tomcat-http.jar, tomcat-util.jar
+         (and tomcat-apr.jar only needed if actually using APR transport).  None of these are needed unless
+         using http server invoker -->
+      <!--<import componentref="apache-tomcat">-->
+         <!--<compatible version="5.5.15"/>-->
+      <!--</import>-->
+
+      <export>
+         <include input="jboss-remoting.jar"/>
+      </export>
+   </component>
+
+
+</project>

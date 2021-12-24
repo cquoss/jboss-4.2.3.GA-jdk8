@@ -1,0 +1,19 @@
+<jboss-web>
+   <context-root>/classloader-leak</context-root>
+   
+   <ejb-ref>
+        <ejb-ref-name>ejb/ClassloaderLeakEJB3SLSB</ejb-ref-name>
+        <jndi-name>Ejb3StatelessSession/remote</jndi-name>
+   </ejb-ref>
+   
+   <ejb-ref>
+        <ejb-ref-name>ejb/ClassloaderLeakEJB3SFSB</ejb-ref-name>
+        <jndi-name>Ejb3StatefulSession/remote</jndi-name>
+   </ejb-ref>
+   
+   <ejb-ref>
+        <ejb-ref-name>ejb/TLPClassloaderLeakEJB3SLSB</ejb-ref-name>
+        <jndi-name>ThreadLocalPoolEjb3StatelessSession/remote</jndi-name>
+   </ejb-ref>
+   
+</jboss-web>

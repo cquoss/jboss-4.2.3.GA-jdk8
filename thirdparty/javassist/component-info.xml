@@ -1,0 +1,17 @@
+<project name="javassist-component-info">
+   <!-- ============================================================ -->
+   <!-- Javassist                                                    -->
+   <!-- ============================================================ -->
+
+   <component id="javassist"
+              licenseType="lgpl"
+              version="3.8.0.GA"
+              projectHome="http://sourceforge.net/projects/jboss"
+              description="Simple Java bytecode manipulation (cvstag rel_3_8_0_ga)">
+      <artifact id="javassist.jar"/>
+      <artifact id="javassist-src.jar"/>
+      <export>
+         <include input="javassist.jar"/>
+      </export>
+   </component>
+</project>

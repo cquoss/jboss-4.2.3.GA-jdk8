@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jboss PUBLIC
+   "-//JBoss//DTD JBOSS 4.0//EN"
+   "http://www.jboss.org/j2ee/dtd/jboss_4_0.dtd">
+
+<jboss>
+   <security-domain>java:/jaas/ejb-timers</security-domain>
+   <!-- Missing method-permissions are treated as unchecked -->
+   <missing-method-permissions-excluded-mode>false</missing-method-permissions-excluded-mode>
+
+   <enterprise-beans>
+
+      <entity>
+         <ejb-name>TimerEntity</ejb-name>
+         <jndi-name>ejb/test/timer/TimerEntity</jndi-name>
+         <timer-persistence>false</timer-persistence>         
+      </entity>
+      <!--
+      <session>
+         <ejb-name>UserDataTimerSLSB</ejb-name>
+         <jndi-name>ejb/test/timer/UserDataTimerSLSB</jndi-name>
+      </session>
+      -->
+      <session>
+         <ejb-name>TimerSLSB</ejb-name>
+         <jndi-name>ejb/test/timer/TimerSLSB</jndi-name>
+         <timer-persistence>false</timer-persistence>
+      </session>
+      <session>
+         <ejb-name>TimerSFSB</ejb-name>
+         <jndi-name>ejb/test/timer/TimerSFSB</jndi-name>
+      </session>
+
+      <entity>
+         <ejb-name>SecuredTimerEntity</ejb-name>
+         <jndi-name>ejb/test/timer/SecuredTimerEntity</jndi-name>
+         <timer-persistence>false</timer-persistence>         
+      </entity>
+      <session>
+         <ejb-name>SecuredTimerSLSB</ejb-name>
+         <jndi-name>ejb/test/timer/SecuredTimerSLSB</jndi-name>
+         <timer-persistence>false</timer-persistence>         
+      </session>
+      <session>
+         <ejb-name>SecuredTimerSFSB</ejb-name>
+         <jndi-name>ejb/test/timer/SecuredTimerSFSB</jndi-name>
+      </session>
+      <session>
+         <ejb-name>NoTimedObjectBean</ejb-name>
+         <jndi-name>ejb/test/timer/NoTimedObjectBean</jndi-name>
+      </session>
+
+      <message-driven>
+         <ejb-name>TimerMDB</ejb-name>
+         <destination-jndi-name>queue/A</destination-jndi-name>
+         <resource-ref>
+            <res-ref-name>jms/QCF</res-ref-name>
+            <jndi-name>ConnectionFactory</jndi-name>
+         </resource-ref>
+      </message-driven>
+      <message-driven>
+         <ejb-name>OnCreateTimerMDB</ejb-name>
+         <destination-jndi-name>queue/C</destination-jndi-name>
+         <timer-persistence>false</timer-persistence>         
+         <resource-ref>
+            <res-ref-name>jms/QCF</res-ref-name>
+            <jndi-name>ConnectionFactory</jndi-name>
+         </resource-ref>
+      </message-driven>
+
+   </enterprise-beans>
+
+</jboss>

@@ -1,0 +1,20 @@
+<project name="jboss/common-component-info">
+
+   <component id="jboss/common"
+              licenseType="lgpl"
+              version="1.2.1.GA"
+              scm="svn:https://svn.jboss.org/repos/common/common-old/tags/JBossCommon_1_2_1_GA"
+              description="Common utilities used in Branch_4_2 of the JBossAS project, compiled with jdk14"
+              >
+      <artifact id="namespace.jar"/>
+      <artifact id="jboss-common.jar"/>
+      <artifact id="jboss-common-client.jar"/>      
+      <artifact id="jboss-common-sources.jar"/>      
+      <export>
+         <include input="namespace.jar"/>
+         <include input="jboss-common.jar"/>
+         <include input="jboss-common-client.jar"/>         
+      </export>
+   </component>
+
+</project>

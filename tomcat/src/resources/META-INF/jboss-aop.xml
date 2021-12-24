@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aop>
+
+   <!-- Prepare classes for DynamicAop so PojoCache can add interceptors.
+        Also, add a Subject mixin. With this mixin, FieldBasedClusteredSession 
+        (which implements the Observable interface) can receive events when 
+        contained pojos are changed. 
+        Note that this file is bundled in jboss-web-cluster.aop. The aop package
+        is needed such that a user doesn't depend on JBossCache library.
+   -->
+
+   <!-- If a POJO has the deprecated TC5 AopMarker interface, it will be aspectized. -->
+   <prepare expr="field(* @org.jboss.web.tomcat.tc5.session.AopMarker->*)" />
+
+   <!-- Make any POJO with the deprecated TC5 AopMarker interface as a Subject/Observerable -->
+   <bind pointcut="set(* @org.jboss.web.tomcat.tc5.session.AopMarker->*)">
+      <interceptor class="org.jboss.aspects.patterns.observable.SubjectInterceptor"/>
+   </bind>
+
+   <introduction class="@org.jboss.web.tomcat.tc5.session.AopMarker">
+      <mixin>
+         <interfaces>org.jboss.aspects.patterns.observable.Subject</interfaces>
+         <class>org.jboss.aspects.patterns.observable.SubjectImpl</class>
+         <construction>new org.jboss.aspects.patterns.observable.SubjectImpl(this)</construction>
+      </mixin>
+   </introduction>
+  
+   <!-- If a POJO has the deprecated TC5 InstanceOfAopMarker interface, it will be aspectized. -->
+   <prepare expr="field(* $instanceof{@org.jboss.web.tomcat.tc5.session.InstanceOfAopMarker}->*)" />
+
+   <!-- Make any POJO with the deprecated TC5 InstanceOfAopMarker interface as a Subject/Observerable -->
+   <bind pointcut="set(* @org.jboss.web.tomcat.tc5.session.InstanceOfAopMarker->*)">
+      <interceptor class="org.jboss.aspects.patterns.observable.SubjectInterceptor"/>
+   </bind>
+
+   <introduction class="@org.jboss.web.tomcat.tc5.session.InstanceOfAopMarker">
+      <mixin>
+         <interfaces>org.jboss.aspects.patterns.observable.Subject</interfaces>
+         <class>org.jboss.aspects.patterns.observable.SubjectImpl</class>
+         <construction>new org.jboss.aspects.patterns.observable.SubjectImpl(this)</construction>
+      </mixin>
+   </introduction>
+
+   <!-- If a POJO has the JBoss Cache JDK 1.4 AopMarker interface, it will be aspectized. -->
+   <prepare expr="field(* @org.jboss.cache.aop.AopMarker->*)" />
+
+   <!-- Make any POJO with the JBoss Cache JDK 1.4 AopMarker interface as a Subject/Observerable -->
+   <bind pointcut="set(* @org.jboss.cache.aop.AopMarker->*)">
+      <interceptor class="org.jboss.aspects.patterns.observable.SubjectInterceptor"/>
+   </bind>
+
+   <introduction class="@org.jboss.cache.aop.AopMarker">
+      <mixin>
+         <interfaces>org.jboss.aspects.patterns.observable.Subject</interfaces>
+         <class>org.jboss.aspects.patterns.observable.SubjectImpl</class>
+         <construction>new org.jboss.aspects.patterns.observable.SubjectImpl(this)</construction>
+      </mixin>
+   </introduction>
+  
+   <!-- If a POJO has the JBoss Cache JDK 1.4 InstanceOfAopMarker interface, it will be aspectized. -->
+   <prepare expr="field(* $instanceof{@org.jboss.cache.aop.InstanceOfAopMarker}->*)" />
+
+   <!-- Make any POJO with the JBoss Cache JDK 1.4 InstanceOfAopMarker interface as a Subject/Observerable -->
+   <bind pointcut="set(* @org.jboss.cache.aop.InstanceOfAopMarker->*)">
+      <interceptor class="org.jboss.aspects.patterns.observable.SubjectInterceptor"/>
+   </bind>
+
+   <introduction class="@org.jboss.cache.aop.InstanceOfAopMarker">
+      <mixin>
+         <interfaces>org.jboss.aspects.patterns.observable.Subject</interfaces>
+         <class>org.jboss.aspects.patterns.observable.SubjectImpl</class>
+         <construction>new org.jboss.aspects.patterns.observable.SubjectImpl(this)</construction>
+      </mixin>
+   </introduction>
+
+   <!-- If a POJO has JDK5 PojoCacheable annotation, it will be aspectized. -->
+   <prepare expr="field(* @org.jboss.cache.aop.annotation.PojoCacheable->*)" />
+
+   <!-- Make any POJO with a JDK5 PojoCacheable annotation as a Subject/Observerable -->
+   <bind pointcut="set(* @org.jboss.cache.aop.annotation.PojoCacheable->*)">
+      <interceptor class="org.jboss.aspects.patterns.observable.SubjectInterceptor"/>
+   </bind>
+
+   <introduction class="@org.jboss.cache.aop.annotation.PojoCacheable">
+      <mixin>
+         <interfaces>org.jboss.aspects.patterns.observable.Subject</interfaces>
+         <class>org.jboss.aspects.patterns.observable.SubjectImpl</class>
+         <construction>new org.jboss.aspects.patterns.observable.SubjectImpl(this)</construction>
+      </mixin>
+   </introduction>
+  
+   <!-- If a POJO has JDK5 InstanceOfPojoCacheable annotation, it will be aspectized. -->
+   <prepare expr="field(* $instanceof{@org.jboss.cache.aop.annotation.InstanceOfPojoCacheable}->*)" />
+
+   <!-- Make any POJO with a JDK5 InstanceOfPojoCacheable annotation as a Subject/Observerable -->
+   <bind pointcut="set(* @org.jboss.cache.aop.annotation.InstanceOfPojoCacheable->*)">
+      <interceptor class="org.jboss.aspects.patterns.observable.SubjectInterceptor"/>
+   </bind>
+
+   <introduction class="@org.jboss.cache.aop.annotation.InstanceOfPojoCacheable">
+      <mixin>
+         <interfaces>org.jboss.aspects.patterns.observable.Subject</interfaces>
+         <class>org.jboss.aspects.patterns.observable.SubjectImpl</class>
+         <construction>new org.jboss.aspects.patterns.observable.SubjectImpl(this)</construction>
+      </mixin>
+   </introduction>
+  
+</aop>

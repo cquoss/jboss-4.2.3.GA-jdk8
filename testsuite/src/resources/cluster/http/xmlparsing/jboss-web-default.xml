@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<jboss-web>
+   <replication-config>
+      <replication-granularity>SESSION</replication-granularity>
+      <replication-trigger>SET_AND_NON_PRIMITIVE_GET</replication-trigger>
+      <replication-field-batch-mode>TRUE</replication-field-batch-mode>
+      <max-unreplicated-interval>60</max-unreplicated-interval>
+   </replication-config>
+</jboss-web>

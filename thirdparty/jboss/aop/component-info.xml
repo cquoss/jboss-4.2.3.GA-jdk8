@@ -1,0 +1,38 @@
+<project name="jboss-aop-component-info">
+
+   <component id="jboss/aop"
+      licenseType="lgpl"
+      version="1.5.6.GA"
+      projectHome="http://www.jboss.org/products/aop"
+      description="JBoss Aspect Oriented Programming">
+
+      <artifact id="common-softvaluehashmap.jar"/>
+      <artifact id="jboss-aop-jdk50-client.jar"/>
+      <artifact id="jboss-aop-jdk50.jar"/>
+      <artifact id="jboss-aop.jar"/>
+      <artifact id="jdk14-pluggable-instrumentor.jar"/>
+      <artifact id="jrockit-pluggable-instrumentor.jar"/>
+      <artifact id="pluggable-instrumentor.jar"/>
+
+      <import componentref="javassist">
+         <compatible version="3.6.0.GA"/>
+         <compatible version="3.8.0.GA"/>
+      </import>
+
+      <import componentref="qdox">
+         <compatible version="1.6.1"/>
+         <compatible version="1.6.1-brew"/>
+      </import>
+      <export>
+         <include input="common-softvaluehashmap.jar"/>
+         <include input="jboss-aop-jdk50-client.jar"/>
+         <include input="jboss-aop-jdk50.jar"/>
+         <include input="jboss-aop.jar"/>
+         <include input="jdk14-pluggable-instrumentor.jar"/>
+         <include input="jrockit-pluggable-instrumentor.jar"/>
+         <include input="pluggable-instrumentor.jar"/>
+      </export>
+   </component>
+
+</project>
+

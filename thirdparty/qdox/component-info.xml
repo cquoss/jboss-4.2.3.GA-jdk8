@@ -1,0 +1,21 @@
+<project name="qdox-component-info">
+   <!-- ============================================================ -->
+   <!-- QDox                                                         -->
+   <!-- ============================================================ -->
+
+   <component id="qdox"
+              licenseType="ironsmith"
+              version="1.6.1-brew"
+              projectHome="http://qdox.codehaus.org/"
+              description="Parser for extracting class/interface/method definitions from source files complete with JavaDoc @tags."
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/qdox"
+              tag="qdox-1_6_1-1jpp_ep1_4">
+      <!-- Built using JDK 1.4 -->
+
+      <artifact id="qdox.jar"/>
+      <export>
+         <include input="qdox.jar"/>
+      </export>
+   </component>
+
+</project>

@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+   <!ENTITY buildmagic SYSTEM "../tools/etc/buildmagic/buildmagic.ent">
+]>
+
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--  JBoss, Home of Professional Open Source                               -->
+<!--                                                                        -->
+<!--  Distributable under LGPL license.                                     -->
+<!--  See terms of license at http://www.gnu.org.                           -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+
+<!-- $Id: build.xml 75689 2008-07-11 13:22:37Z dimitris@jboss.org $ -->
+
+<project default="main" name="JBoss/Build">
+
+  <!-- ================================================================== -->
+  <!-- Setup                                                              -->
+  <!-- ================================================================== -->
+
+  <!--
+     | Include the common Buildmagic elements.
+     |
+     | This defines several different targets, properties and paths.
+     | It also sets up the basic extention tasks amoung other things.
+   -->
+
+  &buildmagic;
+
+
+  <!-- ================================================================== -->
+  <!-- Initialization                                                     -->
+  <!-- ================================================================== -->
+
+  <!--
+     | Initialize the build system.  Must depend on '_buildmagic:init'.
+     | Other targets should depend on 'init' or things will mysteriously fail.
+   -->
+
+  <target name="init" unless="init.disable" depends="_buildmagic:init">
+  </target>
+
+
+  <!-- ================================================================== -->
+  <!-- Configuration                                                      -->
+  <!-- ================================================================== -->
+
+  <!--
+     | Configure the build system.
+     |
+     | This target is invoked by the Buildmagic initialization logic and
+     | should contain module specific configuration elements.
+   -->
+
+  <target name="configure" unless="configure.disable">
+
+    <!-- =================== -->
+    <!-- Basic Configuration -->
+    <!-- =================== -->
+
+    <!-- Module name(s) & version -->
+    <property name="module.name" value="jboss"/>
+    <property name="module.Name" value="JBoss Build"/>
+    <property name="module.version" value="${version.major}.${version.minor}.${version.revision}.${version.tag}"/>
+
+
+
+    <!-- The combined library classpath -->
+    <path id="library.classpath">
+    </path>
+
+    <!-- ============== -->
+    <!-- Modules/Groups -->
+    <!-- ============== -->
+
+    <!-- The group to use by default -->
+    <property name="groups" value="most"/>
+
+    <condition property="build-jdk5" value="ejb3x,ejb3,webservices">
+       <isset property="HAVE_JDK_1.5"/>
+    </condition>
+    <property name="build-jdk5" value=""/>
+    
+    <!-- Sets up the module configuration. -->
+    <moduleconfig property="modules" selected="${groups}">
+
+      <!-- Modules -->
+      <module name="aspects"/>
+      <module name="cluster"/>
+      <module name="connector"/>
+      <module name="console"/>
+      <module name="deployment"/>
+      <module name="hibernate-int"/>
+      <module name="ejb3"/>
+      <module name="ejb3x"/>
+      <module name="iiop"/>
+      <module name="j2ee"/>
+      <module name="jaxrpc"/>
+      <module name="jmx"/>
+      <module name="management"/>
+      <module name="messaging"/>
+      <module name="naming"/>
+      <module name="security"/>
+      <module name="remoting-int"/>
+      <module name="server"/>
+      <module name="system"/>
+      <module name="test"/>
+      <module name="testsuite"/>
+      <module name="tomcat"/>
+      <module name="transaction"/>
+      <module name="varia"/>
+      <module name="webservices"/>
+
+      <!-- Module groups -->
+
+      <!--this lets you recompile a single module using a command line like
+./build.sh -emacs -Dgroups=single -Dsingle-module=server
+      -->
+      <group name="single">
+        <include modules="${single-module}"/>
+      </group>
+
+      <group name="core">
+        <include modules="jmx, test, system, naming"/>
+      </group>
+
+      <group name="basic">
+        <include modules="j2ee,
+                          transaction,
+                          security,
+                          server,
+                          deployment"/>
+
+      </group>
+
+      <group name="standard">
+        <include modules="messaging,
+                          connector,
+                          remoting-int,
+                          jaxrpc,
+                          cluster,
+                          varia,
+                          iiop,
+                          management,
+                          console,
+                          aspects,
+                          tomcat,
+                          hibernate-int
+                          "/>
+      </group>
+
+      <group name="jdk5">
+       <include modules="${build-jdk5}" />
+      </group>
+
+      <!-- Module group sets -->
+
+      <group name="most">
+        <include groups="core, basic, standard, jdk5"/>
+      </group>
+
+      <group name="all">
+        <include groups="core, basic, standard, jdk5"/>
+      </group>
+
+    </moduleconfig>
+
+    <!-- Show the module configuration -->
+    <echo>groups:  ${groups}</echo>
+    <echo>modules: ${modules}</echo>
+
+    <!-- The combined dependent module classpath -->
+    <path id="dependentmodule.classpath">
+    </path>
+
+    <!-- ===== -->
+    <!-- Tasks -->
+    <!-- ===== -->
+
+    <!-- Skip any missing modules and issue a warning -->
+    <property name="executemodules.skipmissing" value="true"/>
+
+    <!-- The header and footer displayed during each module execution -->
+    <property name="executemodules.header"><![CDATA[
+    ======================================================================
+    ==  Executing '${target}' in module '${module}'...
+    ==]]></property>
+
+    <property name="executemodules.footer"><![CDATA[
+    ==
+    ==  Finished with '${target}' in module '${module}'.
+    ======================================================================
+    ]]></property>
+
+    <property name="executemodules.exportproperties">
+       version.major,
+       version.minor,
+       version.revision,
+       version.tag,
+       version.name,
+       version.cvstag,
+
+       specification.title,
+       specification.version,
+       specification.vendor,
+
+       implementation.title,
+       implementation.version,
+       implementation.vendor,
+       implementation.vendor.id,
+       implementation.url
+    </property>
+
+    <!-- Install/Release structure -->
+    <property name="install.id" value="${module.name}-${module.version}"/>
+    <property name="release.id" value="${install.id}"/>
+
+    <property name="install.root" value="${module.output}/${install.id}"/>
+    <!-- JavaEE5 technology integration into the 4.2.x core -->
+    <property name="install.ejb3.root" value="${install.root}-ejb3"/>
+
+    <property name="install.docs" value="${install.root}/docs"/>
+    <property name="install.api" value="${install.docs}/api"/>
+    <property name="install.jmx-api" value="${install.docs}/jmx-api"/>
+    <property name="install.todo" value="${install.docs}/todo"/>
+    <property name="install.examples" value="${install.docs}/examples"/>
+    <property name="install.examples.jca" value="${install.docs}/examples/jca"/>
+    <property name="install.examples.jms" value="${install.docs}/examples/jms"/>
+    <property name="install.examples.jbossweb" value="${install.examples}/jbossweb"/>
+    <property name="install.examples.netboot" value="${install.examples}/netboot"/>
+    <property name="install.examples.binding-manager" value="${install.examples}/binding-manager"/>
+    <property name="install.examples.entity-resolver-manager" value="${install.examples}/varia/entity-resolver-manager"/>
+    <property name="install.examples.varia" value="${install.examples}/varia"/>
+    <property name="install.dtd" value="${install.docs}/dtd"/>
+    <property name="install.schema" value="${install.docs}/schema"/>
+
+    <property name="install.bin" value="${install.root}/bin"/>
+    <property name="install.etc" value="${install.root}/etc"/>
+    <property name="install.client" value="${install.root}/client"/>
+    <property name="install.lib" value="${install.root}/lib"/>
+
+    <property name="install.server" value="${install.root}/server"/>
+    <property name="install.all" value="${install.server}/all"/>
+    <property name="install.all.lib" value="${install.all}/lib"/>
+    <property name="install.all.deploy" value="${install.all}/deploy"/>
+    <property name="install.all.conf" value="${install.all}/conf"/>
+    <property name="install.all.deploy.hasingleton" value="${install.all}/deploy-hasingleton"/>
+
+    <property name="install.default" value="${install.server}/default"/>
+    <property name="install.default.lib" value="${install.default}/lib"/>
+    <property name="install.default.deploy" value="${install.default}/deploy"/>
+    <property name="install.default.conf" value="${install.default}/conf"/>
+
+    <property name="install.minimal" value="${install.server}/minimal"/>
+    <property name="install.minimal.lib" value="${install.minimal}/lib"/>
+    <property name="install.minimal.deploy" value="${install.minimal}/deploy"/>
+    <property name="install.minimal.conf" value="${install.minimal}/conf"/>
+
+    <!-- Configuration for the nightly build and test job -->
+    <property name="run.nightly.sleep" value="1"/> <!-- 1 minute -->
+    <property name="run.nightly.email.tolist" value="jboss-development@lists.sourceforge.net"/>
+    <property name="run.nightly.email.from" value="noreply@jboss.org"/>
+    <property name="run.nightly.email.mailhost" value="localhost"/>
+    <property name="run.home.dir" value="${module.output}/${release.id}"/>
+    <property name="run.bin.dir" value="${run.home.dir}/bin"/>
+   </target>
+
+  <!-- ================================================================== -->
+  <!-- Module Pass-through Targets                                        -->
+  <!-- ================================================================== -->
+
+  <!--
+     | These targets will execute all configured modules with the specified
+     | target.
+   -->
+
+  <target name="modules-all" depends="_buildmagic:modules:all">
+     <antcall target="thirdparty" />
+  </target>
+  <target name="modules-most" depends="_buildmagic:modules:most">
+   <antcall target="thirdparty" />
+  </target>
+  <target name="modules-main" depends="_buildmagic:modules:main"/>
+  <target name="modules-release" depends="_buildmagic:modules:release"/>
+  <target name="modules-tests" depends="_buildmagic:modules:tests"/>
+  <target name="modules-clean" depends="_buildmagic:modules:clean"/>
+  <target name="modules-clobber" depends="_buildmagic:modules:clobber"/>
+  <target name="modules-docs" depends="_buildmagic:modules:docs"/>
+
+
+  <!-- ================================================================== -->
+  <!-- Module Pass-through Hooks                                          -->
+  <!-- ================================================================== -->
+
+  <!--
+     | These hooks are executed after the above pass-through targets have
+     | finished with a given module.
+   -->
+
+  <!-- ==== -->
+  <!-- J2EE -->
+  <!-- ==== -->
+
+  <target name="_module-j2ee-most">
+     <ant antfile="build-distr.xml" target="_module-j2ee-most"/>
+  </target>
+
+  <target name="_module-j2ee-all" depends="_module-j2ee-most">
+     <ant antfile="build-distr.xml" target="_module-j2ee-all"/>
+  </target>
+
+  <!-- ====== -->
+  <!-- System -->
+  <!-- ====== -->
+
+  <target name="_module-system-most">
+     <ant antfile="build-distr.xml" target="_module-system-most"/>
+  </target>
+
+ <target name="_module-system-all" depends="_module-system-most">
+     <ant antfile="build-distr.xml" target="_module-system-all"/>
+  </target>
+
+  <!-- ====== -->
+  <!-- Naming -->
+  <!-- ====== -->
+
+  <target name="_module-naming-most">
+     <ant antfile="build-distr.xml" target="_module-naming-most"/>
+  </target>
+
+  <target name="_module-naming-all" depends="_module-naming-most">
+     <ant antfile="build-distr.xml" target="_module-naming-all"/>
+  </target>
+
+  <!-- ======== -->
+  <!-- Remoting -->
+  <!-- ======== -->
+
+  <target name="_module-remoting-int-most">
+     <ant antfile="build-distr.xml" target="_module-remoting-int-most"/>
+  </target>
+
+  <target name="_module-remoting-all" depends="_module-remoting-int-most">
+     <ant antfile="build-distr.xml" target="_module-remoting-int-all"/>
+  </target>
+
+
+  <!-- ====== -->
+  <!-- Server -->
+  <!-- ====== -->
+
+  <target name="_module-server-most">
+     <ant antfile="build-distr.xml" target="_module-server-most"/>
+  </target>
+
+  <target name="_module-server-all" depends="_module-server-most">
+     <ant antfile="build-distr.xml" target="_module-server-all"/>
+  </target>
+
+  <!-- ========= -->
+  <!-- Connector -->
+  <!-- ========= -->
+
+  <target name="_module-connector-most">
+     <ant antfile="build-distr.xml" target="_module-connector-most"/>
+  </target>
+
+  <target name="_module-connector-all" depends="_module-connector-most">
+     <ant antfile="build-distr.xml" target="_module-connector-all"/>
+  </target>
+
+  <!-- ========= -->
+  <!-- Messaging -->
+  <!-- ========= -->
+
+  <target name="_module-messaging-most">
+     <ant antfile="build-distr.xml" target="_module-messaging-most"/>
+  </target>
+
+  <target name="_module-messaging-all" depends="_module-messaging-most">
+     <ant antfile="build-distr.xml" target="_module-messaging-all"/>
+  </target>
+
+
+  <!-- === -->
+  <!-- JMX -->
+  <!-- === -->
+
+  <target name="_module-jmx-most">
+     <ant antfile="build-distr.xml" target="_module-jmx-most"/>
+  </target>
+
+  <target name="_module-jmx-all" depends="_module-jmx-most">
+     <ant antfile="build-distr.xml" target="_module-jmx-all"/>
+  </target>
+
+  <!-- ======== -->
+  <!-- Security -->
+  <!-- ======== -->
+
+  <target name="_module-security-most">
+     <ant antfile="build-distr.xml" target="_module-security-most"/>
+  </target>
+
+  <target name="_module-security-all" depends="_module-security-most">
+     <ant antfile="build-distr.xml" target="_module-security-all"/>
+  </target>
+
+  <!-- ======= -->
+  <!-- Cluster -->
+  <!-- ======= -->
+
+  <target name="_module-cluster-most">
+     <ant antfile="build-distr.xml" target="_module-cluster-most"/>
+  </target>
+
+  <target name="_module-cluster-all" depends="_module-cluster-most">
+     <ant antfile="build-distr.xml" target="_module-cluster-all"/>
+  </target>
+
+  <!-- ===== -->
+  <!-- Varia -->
+  <!-- ===== -->
+
+  <target name="_module-varia-most">
+     <ant antfile="build-distr.xml" target="_module-varia-most"/>
+  </target>
+
+  <target name="_module-varia-all" depends="_module-varia-most">
+     <ant antfile="build-distr.xml" target="_module-varia-all"/>
+  </target>
+
+  <!-- ===== -->
+  <!-- Tomcat5.5.x -->
+  <!-- ===== -->
+
+  <target name="_module-tomcat-most">
+     <ant antfile="build-distr.xml" target="_module-tomcat-most"/>
+  </target>
+
+  <target name="_module-tomcat-all" depends="_module-tomcat-most">
+     <ant antfile="build-distr.xml" target="_module-tomcat-all"/>
+  </target>
+
+  <!-- ========== -->
+  <!-- JAXRPC     -->
+  <!-- ========== -->
+
+  <target name="_module-jaxrpc-most">
+     <ant antfile="build-distr.xml" target="_module-jaxrpc-most"/>
+  </target>
+
+  <target name="_module-jaxrpc-all" depends="_module-jaxrpc-most">
+     <ant antfile="build-distr.xml" target="_module-jaxrpc-all"/>
+  </target>
+
+
+  <!-- ==== -->
+  <!-- IIOP -->
+  <!-- ==== -->
+
+  <target name="_module-iiop-most">
+     <ant antfile="build-distr.xml" target="_module-iiop-most"/>
+  </target>
+
+  <target name="_module-iiop-all" depends="_module-iiop-most">
+     <ant antfile="build-distr.xml" target="_module-iiop-all"/>
+  </target>
+
+  <!-- ========== -->
+  <!-- Management -->
+  <!-- ========== -->
+
+  <target name="_module-management-most">
+     <ant antfile="build-distr.xml" target="_module-management-most"/>
+  </target>
+
+  <target name="_module-management-all" depends="_module-management-most">
+     <ant antfile="build-distr.xml" target="_module-management-all"/>
+  </target>
+  <!-- =========== -->
+  <!-- Transaction -->
+  <!-- =========== -->
+
+  <target name="_module-transaction-most">
+     <ant antfile="build-distr.xml" target="_module-transaction-most"/>
+  </target>
+
+  <target name="_module-transaction-all" depends="_module-transaction-most">
+     <ant antfile="build-distr.xml" target="_module-transaction-all"/>
+  </target>
+  <!-- ======= -->
+  <!-- Console -->
+  <!-- ======= -->
+
+  <target name="_module-console-most">
+     <ant antfile="build-distr.xml" target="_module-console-most"/>
+  </target>
+
+  <target name="_module-console-all" depends="_module-console-most">
+     <ant antfile="build-distr.xml" target="_module-console-all"/>
+  </target>
+
+
+
+
+  <!-- ========== -->
+  <!-- Deployment -->
+  <!-- ========== -->
+
+  <target name="_module-deployment-most">
+     <ant antfile="build-distr.xml" target="_module-deployment-most"/>
+  </target>
+
+  <target name="_module-deployment-all" depends="_module-deployment-most">
+     <ant antfile="build-distr.xml" target="_module-deployment-all"/>
+  </target>
+
+  <!-- ========== -->
+  <!-- Aspects    -->
+  <!-- ========== -->
+
+  <target name="_module-aspects-most" if="HAVE_JDK_1.5">
+     <ant antfile="build-distr.xml" target="_module-aspects-most"/>
+  </target>
+
+  <target name="_module-aspects-all" depends="_module-aspects-most" if="HAVE_JDK_1.5">
+     <ant antfile="build-distr.xml" target="_module-aspects-all"/>
+  </target>
+
+  <!-- =========== -->
+  <!-- Webservices -->
+  <!-- =========== -->
+
+  <target name="_module-webservices-most">
+     <ant antfile="build-distr.xml" target="_module-webservices-most"/>
+  </target>
+
+  <target name="_module-webservices-all" depends="_module-webservices-most">
+     <ant antfile="build-distr.xml" target="_module-webservices-all"/>
+  </target>
+
+  <!-- ============ -->
+  <!-- Hibernate    -->
+  <!-- ============ -->
+
+  <target name="_module-hibernate-int-most">
+     <ant antfile="build-distr.xml" target="_module-hibernate-int-most"/>
+  </target>
+
+  <target name="_module-hibernate-int-all" depends="_module-hibernate-int-most">
+     <ant antfile="build-distr.xml" target="_module-hibernate-int-all"/>
+  </target>
+
+   <!-- Java5 dependent targets -->
+   
+   <!-- ======== -->
+   <!-- EJB 3.0 -->
+   <!-- ======== -->
+
+   <target name="_module-ejb3-most" if="HAVE_JDK_1.5">
+     <ant antfile="build-distr.xml" target="_module-ejb3-most"/>
+   </target>
+
+   <target name="_module-ejb3-all" depends="_module-ejb3-most" if="HAVE_JDK_1.5">
+     <ant antfile="build-distr.xml" target="_module-ejb3-all"/>
+   </target>
+
+   <!-- ======== -->
+   <!-- EJB3X -->
+   <!-- ======== -->
+
+   <target name="_module-ejb3x-most" if="HAVE_JDK_1.5">
+     <ant antfile="build-distr.xml" target="_module-ejb3x-most"/>
+   </target>
+
+  <!-- ================================================================== -->
+  <!-- Install & Release                                                  -->
+  <!-- ================================================================== -->
+
+  <target name="install"
+    description="Install the structure for a release."
+    depends="partition-build"/>
+
+  <target name="release"
+    description="Builds the default release structure."
+    depends="modules-most, install"/>
+
+  <target name="release-full"
+    description="Builds the full release structure."
+    depends="modules-all, install"/>
+
+  <target name="release-zip"
+    description="Builds a ZIP distribution."
+    depends="release, _buildmagic:release:zip"/>
+
+  <target name="release-tar"
+    description="Builds a TAR distribution."
+    depends="release, _buildmagic:release:tar"/>
+
+  <target name="release-tgz"
+    description="Builds a TAR-GZ distribution."
+    depends="release, _buildmagic:release:tgz"/>
+
+  <target name="release-all"
+    description="Builds a distribution for each archive type."
+    depends="release-zip, release-tgz"/>
+
+   <!-- ========   -->
+   <!-- Thirdparty -->
+   <!-- ========   -->
+
+   <target name="thirdparty">
+     <ant antfile="build-distr.xml" target="thirdparty"/>
+   </target>
+
+
+  <!-- Partition the default single configuration build into a minimal,
+  default and all configs with a minimal set of jars in the root lib dir.
+  -->
+  <target name="partition-build" depends="init">
+    <antcall target="partition-default"/>
+    <antcall target="partition-minimal"/>
+    <antcall target="jboss-all-client"/>
+    <!--<antcall target="setup-ejb3-dist"/>-->
+  </target>
+
+  <target name="partition-default"
+    description="The legacy jboss base j2ee 1.4 compatible configuration">
+    <!-- Copy server/all to server/default and then remove the services and
+    jars outside of the scope of the default config -->
+    <copy todir="${install.default}">
+      <fileset dir="${install.all}">
+        <exclude name="data/**"/>
+        <exclude name="log/**"/>
+        <exclude name="tmp/**"/>
+        <exclude name="work/**"/>
+        <exclude name="deploy-hasingleton/**"/>
+        <exclude name="conf/axis-config.xml"/>
+        <exclude name="conf/jacorb.properties"/>
+        <exclude name="lib/avalon-framework.jar"/>
+        <exclude name="lib/axis.jar"/>
+        <exclude name="lib/castor*.jar"/>
+        <exclude name="lib/jgroups.jar"/>
+        <exclude name="lib/jacorb.jar"/>
+        <exclude name="lib/jaxr-client.jar"/>
+        <!-- JBAS-4927 <exclude name="lib/jboss-iiop.jar"/> -->
+        <exclude name="lib/jboss-cache*.jar"/>
+        <exclude name="lib/jbossha.jar"/>
+        <exclude name="lib/jbossmqha.jar"/>
+        <exclude name="lib/xmlsec.jar"/>
+        <exclude name="deploy/cluster-service.xml"/>
+        <exclude name="deploy/deploy-hasingleton-service.xml"/>
+        <exclude name="deploy/ejb3-entity-cache-service.xml"/>
+        <exclude name="deploy/ejb3-clustered-sfsbcache-service.xml"/>
+        <exclude name="deploy/iiop-service.xml"/>
+        <exclude name="deploy/httpha-invoker.sar/**"/>
+        <exclude name="deploy/jbossweb-ejb.jar"/>
+        <exclude name="deploy/jms/hajndi-jms-ds.xml"/>
+        <exclude name="deploy/deploy.last/**"/>
+        <exclude name="deploy/snmp-adaptor.sar/**"/>
+        <exclude name="farm/**"/>
+        <exclude name="deploy/juddi-service.sar/**"/>
+        <exclude name="deploy/juddiws.war/**"/>
+        <exclude name="deploy/jboss-web-cluster.sar/**"/>
+      </fileset>
+    </copy>
+     <copy tofile="${install.default}/deploy/jboss-web.deployer/META-INF/jboss-service.xml"
+      file="${project.root}/tomcat/src/resources/jboss-service.xml" overwrite="true"/>
+     <copy todir="${install.default}/deploy/jms" overwrite="true">
+       <fileset dir="${install.all}/deploy-hasingleton/jms" />
+     </copy>
+     <copy todir="${install.default}/deploy/jms" overwrite="true">
+       <fileset dir="${install.docs}/examples/jca">
+         <include name="jms-ds.xml"/>
+       </fileset>
+     </copy>
+     <mkdir dir="${install.default}/deploy/http-invoker.sar"/>
+     <unjar src="${project.root}/varia/output/lib/http-invoker.sar"
+       dest="${install.default}/deploy/http-invoker.sar"/>
+  </target>
+
+  <target name="partition-minimal">
+    <!-- Build server/minimal manually -->
+    <mkdir dir="${install.minimal.deploy}"/>
+    <copy todir="${install.minimal.conf}">
+      <fileset dir="${install.default.conf}">
+        <include name="jndi.properties"/>
+        <include name="jboss-log4j.xml"/>
+        <include name="xmdesc/NamingBean-xmbean.xml"/>
+        <include name="xmdesc/NamingService-xmbean.xml"/>        
+      </fileset>
+    </copy>
+    <copy file="${install.default.conf}/jboss-minimal.xml"
+      tofile="${install.minimal.conf}/jboss-service.xml"/>
+    <copy todir="${install.minimal.lib}">
+      <fileset dir="${install.default.lib}">
+        <include name="jboss-management.jar"/>
+        <include name="jnpserver.jar"/>
+        <include name="log4j.jar"/>
+      </fileset>
+    </copy>
+    <copy todir="${install.minimal.lib}"
+      file="${project.root}/server/output/lib/jboss-minimal.jar"/>
+  </target>
+
+  <target name="bypass-jboss-all-client">
+
+    <uptodate property="bypass-jboss-all-client.on" targetfile="${install.client}/jbossall-client.jar">
+      <srcfiles dir="${install.client}">
+        <include name="*-client.jar"/>
+        <include name="concurrent.jar"/>
+        <include name="hibernate-annotations.jar"/>
+        <include name="jboss-deployment.jar" />
+        <include name="jboss-j2ee.jar"/>
+        <include name="jboss-remoting.jar"/>
+        <include name="jboss-serialization.jar"/>
+        <include name="jbossmqha.jar"/>
+        <include name="jmx-connector-client-factory.jar"/>
+        <include name="xmlsec.jar"/>
+        <exclude name="jbossws-client.jar"/>
+      </srcfiles>
+    </uptodate>
+
+  </target>
+
+  <target name="jboss-all-client"
+    depends="bypass-jboss-all-client"
+    unless="bypass-jboss-all-client.on">
+
+    <!--Create a jbossall-client.jar containing everything a client app needs-->
+    <mkdir dir="build"/>
+    <delete file="${install.client}/jbossall-client.jar"/>
+    <unjar dest="build">
+      <fileset dir="${install.client}">
+        <include name="*-client.jar"/>
+        <include name="concurrent.jar"/>
+        <include name="hibernate-annotations.jar"/>
+        <include name="jboss-deployment.jar" />
+        <include name="jboss-j2ee.jar"/>
+        <include name="jboss-remoting.jar"/>
+        <include name="jboss-serialization.jar"/>
+	<!-- Do not include, otherwise jbossws cannot be a drop in replacement.
+        <include name="jboss-xml-binding.jar"/> 
+        <include name="jboss-jaxrpc.jar"/> 
+        <include name="jboss-jaxws.jar"/> 
+        <include name="jboss-saaj.jar"/> 
+        <include name="wsdl4j.jar"/>
+	-->
+        <include name="jbossmqha.jar"/>
+        <include name="jmx-connector-client-factory.jar"/>
+        <include name="xmlsec.jar"/>
+        <exclude name="jbossws-client.jar"/>
+      </fileset>
+    </unjar>
+    <jar destfile="${install.client}/jbossall-client.jar" basedir="build"/>
+
+    <delete dir="build"/>
+
+  </target>
+
+  <target name="setup-ejb3-dist" if="HAVE_JDK_1.5">
+    <ant antfile="build-distr.xml" target="setup-ejb3-dist"/>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Cleaning                                                           -->
+  <!-- ================================================================== -->
+
+  <!-- Clean up all build output -->
+  <target name="clean" depends="createthirdparty, _buildmagic:clean, modules-clean"
+    description="Cleans up most generated files.">
+  </target>
+
+  <!-- Clean up all generated files -->
+  <target name="clobber" depends="_buildmagic:clobber, clean, modules-clobber"
+    description="Cleans up all generated files.">
+    <delete file="${module.root}/*_run.log"/>
+  </target>
+
+
+   <!-- ================================================================== -->
+   <!-- Misc.                                                              -->
+   <!-- ================================================================== -->
+
+   <target name="main" depends="most"
+     description="Executes the default target (most)."/>
+
+   <target name="all" depends="createthirdparty, modules-all, install"
+     description="Executes all modules and builds everything."/>
+
+   <target name="most" depends="createthirdparty, modules-most, install"
+     description="Executes all modules and builds most everything."/>
+
+   <target name="help" depends="_buildmagic:help:build"
+     description="Show this help message."/>
+
+
+   <!-- create the thirdparty folder from items in the repository -->
+   <!-- then generate a new libraries.ent file and include it in  -->
+   <!-- the build                                                 -->
+   <target name="createthirdparty" unless="inhibit.downloads"
+      depends="check.inhibit.downloads, set.proxy"
+      description="Create the thirdparty library structure from repository">
+      <ant antfile="build-thirdparty.xml" target="generate-lib-file"/>
+   </target>
+
+   <!-- check if thirdparty libraries are to be downloaded -->
+   <target name="check.inhibit.downloads">
+      <condition property="inhibit.downloads">
+         <or>
+            <uptodate property="dependencies.current"
+ 	      srcfile="build-thirdparty.xml"
+               targetfile="../thirdparty/libraries.ent"/>
+            <istrue value="${nodownload}"/>
+         </or>
+      </condition>
+  </target>
+
+  <!-- check if the the user has specied proxy settings -->
+  <target name="check.proxy">
+    <condition property="hasproxy">
+      <and>
+        <isset property="proxy.host"/>
+        <isset property="proxy.port"/>
+        <not>
+          <equals arg1="" arg2="${proxy.host}" trim="true"/>
+        </not>
+        <not>
+          <equals arg1="" arg2="${proxy.port}" trim="true"/>
+        </not>
+      </and>
+    </condition>
+
+    <!-- set proxy settings -->
+    <condition property="hasproxyauth">
+      <and>
+        <isset property="hasproxy"/>
+        <isset property="proxy.username"/>
+        <isset property="proxy.password"/>
+        <not>
+          <equals arg1="" arg2="${proxy.username}" trim="true"/>
+        </not>
+        <not>
+          <equals arg1="" arg2="${proxy.password}" trim="true"/>
+        </not>
+      </and>
+    </condition>
+  </target>
+
+  <target name="set.proxy" depends="set.proxy.withoutauth, set.proxy.auth"/>
+
+  <!-- set proxy settings without auth -->
+  <target name="set.proxy.withoutauth" if="hasproxy" unless="hasproxyauth" depends="check.proxy">
+    <echo>Proxy is set to ${proxy.host}:${proxy.port}</echo>
+    <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}"/>
+  </target>
+
+  <!-- set proxy settings using auth -->
+  <target name="set.proxy.auth" if="hasproxyauth" depends="check.proxy">
+    <echo>Auth Proxy is set to ${proxy.host}:${proxy.port} username=[${proxy.username}]</echo>
+    <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" proxyuser="${proxy.username}" proxypassword="${proxy.password}"/>
+  </target>
+
+</project>

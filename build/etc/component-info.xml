@@ -1,0 +1,20 @@
+<project name="jbossas-libs-component-info">
+
+   <!-- The jbossbuild repository component info for the canonical
+   jbossas content.
+   $Id: component-info.xml 58071 2006-11-03 12:51:35Z dimitris@jboss.org $
+   -->
+   <component id="jbossas/core-libs"
+              version="4.2.0.GA"
+              licenseType="lgpl"
+              projectHome="http://www.jboss.org"
+              description="A canonical representation of JBossAS: j2ee1.4 application server based on a jmx microkernel"
+   >
+      <artifact id="jbossas-repo.zip"/>
+
+      <export>
+         <include input="jbossas-repo.zip"/>
+      </export>
+   </component>
+</project>
+   

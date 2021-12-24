@@ -1,0 +1,21 @@
+<project name="jboss/jbossws-common">
+	
+  <component id="jboss/jbossws-common" 
+    description="JBossWS Common" 
+    version="1.0.4.GA" 
+    licenseType="lgpl">
+    
+    <artifact id="jbossws-common.jar"/>
+    <artifact id="jbossws-common-src.zip"/>
+    
+    <import componentref="jboss/jbossws-spi">
+      <compatible version="1.0.2.GA"/>
+    </import>
+    
+    <export>
+      <include input="jbossws-common.jar"/>
+    </export>
+    
+  </component>
+	
+</project>

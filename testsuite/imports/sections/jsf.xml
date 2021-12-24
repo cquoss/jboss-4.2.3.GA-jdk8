@@ -1,0 +1,22 @@
+<project name="tests-jsf-jars">
+   <!-- jsf test -->
+   <target name="_jars-jsf">
+     <mkdir dir="${build.lib}"/>
+     <!-- build jbosstest-jsf.war -->
+     <war destfile="${build.lib}/jbosstest-jsf.war"
+       webxml="${build.resources}/web/WEB-INF/jsftest-web.xml">
+       <fileset dir="${build.resources}/web/html/jsftest">
+         <include name="**/*.jsp"/>
+       </fileset>
+
+       <classes dir="${build.classes}">
+          <include name="org/jboss/test/jsf/webapp/**"/>
+       </classes>
+
+       <webinf dir="${build.resources}/web/html/jsftest/WEB-INF">
+         <include name="**/*"/>
+       </webinf>
+     </war>
+   </target>
+
+</project>

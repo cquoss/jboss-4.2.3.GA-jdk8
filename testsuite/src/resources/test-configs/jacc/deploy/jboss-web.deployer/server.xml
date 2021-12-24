@@ -1,0 +1,48 @@
+<Server>
+
+   <!-- Use a custom version of StandardService that allows the
+   connectors to be started independent of the normal lifecycle
+   start to allow web apps to be deployed before starting the
+   connectors.
+   -->
+   <Service name="jboss.web">
+
+      <!-- A HTTP/1.1 Connector on port 8080 -->
+      <Connector port="8080" address="${jboss.bind.address}"
+         maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+         enableLookups="false" redirectPort="8443" acceptCount="100"
+         connectionTimeout="20000" disableUploadTimeout="true"/>
+
+      <Engine name="jboss.web" defaultHost="localhost">
+
+         <!-- A subclass of JBossSecurityMgrRealm that uses the authentication
+         behavior of JBossSecurityMgrRealm, but overrides the authorization
+         checks to use JACC permissions with the current java.security.Policy
+         to determine authorized access.
+         -->
+         <Realm className="org.jboss.web.tomcat.security.JaccAuthorizationRealm"
+            certificatePrincipal="org.jboss.security.auth.certs.SubjectDNMapping"
+            />
+
+         <Host name="localhost"
+            autoDeploy="false" deployOnStartup="false" deployXML="false">
+
+            <!-- Uncomment to enable single sign-on across web apps
+               deployed to this host. Does not provide SSO across a cluster.     
+            
+               If this valve is used, do not use the JBoss SingleSignOn valve 
+               shown below. 
+            -->
+            <Valve className="org.apache.catalina.authenticator.SingleSignOn"
+               debug="0"/>
+         
+            <!-- Default context parameters -->
+            <DefaultContext cookies="true" crossContext="true" override="true"/>
+
+         </Host>
+
+      </Engine>
+
+   </Service>
+
+</Server>

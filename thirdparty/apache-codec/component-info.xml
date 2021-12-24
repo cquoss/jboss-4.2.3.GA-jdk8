@@ -1,0 +1,15 @@
+<project name="apache-commons-codec">
+   <component id="apache-codec"
+              licenseType="apache-2.0"
+              version="1.3.0-brew"
+              projectHome="http://jakarta.apache.org/commons/codec/"
+              description="Commons Codec provides implementations of common encoders and decoders"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/jakarta-commons-codec"
+              tag="jakarta-commons-codec-1_3-2jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="commons-codec.jar"/>
+      <export>
+         <include input="commons-codec.jar"/>
+      </export>
+   </component>
+</project>

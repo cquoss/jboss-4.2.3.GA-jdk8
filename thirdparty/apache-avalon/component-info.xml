@@ -1,0 +1,15 @@
+<project name="apache-avalon-component-info">
+   <component id="apache-avalon"
+              licenseType="apache-1.1"
+              version="4.1.5-brew"
+              projectHome="http://www.apache.org/dist/avalon/avalon-framework/"
+              description="Java Apache Server Framework"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/avalon-framework"
+              tag="avalon-framework-4_1_5-1jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="avalon-framework.jar"/>
+      <export>
+         <include input="avalon-framework.jar"/>
+      </export>
+   </component>
+</project>

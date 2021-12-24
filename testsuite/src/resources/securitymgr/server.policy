@@ -1,0 +1,63 @@
+// The Java2 security policy for the securitymgr tests
+// Install with -Djava.security.policy==server.policy
+// and -Djboss.home.dir=path_to_jboss_distribution
+
+// Trusted core Java code
+grant codeBase "file:${java.home}/lib/ext/-" {
+   permission java.security.AllPermission;
+};
+grant codeBase "file:${java.home}/lib/*" {
+   permission java.security.AllPermission;
+};
+// For java.home pointing to the JDK jre directory
+grant codeBase "file:${java.home}/../lib/*" {
+   permission java.security.AllPermission;
+};
+
+// Trusted core Jboss code
+grant codeBase "file:${jboss.home.dir}/bin/-" {
+   permission java.security.AllPermission;
+};
+grant codeBase "file:${jboss.home.dir}/lib/-" {
+   permission java.security.AllPermission;
+};
+grant codeBase "file:${jboss.server.home.dir}/lib/-" {
+   permission java.security.AllPermission;
+};
+grant codeBase "file:${jboss.server.home.dir}/deploy/-" {
+   permission java.security.AllPermission;
+};
+grant codeBase "file:${jboss.server.home.dir}/work/-" {
+   permission java.security.AllPermission;
+};
+
+// Permissions for the WarPermissionsUnitTestCase
+grant codeBase "file:${jboss.test.deploy.dir}/securitymgr/-" {
+   permission java.util.PropertyPermission "*", "read";
+   permission java.io.FilePermission "<<ALL FILES>>", "read,write,delete";
+};
+
+
+// Minimal permissions are allowed to everyone else
+grant {
+   permission java.util.PropertyPermission "*", "read";
+   permission java.lang.RuntimePermission "queuePrintJob";
+   permission java.net.SocketPermission "*", "connect";
+   permission java.security.SecurityPermission "getPolicy";
+   permission java.lang.RuntimePermission "accessClassInPackage.*";
+   permission java.lang.RuntimePermission "getProtectionDomain";
+   permission java.lang.RuntimePermission "getClassLoader";
+   permission java.lang.RuntimePermission "org.jboss.security.SecurityAssociation.getSubject";
+   permission javax.management.MBeanServerPermission "findMBeanServer";
+   permission javax.management.MBeanPermission "org.jboss.mx.modelmbean.XMBean#*[JMImplementation:type=MBeanRegistry]", "*";
+   permission javax.security.auth.AuthPermission "createLoginContext.*";
+};
+
+// To handle tests run with JBoss installed from RPMs - http://jira.jboss.com/jira/browse/JBPAPP-60
+grant codeBase "file:/usr/share/java/-" {
+   permission java.security.AllPermission;
+};
+grant codeBase "file:/etc/jbossas/-" {
+   permission java.security.AllPermission;
+};
+

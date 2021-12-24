@@ -1,0 +1,5 @@
+<jboss-app>
+   <loader-repository>jboss.test:loader=sessionB.ear
+      <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
+   </loader-repository>
+</jboss-app>

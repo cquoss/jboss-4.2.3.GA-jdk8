@@ -1,0 +1,22 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>
+		This file contains the action to take when a known issue is encountered.
+		
+		The following actions are allowed:
+		- fail : fail the test (set this when an issue is resolved)
+		- ignore : do nothing
+		- show : show the issue on System.err
+	</comment>
+	<entry key="EJBTHREE-757">show</entry>
+	<entry key="EJBTHREE-832">show</entry>
+	<entry key="EJBTHREE-892">show</entry>
+	<entry key="EJBTHREE-894">show</entry>
+	<entry key="EJBTHREE-896">show</entry>
+	<!-- EJBTHREE-899 has become JBWS-1841 -->
+	<entry key="EJBTHREE-899">show</entry>
+	<!-- with the introduction of WS 2.0 encountering EJBTHREE-900 is a failure -->
+	<entry key="EJBTHREE-900">fail</entry>
+	<entry key="EJBTHREE-1053">show</entry>
+	<entry key="EJBTHREE-1055">fail</entry>
+</properties>

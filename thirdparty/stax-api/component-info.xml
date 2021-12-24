@@ -1,0 +1,20 @@
+<project name="stax-api-component-info">
+
+   <!-- ============================================================ -->
+   <!-- STAX API                                                     -->
+   <!-- ============================================================ -->
+
+   <component id="stax-api"
+           version="1.0"
+            licenseType="apache-2.0"
+            projectHome="http://stax.codehaus.org/"
+            description="The STAX API"
+      >
+      <artifact id="stax-api.jar"/>
+      <export>
+         <include input="stax-api.jar"/>
+      </export>
+   </component>
+
+
+</project>

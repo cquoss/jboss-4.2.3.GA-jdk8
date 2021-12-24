@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+
+<project name="PojoCache tasks">
+   <!--
+   Tasks definition for JDK1.4 annoc and aopc. In addition to annotate your POJO with JDK-14 style
+   annotation, you will also need to define the "source" and "build" directory. It will byte-code
+   instrumented your POJOs and update them under build directory. You can verify this by doing
+   a listing there to confirm creation of new (and additional) classes.
+
+   To use this, you can use Ant import to import it into you regular build.xml (see the example
+   build.xml here). You will need to pass in the following properties: user.source, where your java source
+   is located; user.build, where you output classes is located, and finally user.classpath is the
+   path element that your java class is using.
+
+   Finally, you will also need to specify the jboss installation as a "jboss.config" system property,
+   e.g., path to "all" directory. The JBoss AS version tested is 4.0.4.
+   -->
+
+   <!-- set local properties for this build -->
+   <path id="pojocache.lib.classpath">
+      <!-- set local properties for this build -->
+      <fileset dir="${lib}">
+        <include name="qdox.jar" />
+      </fileset>
+      <fileset dir="${jboss.lib}">
+        <include name="javassist.jar" />
+        <include name="jboss-cache.jar" />
+      </fileset>
+      <fileset dir="${jboss.root.lib}">
+         <include name="jboss-common.jar" />
+         <include name="concurrent.jar" />
+      </fileset>
+      <fileset dir="${jboss.deploy}/jboss-web-cluster.sar">
+        <include name="jboss-web-cluster.aop" />
+      </fileset>
+      <fileset dir="${jboss.deploy}">
+         <include name="jboss-aop.deployer/trove.jar" />
+         <include name="jboss-aop.deployer/jboss-aspect-library.jar" />
+      </fileset>
+   </path>
+
+   <path id="jboss.aop.classpath">
+      <fileset dir="${jboss.deploy}">
+        <include name="jboss-aop.deployer/jboss-aop.jar" />
+      </fileset>
+   </path>
+
+   <property name="jbossaop.xml.location" value="${jboss.deploy}/jboss-web-cluster.sar/META-INF"/>
+
+
+   <!-- pre-compile directory with annotationc using jdk1.4 -->
+   <target name="annoc" depends="compile" description="Annotation precompiler for aop class">
+      <taskdef name="annotationc" classname="org.jboss.aop.ant.AnnotationC" classpathref="jboss.aop.classpath"/>
+      <annotationc compilerclasspathref="jboss.aop.classpath" bytecode="true">
+         <classpath refid="pojocache.lib.classpath"/>
+         <classpath refid="jboss.aop.classpath"/>
+         <classpath refid="user.classpath"/>
+         <src path="${user.source}"/>
+         <!--include name="examples/*.java"/-->
+         <!--exclude name="test/*.java"/-->
+      </annotationc>
+   </target>
+
+   <!-- pre-compile directory with aopc -->
+   <target name="aopc" depends="annoc" description="Precompile aop test classes after annoc">
+      <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+      <aopc compilerclasspathref="jboss.aop.classpath" verbose="true">
+         <!-- Can be more specific here -->
+         <!--src path="${build}/examples"/-->
+         <src path="${user.build}"/>
+         <!--classpath refid="jboss.aop.classpath"/-->
+         <classpath refid="pojocache.lib.classpath"/>
+         <classpath refid="user.classpath"/>
+      </aopc>
+   </target>
+</project>

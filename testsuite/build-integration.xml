@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<!--
+   | Targets that test integration with the JEMS
+   | projects go here. The targets can create their own server
+   | configuration, if necessary
+-->
+ 
+<!-- $Id: build-integration.xml 42813 2006-03-27 18:24:30Z asaldhana $ -->
+<project name="main.build.integration" default="tests-wsrp-integration">
+
+<!--
+|  Define the Pattern Sets Here
+|
+-->	
+<patternset id="wsrp.includes">
+  <include name="org/jboss/test/wsrp/*TestCase.class"/> 
+</patternset>
+
+
+<!-- WSRP Integration Tests -->
+<target name="tests-wsrp-integration"
+    description="Execute WSRP Integration Tests"> 
+
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+
+    <property name="build.testlog" value="${build.testlog}"/>
+    <property name="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+    <property name="java.endorsed.dirs" value="${jboss.dist}/lib/endorsed"/>
+    <property name="java.naming.provider.url" value="${node0.jndi.url}"/>
+    <property name="jbosstest.server.host" value="${node0}"/>
+
+    <propertyset id="wsrp-tests-props">
+      <propertyref name="build.testlog"/> 
+      <propertyref name="log4j.configuration"/> 
+      <propertyref prefix="java."/>
+      <propertyref name="jbosstest.server.host"/>
+    </propertyset>
+	
+    <run-junit junit.patternset="wsrp.includes"
+       junit.configuration="WSRP-Integration"
+       junit.syspropertyset="wsrp-tests-props" /> 
+  </target>
+</project>

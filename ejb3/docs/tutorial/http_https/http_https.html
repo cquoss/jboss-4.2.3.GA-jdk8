@@ -1,0 +1,113 @@
+<html>
+<body>
+<p>
+<h2>EJB3 over HTTP/HTTPS</h2>
+
+This tutorial describes how to access EJB3s via HTTP or HTTPS (HTTP over SSL). This is typically
+done when the beans are deployed behind a firewall so the client needs to communicate via
+a protocol and port allowed through the firewall. There are several steps required to configure the
+client, the server, and the beans to enable HTTP/HTTPS. Lets cover these one by one.
+</p><p>
+<h3> Enabling Web Connectors</h3>
+
+Take a look at <a href="jboss-web.deployer/server.xml">jboss-web.deployer/server.xml</a>, which is in the
+deploy directory. The <a href="jboss-web.deployer/server.xml">server.xml</a> file
+will need to be modified from the default.  Both the HTTP
+and HTTPS Connectors are enabled on ports 8080 and 8443, respectively. Notice the settings that
+distinguish HTTP from HTTPS. Note that the HTTPS Connector has parameters for the keystore 
+and truststore. This is where the digitial certificates and public/private keys are stored
+that are used by SSL. More on keystore config later. 
+</p><p>
+<h3> Enabling Servlets</h3>
+
+Take a look at <a href="servlet-invoker.war">servlet-invoker.war</a>, specifically the <a href="servlet-invoker.war/WEB-INF/web.xml">WEB-INF/web.xml</a>
+file. The <tt>servlet-invoker.war</tt> directory needs to be created per this example and deployed
+in the deploy directory. This will deploy the servlets that handle the HTTP and HTTPS requests.
+Notice that in <a href="servlet-invoker.war/WEB-INF/web.xml">web.xml</a> file there are two servlets. The HTTP servlet defines the 
+<tt>invokerName</tt> and the HTTPS servlet defines the <tt>locatorUrl</tt>. These parameters will be used
+when configuring the EJB3 Connectors and the beans.
+</p><p>
+<h3> Enabling EJB3 Connectors</h3>
+
+Take a look at <a href="ejb3.deployer/META-INF/jboss-service.xml">ejb3.deployer/META-INF/jboss-service.xml</a>, 
+which is in the deploy directory. The <a href="ejb3.deployer/META-INF/jboss-service.xml">jboss-service.xml</a>
+will need to be modified from the default. At the bottom of the file you will see two MBeans that are not
+included in the default configuration. These MBeans configure the EJB3 Connectors for HTTP and
+HTTPS. Notice the <tt>InvokerLocator</tt> parameters in each of the Connector configs.
+</p><p>
+<h3> Keystores and Truststores</h3>
+
+You will need to generate public/private key pairs and digital certificates to enable SSL. The
+JDK provides a <tt>keytool</tt> utility for the generation and management of keys and certificates.
+The server keystore contains the server side public and private keys as well as the client's certificate, which 
+includes the client public key. The server truststore contains the client's certificate, which 
+indicates that the owner of the certificate is trusted. Conversely, the client side needs access
+to the truststore, which contains the server's certificate, which indicates that the owner of the
+certificate is trusted. Typically, the keystore and truststore are placed in the <tt>conf</tt> directory
+on the server side.
+</p><p>
+<h3> Bean Configuration</h3>
+
+Take a look at <a href="src/org/jboss/tutorial/http_https/bean/CalculatorHttpBean.java">CalculatorHttpBean.java</a> and
+<a href="src/org/jboss/tutorial/http_https/bean/CalculatorHttpsBean.java">CalculatorHttpsBean.java</a>. Not the 
+<tt>@RemoteBinding(clientBindUrl=".."")</tt> annotations. The <tt>clientBindUrl</tt> settings correspond
+to the <tt>InvokerLocator</tt> parameters configured on the server side. 
+</p><p>
+<h4>Client</h4>
+
+Take a look at <a href="src/org/jboss/tutorial/http_https/client/Client.java">Client.java</a>. You will see
+examples of invoking the Calculator bean via both HTTP and HTTPS. Note the configuration of the
+<tt>HostnameVerifier</tt>. This is required in some cases where the hostname in the URL does not
+match the expected URL hostname. The <tt>HostnameVerifier</tt> handles this scenario.
+</p><p>
+<h4>Building and Running</h4>
+
+To build and run the example, make sure you have <tt>ejb3.deployer</tt> installed in JBoss 4.x.
+See the reference manual on how to install EJB 3.0. You will need to modify the JBossAS <tt>run</tt> script
+to configure the keystore. The following needs to be added to the JAVA_OPTS, which
+are passed to the VM:
+</p><p>
+<tt>JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.keyStore=$JBOSS_HOME/server/default/conf/localhost.keystore -Djavax.net.ssl.keyStorePassword=opensource -Djava.protocol.handler.pkgs=javax.net.ssl"</tt>
+</p><p>
+Then run <tt>ant</tt>. This will replace the default configuration with the HTTP and HTTPS enabled
+configuration. Start JBoss. Once JBoss is started with these options, you can run the client.
+Take a look at <a href="build.xml">build.xml</a>. Note that there are VM options for the truststore being passed to the client VM.
+</p><p>
+<pre>
+Unix:    $ export JBOSS_HOME=&lt;where your jboss 4.x distribution is&gt;
+Windows: $ set JBOSS_HOME=&lt;where your jboss 4.x distribution is&gt;
+$ ant run
+Buildfile: build.xml
+
+run:
+     [java] Kabir is a student.
+     [java] Kabir types in the wrong password
+     [java] Saw expected SecurityException: null
+     [java] Kabir types in correct password.
+     [java] Kabir does unchecked addition.
+     [java] 1 + 1 = 2
+     [java] Kabir is not a teacher so he cannot do division
+     [java] null
+     [java] Students are allowed to do subtraction
+     [java] 1 - 1 = 0
+     [java] Kabir is a student.
+     [java] Kabir types in the wrong password
+     [java] Warning: URL Host: localhost vs. 192.168.1.57
+     [java] Saw expected SecurityException: null
+     [java] Kabir types in correct password.
+     [java] Kabir does unchecked addition.
+     [java] Warning: URL Host: localhost vs. 192.168.1.57
+     [java] 1 + 1 = 2
+     [java] Kabir is not a teacher so he cannot do division
+     [java] Warning: URL Host: localhost vs. 192.168.1.57
+     [java] null
+     [java] Students are allowed to do subtraction
+     [java] Warning: URL Host: localhost vs. 192.168.1.57
+     [java] 1 - 1 = 0
+</pre>
+</p><p>
+</p><p>
+</p><p>
+</p>
+</body>
+</html>

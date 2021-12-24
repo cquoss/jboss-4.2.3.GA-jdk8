@@ -1,0 +1,21 @@
+<project name="jboss-cache-component-info">
+
+   <!-- ============================================================ -->
+   <!-- jboss/cache                                                      -->
+   <!-- ============================================================ -->
+
+   <component id="jboss/cache"
+              version="1.4.1.SP9-brew"
+              licenseType="lgpl"
+              projectHome="http://www.jboss.org/products/jbosscache"
+              description="JBoss Cache is a product designed to cache 
+              frequently accessed Java objects in order to dramatically improve 
+              the performance of e-business applications."
+              tag="jboss-cache-1_4_1-4_SP9_1jpp_ep1_1_el4">
+
+      <artifact id="jboss-cache-jdk50.jar"/>
+      <export>
+         <include input="jboss-cache-jdk50.jar"/>
+      </export>
+   </component>
+</project>

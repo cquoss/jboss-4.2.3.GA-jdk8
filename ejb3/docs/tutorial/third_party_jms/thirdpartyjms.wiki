@@ -1,0 +1,70 @@
+!!!Third Party JMS Provider Integration
+
+This tutorial describes how to integrate third party JMS providers into JBoss and EJB3 Message Driven
+Beans. This tutorial is based on integration with OpenJMS, but applies to any third party JMS provider.
+OpenJMS is not included as part of this tutorial. In order to run the example, you will need to download,
+install, and start OpenJMS. You will also need to copy the appropriate jars into the {{thirdparty}}
+directory.
+
+!!The JMS Resource Adaptor
+
+There are two mechanisms you can use to integrate the third party provider. MDBs in JBoss EJB3
+are based on JMS JCA resource adaptors. The adaptors handle the integration with the JMS provider
+as well as handling transactions, thread pooling, etc.
+
+The first and often the preferred mechanism is to use a JMS JCA resource adaptor provided by the
+third party vendor. Some vendors supply resource adaptors, others do not. If this is the chosen approach,
+you need to annotate your MDB with @org.jboss.annotation.ejb.ResourceAdaptor("thirdparty.rar") and then
+add the @ActivationConfigProperty annotations with the properties described by the third party vendor
+and supported by their resource adaptor.
+
+The second mechanism uses the JBoss JMS JCA resource adaptor and is described in detail here.
+
+!! The Third Party Provider
+
+Take a look at [thirdparty-jms-service.xml|thirdparty-jms-service.xml]. This file describes the service
+that defines how to communicate with the third party provider. You typically define:
+{{{
+ProviderName - the JNDI binding (in JBoss JNDI) of the provider, which is referenced by the MDB
+ProviderAdapterClass - the JBoss class used to implement the provider adaptor
+QueueFactoryRef - the JNDI binding (in third party JNDI) of the third party QueueConnectionFactory 
+TopicFactoryRef - the JNDI binding (in third party JNDI) of the third partt TopicConnectionFactory
+Properties - the JNDI properties used to access the third party JNDI service
+}}}
+
+!! The MDB
+
+Take a look at [ExampleMDB.java|src/org/jboss/tutorial/thirdpartyjms/bean/ExampleMDB]. Note there is
+no @ResourceAdaptor annotation as by default MDBs are configured to use the JBoss JMS JCA resource
+adaptor. Also, note that we have defined the {{providerAdapterJNDI}} property to be the name we defined
+in [thirdparty-jms-service.xml|thirdparty-jms-service.xml]. The {{destination}} and {{dLQJNDIName}}
+properties are the JNDI bindings of the queues in the third party JNDI service.
+
+!Building and Running
+To build and run the example, make sure you have {{ejb3.deployer}} installed in JBoss 4.x and have JBoss running.  See the reference manual on how to install EJB 3.0.  
+{{{
+Unix:    $ export JBOSS_HOME=<where your jboss 4.x distribution is>
+Windows: $ set JBOSS_HOME=<where your jboss 4.x distribution is>
+$ ant
+$ ant run
+
+}}}
+
+Look at the client window to determine that the message was sent.
+
+{{{
+run:
+     [java] Message sent successfully to remote third party queue
+}}}
+
+Look in the console window to determine that the messages was received.
+
+{{{
+16:08:08,233 INFO  [STDOUT] ----------------
+16:08:08,233 INFO  [STDOUT] Received message
+16:08:08,233 INFO  [STDOUT] ----------------
+}}}
+
+
+
+

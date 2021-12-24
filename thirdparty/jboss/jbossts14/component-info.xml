@@ -1,0 +1,23 @@
+<project name="jboss/jbossts-component-info">
+
+	<!-- 4.2.3.SP7, from released binaries (jdk 1.4 build, jbossjta target) -->
+	<component id="jboss/jbossts14"
+			   licenseType="lgpl"
+			   version="4.2.3.SP7"
+			   projectHome="http://labs.jboss.com/portal/jbosstm"
+			   description="JBoss Transaction Service">
+
+		<artifact id="jbossjta.jar"/>
+		<artifact id="jbossjta-integration.jar"/>
+		<artifact id="jbossts-common.jar"/>
+		<artifact id="jbossjta-properties.xml"/>
+
+		<export>
+			<include input="jbossjta.jar"/>
+			<include input="jbossjta-integration.jar"/>
+			<include input="jbossts-common.jar"/>
+		</export>
+
+	</component>
+
+</project>

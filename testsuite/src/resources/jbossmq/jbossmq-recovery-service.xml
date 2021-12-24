@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id: jbossmq-recovery-service.xml 61585 2007-03-22 15:24:19Z adrian@jboss.org $ -->
+
+<server>
+
+  <mbean code="org.jboss.mq.server.jmx.Topic"
+	 name="jboss.mq.destination.recovery:service=Topic,name=recoveryTopic">
+    <depends optional-attribute-name="DestinationManager">jboss.mq.recovery:service=DestinationManager</depends>
+    <depends optional-attribute-name="SecurityManager">jboss.mq.recovery:service=SecurityManager</depends>
+    <attribute name="SecurityConf">
+      <security>
+        <role name="guest" read="true" write="true"/>
+      </security>
+    </attribute>
+  </mbean>
+
+  <mbean code="org.jboss.mq.server.jmx.Topic"
+	 name="jboss.mq.destination.recovery:service=Topic,name=recoveryDurableTopic">
+    <depends optional-attribute-name="DestinationManager">jboss.mq.recovery:service=DestinationManager</depends>
+    <depends optional-attribute-name="SecurityManager">jboss.mq.recovery:service=SecurityManager</depends>
+    <attribute name="SecurityConf">
+       <security>
+         <role name="guest" read="true" write="true" create="true"/>
+      </security>
+    </attribute>
+  </mbean>
+
+  <mbean code="org.jboss.mq.server.jmx.Queue"
+	 name="jboss.mq.destination.recovery:service=Queue,name=recoveryQueue">
+    <depends optional-attribute-name="DestinationManager">jboss.mq.recovery:service=DestinationManager</depends>
+    <depends optional-attribute-name="SecurityManager">jboss.mq.recovery:service=SecurityManager</depends>
+    <attribute name="MessageCounterHistoryDayLimit">-1</attribute>
+    <attribute name="SecurityConf">
+      <security>
+        <role name="guest" read="true" write="true"/>
+      </security>
+    </attribute>
+  </mbean>
+
+  <mbean code="org.jboss.mq.il.uil2.UILServerILService"
+	 name="jboss.mq.recovery:service=InvocationLayer,type=UIL2">
+
+    <!-- The server chain -->
+    <depends optional-attribute-name="Invoker">jboss.mq.recovery:service=Invoker</depends>
+    <!-- JNDI binding -->
+    <attribute name="ConnectionFactoryJNDIRef">RecoveryConnectionFactory</attribute>
+    <!-- JNDI binding for XA -->
+    <attribute name="XAConnectionFactoryJNDIRef">RecoveryXAConnectionFactory</attribute>
+    <!-- The bind address -->
+    <attribute name="BindAddress">${jboss.bind.address}</attribute>
+    <!-- The bind port - use a random port for this test-->
+    <!--attribute name="ServerBindPort">8083</attribute-->
+    <!-- The ping period in millis -->
+    <attribute name="PingPeriod">60000</attribute>
+    <!-- Whether tcp/ip does not wait for buffer fills -->
+    <attribute name="EnableTcpNoDelay">true</attribute>
+    <!-- Used to disconnect the client on the serverside if there is no activity -->
+    <!-- Ensure this is greater than the ping period -->
+    <attribute name="ReadTimeout">120000</attribute>
+    <!-- Used to disconnect the client on the clientside if there is no activity -->
+    <!-- Ensure this is greater than the ping period -->
+    <attribute name="ClientReadTimeout">120000</attribute>
+    <!-- The size of the buffer (in bytes) wrapping the socket -->
+    <!-- The buffer is flushed after each request -->
+    <attribute name="BufferSize">2048</attribute>
+    <!-- Large messages may block the ping/pong -->
+    <!-- A pong is simulated after each chunk (in bytes) for both reading and writing -->
+    <!-- It must be larger than the buffer size -->
+    <attribute name="ChunkSize">1000000</attribute>
+  </mbean>
+
+  <mbean code="org.jboss.mq.server.jmx.Invoker" name="jboss.mq.recovery:service=Invoker">
+    <depends optional-attribute-name="NextInterceptor">jboss.mq.recovery:service=TracingInterceptor</depends>
+    <depends>jboss:service=Naming</depends>
+  </mbean>
+
+  <mbean code="org.jboss.mq.server.jmx.InterceptorLoader" name="jboss.mq.recovery:service=TracingInterceptor">
+    <attribute name="InterceptorClass">org.jboss.mq.server.TracingInterceptor</attribute>
+    <depends optional-attribute-name="NextInterceptor">jboss.mq.recovery:service=SecurityManager</depends>
+  </mbean>
+
+  <mbean code="org.jboss.mq.security.SecurityManager" name="jboss.mq.recovery:service=SecurityManager">
+    <attribute name="DefaultSecurityConfig">
+      <security>
+        <role name="guest" read="true" write="true" create="true"/>
+      </security>
+    </attribute>
+    <attribute name="SecurityDomain">java:/jaas/jbossmq</attribute>
+    <depends optional-attribute-name="NextInterceptor">jboss.mq.recovery:service=DestinationManager</depends>
+  </mbean>
+
+  <!--
+     | The destination manager is the core service within JBossMQ
+  -->
+  <mbean code="org.jboss.mq.server.jmx.DestinationManager" name="jboss.mq.recovery:service=DestinationManager">
+    <depends optional-attribute-name="MessageCache">jboss.mq.recovery:service=MessageCache</depends>
+    <depends optional-attribute-name="PersistenceManager">jboss.mq.recovery:service=PersistenceManager</depends>
+    <depends optional-attribute-name="StateManager">jboss.mq:service=StateManager</depends>
+    <depends optional-attribute-name="ThreadPool">jboss.mq:service=ThreadPool</depends>
+    <depends>jboss:service=Naming</depends>
+  </mbean>
+
+  <!--
+     | The MessageCache decides where to put JBossMQ message that
+     | are sitting around waiting to be consumed by a client.
+     |
+     | The memory marks are in Megabytes.  Once the JVM memory usage hits
+     | the high memory mark, the old messages in the cache will start getting
+     | stored in the DataDirectory.  As memory usage gets closer to the
+     | Max memory mark, the amount of message kept in the memory cache aproaches 0.
+   -->
+  <mbean code="org.jboss.mq.server.MessageCache"
+	 name="jboss.mq.recovery:service=MessageCache">
+    <attribute name="HighMemoryMark">50</attribute>
+    <attribute name="MaxMemoryMark">60</attribute>
+    <attribute name="CacheStore">jboss.mq.recovery:service=PersistenceManager</attribute>
+  </mbean>
+
+  <!-- 
+     | The jdbc2 PersistenceManager is the new improved JDBC implementation.
+     | This implementation allows you to control how messages are stored in 
+     | the database.
+     |
+     | Use this PM if you want the reliablity a relational database can offer
+     | you.  The default configuration is known to work with hsqldb, other
+     | databases will requrie teaking of the SqlProperties e.g. changing table
+     | colum definitions to database supported types.
+     |
+     | Take care that the selected blob column type in RECOVERY_RECOVERY_JMS_MESSAGES can store
+     | all message data. Some databases (e.g. mySQL) offer blob types with
+     | different maximum capacity (e.g. mySQL-type BLOB=64K, LONGBLOB=2G).
+     |
+     | If you encouter problems with the configured BLOB_TYPE try a different
+     | setting. Valid settings are OBJECT_BLOB, BINARYSTREAM_BLOB and BYTES_BLOB.
+   -->
+  <mbean code="org.jboss.mq.pm.jdbc2.PersistenceManager"
+	 name="jboss.mq.recovery:service=PersistenceManager">
+    <depends optional-attribute-name="ConnectionManager">jboss.jca:service=DataSourceBinding,name=DefaultDS</depends>
+    <attribute name="XARecovery">true</attribute>
+    <attribute name="SqlProperties">
+      BLOB_TYPE=OBJECT_BLOB
+      INSERT_TX = INSERT INTO RECOVERY_JMS_TRANSACTIONS (TXID) VALUES(?)
+      INSERT_TX_XARECOVERY = INSERT INTO RECOVERY_JMS_TRANSACTIONS (TXID, XID) VALUES(?, ?)
+      INSERT_MESSAGE = INSERT INTO RECOVERY_JMS_MESSAGES (MESSAGEID, DESTINATION, MESSAGEBLOB, TXID, TXOP) VALUES(?,?,?,?,?)
+      SELECT_ALL_UNCOMMITED_TXS = SELECT TXID FROM RECOVERY_JMS_TRANSACTIONS
+      SELECT_MAX_TX = SELECT MAX(TXID) TXID FROM (SELECT MAX(TXID) AS TXID FROM RECOVERY_JMS_TRANSACTIONS UNION SELECT MAX(TXID) AS TXID FROM RECOVERY_JMS_MESSAGES)
+      DELETE_ALL_TX = DELETE FROM RECOVERY_JMS_TRANSACTIONS
+      DELETE_ALL_TX_XARECOVERY = DELETE FROM RECOVERY_JMS_TRANSACTIONS WHERE XID = NULL
+      SELECT_ALL_TX_XARECOVERY = SELECT TXID, XID FROM RECOVERY_JMS_TRANSACTIONS
+      SELECT_MESSAGES_IN_DEST = SELECT MESSAGEID, MESSAGEBLOB FROM RECOVERY_JMS_MESSAGES WHERE DESTINATION=?
+      SELECT_MESSAGES_IN_DEST_XARECOVERY = SELECT MESSAGEID, MESSAGEBLOB, TXID, TXOP FROM RECOVERY_JMS_MESSAGES WHERE DESTINATION=?
+      SELECT_MESSAGE_KEYS_IN_DEST = SELECT MESSAGEID FROM RECOVERY_JMS_MESSAGES WHERE DESTINATION=?
+      SELECT_MESSAGE = SELECT MESSAGEID, MESSAGEBLOB FROM RECOVERY_JMS_MESSAGES WHERE MESSAGEID=? AND DESTINATION=?
+      SELECT_MESSAGE_XARECOVERY = SELECT MESSAGEID, MESSAGEBLOB, TXID, TXOP FROM RECOVERY_JMS_MESSAGES WHERE MESSAGEID=? AND DESTINATION=?
+      MARK_MESSAGE = UPDATE RECOVERY_JMS_MESSAGES SET TXID=?, TXOP=? WHERE MESSAGEID=? AND DESTINATION=?
+      UPDATE_MESSAGE = UPDATE RECOVERY_JMS_MESSAGES SET MESSAGEBLOB=? WHERE MESSAGEID=? AND DESTINATION=?
+      UPDATE_MARKED_MESSAGES = UPDATE RECOVERY_JMS_MESSAGES SET TXID=?, TXOP=? WHERE TXOP=?
+      UPDATE_MARKED_MESSAGES_XARECOVERY = UPDATE RECOVERY_JMS_MESSAGES SET TXID=?, TXOP=? WHERE TXOP=? AND TXID NOT IN (SELECT TXID FROM RECOVERY_JMS_TRANSACTIONS WHERE XID IS NOT NULL)
+      UPDATE_MARKED_MESSAGES_WITH_TX = UPDATE RECOVERY_JMS_MESSAGES SET TXID=?, TXOP=? WHERE TXOP=? AND TXID=?
+      DELETE_MARKED_MESSAGES_WITH_TX = DELETE FROM RECOVERY_JMS_MESSAGES WHERE TXOP=? AND RECOVERY_JMS_MESSAGES.TXID IN (SELECT TXID FROM RECOVERY_JMS_TRANSACTIONS)
+      DELETE_MARKED_MESSAGES_WITH_TX_XARECOVERY = DELETE FROM RECOVERY_JMS_MESSAGES WHERE TXOP=? AND RECOVERY_JMS_MESSAGES.TXID IN (SELECT TXID FROM RECOVERY_JMS_TRANSACTIONS WHERE XID = NULL)
+      DELETE_TX = DELETE FROM RECOVERY_JMS_TRANSACTIONS WHERE TXID = ?
+      DELETE_MARKED_MESSAGES = DELETE FROM RECOVERY_JMS_MESSAGES WHERE TXID=? AND TXOP=?
+      DELETE_TEMPORARY_MESSAGES = DELETE FROM RECOVERY_JMS_MESSAGES WHERE TXOP='T'
+      DELETE_MESSAGE = DELETE FROM RECOVERY_JMS_MESSAGES WHERE MESSAGEID=? AND DESTINATION=?
+      CREATE_MESSAGE_TABLE = CREATE CACHED TABLE RECOVERY_JMS_MESSAGES ( MESSAGEID INTEGER NOT NULL, \
+         DESTINATION VARCHAR(255) NOT NULL, TXID INTEGER, TXOP CHAR(1), \
+         MESSAGEBLOB OBJECT, PRIMARY KEY (MESSAGEID, DESTINATION) )
+      CREATE_IDX_MESSAGE_TXOP_TXID = CREATE INDEX RECOVERY_JMS_MESSAGES_TXOP_TXID ON RECOVERY_JMS_MESSAGES (TXOP, TXID)
+      CREATE_IDX_MESSAGE_DESTINATION = CREATE INDEX RECOVERY_JMS_MESSAGES_DESTINATION ON RECOVERY_JMS_MESSAGES (DESTINATION)
+      CREATE_TX_TABLE = CREATE CACHED TABLE RECOVERY_JMS_TRANSACTIONS ( TXID INTEGER, PRIMARY KEY (TXID) )
+      CREATE_TX_TABLE_XARECOVERY = CREATE CACHED TABLE RECOVERY_JMS_TRANSACTIONS ( TXID INTEGER, XID OBJECT, PRIMARY KEY (TXID) )
+      CREATE_TABLES_ON_STARTUP = TRUE
+    </attribute>
+    <!-- Uncomment to override the transaction timeout for recovery per queue/subscription, in seconds -->
+    <!--attribute name="RecoveryTimeout">0</attribute-->
+    <!-- The number of blobs to load at once during message recovery -->
+    <attribute name="RecoverMessagesChunk">0</attribute>
+  </mbean>
+ 
+</server>

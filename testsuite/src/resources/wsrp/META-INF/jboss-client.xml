@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<!DOCTYPE jboss-client PUBLIC "-//JBoss//DTD Application Client 4.0//EN"
+   "http://www.jboss.org/j2ee/dtd/jboss-client_4_0.dtd">
+
+
+<jboss-client>
+   <jndi-name>wsrp-client</jndi-name>
+   <service-ref>
+      <service-ref-name>service/ServiceDescriptionService</service-ref-name>
+      <wsdl-override>http://${jboss.bind.address}:8080/wsrp/ServiceDescriptionService?wsdl</wsdl-override>
+   </service-ref>
+   <service-ref>
+      <service-ref-name>service/MarkupService</service-ref-name>
+      <wsdl-override>http://${jboss.bind.address}:8080/wsrp/MarkupService?wsdl</wsdl-override>
+   </service-ref>
+   <service-ref>
+      <service-ref-name>service/MarkupService_Handler</service-ref-name>
+      <wsdl-override>http://${jboss.bind.address}:8080/wsrp/MarkupService_Handler?wsdl</wsdl-override>
+   </service-ref>
+   <service-ref>
+      <service-ref-name>service/PortletManagementService</service-ref-name>
+      <wsdl-override>http://${jboss.bind.address}:8080/wsrp/PortletManagementService?wsdl</wsdl-override>
+   </service-ref>
+   <service-ref>
+      <service-ref-name>service/RegistrationService</service-ref-name>
+      <wsdl-override>http://${jboss.bind.address}:8080/wsrp/RegistrationService?wsdl</wsdl-override>
+   </service-ref>
+</jboss-client>

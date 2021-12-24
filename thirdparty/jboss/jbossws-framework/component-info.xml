@@ -1,0 +1,28 @@
+<project name="jboss/jbossws-framework">
+	
+  <component id="jboss/jbossws-framework" 
+    description="JBossWS Framework" 
+    version="3.0.1.GA" 
+    licenseType="lgpl">
+    
+    <artifact id="jbossws-framework.jar"/>
+    <artifact id="jbossws-framework-src.zip"/>
+    <artifact id="wsconsume.bat"/>
+    <artifact id="wsconsume.sh"/>
+    <artifact id="wsprovide.bat"/>
+    <artifact id="wsprovide.sh"/>
+    
+    <import componentref="jboss/jbossws-common">
+      <compatible version="1.0.4.GA"/>
+    </import>
+    <import componentref="jboss/jbossws-spi">
+      <compatible version="1.0.2.GA"/>
+    </import>
+    
+    <export>
+      <include input="jbossws-framework.jar"/>
+    </export>
+    
+  </component>
+	
+</project>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE jboss PUBLIC
+      "-//JBoss//DTD JBOSS 3.2//EN"
+      "http://www.jboss.org/j2ee/dtd/jboss_4_0.dtd">
+
+<jboss>
+   <enterprise-beans>
+      <message-driven>
+         <ejb-name>TestMDB</ejb-name>
+         <activation-config>
+            <activation-config-property>
+               <activation-config-property-name>destination</activation-config-property-name>
+               <activation-config-property-value>${test.messagedriven.destination}</activation-config-property-value>
+            </activation-config-property>
+            <activation-config-property>
+               <activation-config-property-name>destinationType</activation-config-property-name>
+               <activation-config-property-value>${test.messagedriven.destinationType}</activation-config-property-value>
+            </activation-config-property>
+            <activation-config-property>
+               <activation-config-property-name>subscriptionDurability</activation-config-property-name>
+               <activation-config-property-value>${test.messagedriven.durability}</activation-config-property-value>
+            </activation-config-property>
+            <!-- When not using preconfigured client ids
+            <activation-config-property>
+               <activation-config-property-name>clientID</activation-config-property-name>
+               <activation-config-property-value>${test.messagedriven.clientID}</activation-config-property-value>
+            </activation-config-property-->
+            <activation-config-property>
+               <activation-config-property-name>subscriptionName</activation-config-property-name>
+               <activation-config-property-value>${test.messagedriven.subscriptionName}</activation-config-property-value>
+            </activation-config-property>
+            <activation-config-property>
+               <activation-config-property-name>user</activation-config-property-name>
+               <activation-config-property-value>${test.messagedriven.user}</activation-config-property-value>
+            </activation-config-property>
+            <activation-config-property>
+               <activation-config-property-name>password</activation-config-property-name>
+               <activation-config-property-value>${test.messagedriven.password}</activation-config-property-value>
+            </activation-config-property>
+            <activation-config-property>
+               <activation-config-property-name>DLQMaxResent</activation-config-property-name>
+               <activation-config-property-value>${test.messagedriven.DLQMaxResent}</activation-config-property-value>
+            </activation-config-property>
+         </activation-config>
+         <invoker-bindings>
+            <invoker>
+               <invoker-proxy-binding-name>jms-message-inflow-driven-bean</invoker-proxy-binding-name>
+            </invoker>
+         </invoker-bindings>
+      </message-driven>
+      <message-driven>
+         <ejb-name>TestDLQ</ejb-name>
+         <invoker-bindings>
+            <invoker>
+               <invoker-proxy-binding-name>jms-message-inflow-driven-bean</invoker-proxy-binding-name>
+            </invoker>
+         </invoker-bindings>
+      </message-driven>
+   </enterprise-beans>
+</jboss>

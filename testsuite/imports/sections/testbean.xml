@@ -1,0 +1,139 @@
+<project name="tests-testbean-jars">
+   <!-- testbean test -->
+   <target name="_jars-testbean">
+      <mkdir dir="${build.lib}"/>
+      
+      <!-- build testbeantest.jar -->
+      <jar destfile="${build.lib}/testbeantest.jar">
+         <fileset dir="${build.classes}">
+            <patternset refid="common.test.client.classes"/>
+            <include name="org/jboss/test/testbean/interfaces/**"/>
+            <include name="org/jboss/test/testbean/test/**"/>
+            <include name="org/jboss/test/testbean2/interfaces/**"/>
+            <include name="org/somepackage/**"/>
+            <include name="org/jboss/test/bmp/interfaces/**"/>
+         </fileset>
+         <fileset dir="${build.resources}/testbean">
+            <include name="*.*"/>
+         </fileset>
+      </jar>
+      
+      <!-- build testbean.jar -->
+      <jar destfile="${build.lib}/testbean.jar">
+         <fileset dir="${build.classes}">
+            <patternset refid="jboss.test.util.ejb.set"/>
+            <include name="org/jboss/test/testbean/interfaces/**"/>
+            <include name="org/jboss/test/testbean/bean/**"/>
+            <!--include name="org/jboss/test/testbean2/interfaces/**"/-->
+            <include name="org/somepackage/**"/>
+         </fileset>
+         <fileset dir="${build.resources}/testbean">
+            <include name="**/*.xml"/>
+         </fileset>
+      </jar>
+      
+      <!-- build testbean2.jar -->
+      <jar destfile="${build.lib}/testbean2.jar">
+         <fileset dir="${build.classes}">
+            <patternset refid="jboss.test.util.ejb.set"/>
+            <include name="org/jboss/test/testbean/interfaces/**"/>
+            <include name="org/jboss/test/testbean2/interfaces/**"/>
+            <include name="org/jboss/test/testbean2/bean/**"/>
+         </fileset>
+         <fileset dir="${build.resources}/testbean2">
+            <include name="**/*.xml"/>
+         </fileset>
+      </jar>
+   </target>
+   
+   <!-- testbeancluster test -->
+   <target name="_jars-testbeancluster" depends="_jars-testbean">
+      <mkdir dir="${build.lib}"/>
+      
+      <!-- build testbeancluster.jar -->
+      <jar destfile="${build.lib}/testbeancluster.jar">
+         <fileset dir="${build.classes}">
+            <patternset refid="jboss.test.util.ejb.set"/>
+            <include name="org/jboss/test/testbean/interfaces/**"/>
+            <include name="org/jboss/test/testbeancluster/interfaces/**"/>
+            <include name="org/jboss/test/testbean/bean/**"/>
+            <include name="org/jboss/test/testbeancluster/bean/**"/>
+            <include name="org/somepackage/**"/>
+         </fileset>
+         <fileset dir="${build.resources}/testbeancluster">
+            <include name="**/*.xml"/>
+         </fileset>
+      </jar>
+      
+      <jar destfile="${build.lib}/test-cif.jar">
+         <fileset dir="${build.classes}">
+            <include
+               name="org/jboss/test/testbean/interfaces/AComplexPK.class"/>
+            <include name="org/jboss/test/testbeancluster/interfaces/**"/>
+            <include name="org/jboss/test/testbeancluster/bean/**"/>
+         </fileset>
+         <zipfileset dir="${build.resources}/testbeancluster"
+            fullpath="META-INF/ejb-jar.xml" includes="cif-ejb-jar.xml"/>
+         <zipfileset dir="${build.resources}/testbeancluster"
+            fullpath="META-INF/jboss.xml" includes="cif-jboss.xml"/>
+         <zipfileset dir="${build.resources}/testbeancluster"
+            fullpath="META-INF/jbosscmp-jdbc.xml"
+            includes="jbosscmp-jdbc.xml"/>
+      </jar>
+      <ear destfile="${build.lib}/test-cif.ear"
+         appxml="${build.resources}/testbeancluster/application.xml">
+         <metainf dir="${build.resources}/testbeancluster">
+            <include name="jboss-app.xml"/>
+         </metainf>
+         <fileset dir="${build.lib}">
+            <include name="test-cif.jar"/>
+         </fileset>
+         <fileset dir="${build.resources}/testbeancluster">
+            <include name="cif-ds.xml"/>
+         </fileset>
+      </ear>
+      
+      <jar destfile="${build.lib}/test-retry.jar">
+         <fileset dir="${build.classes}">
+            <include
+               name="org/jboss/test/testbean/interfaces/AComplexPK.class"/>
+            <include name="org/jboss/test/testbean/interfaces/**"/>
+            <include name="org/jboss/test/testbean/bean/**"/>
+            <include name="org/jboss/test/testbeancluster/interfaces/**"/>
+            <include name="org/jboss/test/testbeancluster/bean/**"/>
+         </fileset>
+         <zipfileset dir="${build.resources}/testbeancluster"
+            fullpath="META-INF/ejb-jar.xml" includes="retry-ejb-jar.xml"/>
+         <zipfileset dir="${build.resources}/testbeancluster"
+            fullpath="META-INF/jboss.xml" includes="retry-jboss.xml"/>
+         <zipfileset dir="${build.resources}/testbeancluster"
+            fullpath="META-INF/jbosscmp-jdbc.xml"
+            includes="retry-jbosscmp-jdbc.xml"/>
+      </jar>
+      <ear destfile="${build.lib}/test-retry.ear"
+         appxml="${build.resources}/testbeancluster/retry-application.xml">
+         <metainf dir="${build.resources}/testbeancluster">
+            <include name="jboss-app.xml"/>
+         </metainf>
+         <fileset dir="${build.lib}">
+            <include name="test-retry.jar"/>
+         </fileset>
+         <fileset dir="${build.resources}/testbeancluster">
+            <include name="cif-ds.xml"/>
+         </fileset>
+      </ear>
+      
+     <jar destfile="${build.lib}/pooledha.jar">
+        <fileset dir="${build.classes}">
+           <include name="org/jboss/test/testbean/interfaces/**"/>
+           <include name="org/jboss/test/testbean/bean/**"/>
+           <include name="org/jboss/test/testbeancluster/interfaces/**"/>
+           <include name="org/jboss/test/testbeancluster/bean/**"/>
+        </fileset>
+        <zipfileset dir="${build.resources}/testbeancluster"
+           fullpath="META-INF/ejb-jar.xml" includes="pooledha-ejb-jar.xml"/>
+        <zipfileset dir="${build.resources}/testbeancluster"
+           fullpath="META-INF/jboss.xml" includes="pooledha-jboss.xml"/>
+     </jar>
+   </target>
+</project>

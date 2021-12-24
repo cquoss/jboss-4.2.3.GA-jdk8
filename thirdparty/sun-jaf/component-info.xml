@@ -1,0 +1,16 @@
+<project name="sun-jaf-component-info">
+
+   <component id="sun-jaf"
+              licenseType="cddl"
+              version="1.1"
+              projectHome="https://glassfish.dev.java.net/"
+              description="JavaBeans Activation Frameworkfrom glashfish(http://wiki.java.net/bin/view/Projects/GlassFishCodeDependencies)">
+
+      <artifact id="activation.jar"/>
+      <export>
+         <include input="activation.jar"/>
+      </export>
+   </component>
+
+
+</project>

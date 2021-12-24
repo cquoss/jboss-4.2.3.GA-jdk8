@@ -1,0 +1,36 @@
+<project name="sun-jaxws">
+
+   <component id="sun-jaxws"
+              version="2.1.1"
+              projectHome="https://jax-ws.dev.java.net/">
+
+      <artifact id="FastInfoset.jar"/>
+      <artifact id="http.jar"/>
+      <artifact id="jaxws-api.jar"/> 
+      <artifact id="jaxws-rt.jar"/> 
+      <artifact id="jaxws-tools.jar"/> 
+      <artifact id="jsr173_api.jar"/>
+      <artifact id="jsr181-api.jar"/> 
+      <artifact id="jsr250-api.jar"/> 
+      <artifact id="saaj-api.jar"/>
+      <artifact id="saaj-impl.jar"/>
+      <artifact id="sjsxp.jar"/>
+      <artifact id="stax-ex.jar"/>
+      <artifact id="streambuffer.jar"/>
+
+      <import componentref="sun-jaf">
+        <compatible version="1.1"/>
+        <compatible version="1.1.0-brew"/>
+      </import>
+      <import componentref="sun-jaxb">
+        <compatible version="2.1.3"/>
+        <compatible version="2.1.4"/>
+      </import>
+
+      <export>
+         <include input="jaxws-api.jar"/>
+         <include input="jsr181-api.jar"/>
+      </export>
+
+   </component>
+</project>

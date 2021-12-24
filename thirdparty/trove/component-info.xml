@@ -1,0 +1,18 @@
+<project name="trove-component-info">
+   <!-- ============================================================ -->
+   <!-- Trove                                                        -->
+   <!-- ============================================================ -->
+   <component id="trove"
+              licenseType="lgpl"
+              version="1.0.2-brew"
+              projectHome="http://trove4j.sourceforge.net/"
+              description="High performance collections for Java"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/gnu-trove"
+              tag="gnu-trove-1_0_2-5jpp_el4ep1_3">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="trove.jar"/>
+      <export>
+         <include input="trove.jar"/>
+      </export>
+   </component>
+</project>

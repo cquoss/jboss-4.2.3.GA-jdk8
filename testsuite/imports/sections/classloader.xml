@@ -1,0 +1,647 @@
+<project name="tests-classloader-jars">
+  <!-- classloader test -->
+  <target name="_jars-classloader" depends="compile-classes-only">
+    <mkdir dir="${build.lib}"/>
+
+    <!-- build concurrentloader.sar -->
+    <jar destfile="${build.lib}/concurrentloader.sar">
+      <metainf dir="${build.resources}/classloader/concurrentloader"/>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/concurrentload/**"/>
+      </fileset>
+    </jar>
+    <!-- build concurrentloader.ear which deploys the concurrentloader.sar
+         with a HeirarchicalLoaderRepository
+    -->
+    <ear earfile="${build.lib}/concurrentloader.ear"
+      appxml="${build.resources}/classloader/concurrentloader/application.xml">
+      <metainf dir="${build.resources}/classloader/concurrentloader">
+        <include name="jboss-app.xml"/>
+      </metainf>
+      <fileset dir="${build.lib}">
+        <include name="concurrentloader.sar"/>
+      </fileset>
+    </ear>
+
+    <!-- build circularity.sar -->
+    <jar destfile="${build.lib}/j0.jar" basedir="${build.classes}"
+      includes="org/jboss/test/classloader/circularity/support/Class0.class"/>
+    <jar destfile="${build.lib}/j1.jar" basedir="${build.classes}"
+      includes="org/jboss/test/classloader/circularity/support/Class1.class"/>
+    <jar destfile="${build.lib}/j2.jar" basedir="${build.classes}"
+      includes="org/jboss/test/classloader/circularity/support/Class2.class"/>
+    <jar destfile="${build.lib}/j3.jar" basedir="${build.classes}"
+      includes="org/jboss/test/classloader/circularity/support/Derived.class"/>
+    <jar destfile="${build.lib}/any0.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/circularity/support/Base.class"/>
+        <include name="org/jboss/test/classloader/circularity/support/Class0.class"/>
+        <include name="org/jboss/test/classloader/circularity/support/Class2.class"/>
+      </fileset>
+    </jar>
+    <jar destfile="${build.lib}/any1.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/circularity/support/Class0.class"/>
+        <include name="org/jboss/test/classloader/circularity/support/Class2.class"/>
+      </fileset>
+    </jar>
+    <jar destfile="${build.lib}/xsub1.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/circularity/support/linkage/X.class"/>
+        <include name="org/jboss/test/classloader/circularity/support/linkage/Xsub.class"/>
+        <include name="org/jboss/test/classloader/circularity/support/linkage/Y.class"/>
+      </fileset>
+    </jar>
+    <jar destfile="${build.lib}/xsub2.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/circularity/support/linkage/Xsub.class"/>
+        <include name="org/jboss/test/classloader/circularity/support/linkage/Y.class"/>
+      </fileset>
+    </jar>
+    
+    <jar destfile="${build.lib}/login.jar" basedir="${build.classes}"
+      manifest="${build.resources}/classloader/circularity/to-cl-util.mf"
+      includes="org/jboss/test/classloader/circularity/support/UserOfLoginInfo.class"/>
+    <jar destfile="${build.lib}/usrmgr.jar" basedir="${build.classes}"
+      manifest="${build.resources}/classloader/circularity/to-cl-util.mf"
+      includes="org/jboss/test/classloader/circularity/support/UserOfUsrMgr.class"/>
+    <jar destfile="${build.lib}/cl-util.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/circularity/support/LoginInfo.class"/>
+        <include name="org/jboss/test/classloader/circularity/support/UsrMgr.class"/>
+      </fileset>
+    </jar>
+    <jar destfile="${build.lib}/le0.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/circularity/support/Base.class"/>
+        <include name="org/jboss/test/classloader/circularity/support/UserOfBase.class"/>
+      </fileset>
+    </jar>
+    <jar destfile="${build.lib}/le1.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/circularity/support/Base.class"/>
+        <include name="org/jboss/test/classloader/circularity/support/Support.class"/>
+      </fileset>
+    </jar>
+    <jar destfile="${build.lib}/dl10.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/circularity/support/pkg0/Derived.class"/>
+      </fileset>
+    </jar>
+    <jar destfile="${build.lib}/dl11.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/circularity/support/Base.class"/>
+      </fileset>
+    </jar>
+
+    <!-- Jars used by the Deadlock32 tests -->
+    <jar destfile="${build.lib}/dl-a.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/test/abc/TestA*"/>
+      </fileset>
+    </jar>
+    <jar destfile="${build.lib}/dl-b.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/test/abc/TestB*"/>
+      </fileset>
+    </jar>
+
+    <!-- A jar that appears to contain java.sql classes for
+      ScopingUnitTestCase.testSystemClasses2
+    -->
+    <mkdir dir="${build.classes}/java/sql"/>
+    <touch file="${build.classes}/java/sql/Fake.class"/>
+    <jar destfile="${build.lib}/java-sql.jar">
+      <fileset dir="${build.classes}">
+        <include name="java/sql/*"/>
+      </fileset>
+    </jar>
+
+    <jar destfile="${build.lib}/ha.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/circularity/support/HARMIServerImpl.class"/>
+        <include name="org/jboss/test/classloader/circularity/support/HARMIServer.class"/>
+        <include name="org/jboss/test/classloader/circularity/support/HARMIServerImpl_Stub.class"/>
+      </fileset>
+    </jar>
+
+
+    <jar destfile="${build.lib}/circularity.sar">
+      <metainf dir="${build.resources}/classloader/circularity"/>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/circularity/*"/>
+        <include name="org/jboss/test/classloader/circularity/test/*"/>
+      </fileset>
+    </jar>
+
+    <!-- build interrupt.sar -->
+    <jar destfile="${build.lib}/interrupt.sar">
+      <metainf dir="${build.resources}/classloader/interrupt"/>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/interrupt/**"/>
+      </fileset>
+    </jar>
+
+    <!-- build loadingresource.sar -->
+    <jar destfile="${build.lib}/loading.sar">
+      <metainf dir="${build.resources}/classloader/resource">
+        <include name="jboss-service.xml"/>
+      </metainf>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/resource/**"/>
+      </fileset>
+    </jar>
+
+    <ear earfile="${build.lib}/loadingresource.ear"
+      appxml="${build.resources}/classloader/resource/application.xml">
+      <metainf dir="${build.resources}/classloader/resource">
+        <include name="jboss-app.xml"/>
+      </metainf>
+      <fileset dir="${build.resources}/classloader/resource">
+        <include name="dtds/*"/>
+      </fileset>
+      <fileset dir="${build.lib}">
+        <include name="loading.sar"/>
+      </fileset>
+    </ear>
+
+    <!-- Create unpacked loadingresource1 ear -->
+    <property name="ear1.dist"
+      value="${build.lib}/unpacked/loadingresource1.ear"/>
+    <mkdir dir="${ear1.dist}/META-INF"/>
+    <copy todir="${ear1.dist}/META-INF">
+      <fileset dir="${build.resources}/classloader/resource">
+        <include name="application.xml"/>
+        <include name="jboss-app.xml"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${ear1.dist}/loading.sar/META-INF"/>
+    <unzip src="${build.lib}/loading.sar" dest="${ear1.dist}/loading.sar"/>
+    <copy file="${build.resources}/classloader/resource/jboss-serviceX.xml"
+      tofile="${ear1.dist}/loading.sar/META-INF/jboss-service.xml"
+      overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="1"/>
+      </filterset>
+    </copy>
+    <copy file="${build.resources}/classloader/resource/dtds/sampleX.dtd"
+      tofile="${ear1.dist}/dtds/sample1.dtd"/>
+    <!-- Create unpacked loadingresource2 ear -->
+    <property name="ear2.dist"
+      value="${build.lib}/unpacked/loadingresource2.ear"/>
+    <mkdir dir="${ear2.dist}/META-INF"/>
+    <copy todir="${ear2.dist}/META-INF">
+      <fileset dir="${build.resources}/classloader/resource">
+        <include name="application.xml"/>
+        <include name="jboss-app.xml"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${ear2.dist}/loading.tmp/META-INF"/>
+    <unzip src="${build.lib}/loading.sar" dest="${ear2.dist}/loading.tmp"/>
+    <copy file="${build.resources}/classloader/resource/jboss-serviceX.xml"
+      tofile="${ear2.dist}/loading.tmp/META-INF/jboss-service.xml"
+      overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="2"/>
+      </filterset>
+    </copy>
+    <copy todir="${ear2.dist}//loading.tmp/dtds">
+      <fileset dir="${build.resources}/classloader/resource/dtds"/>
+    </copy>
+    <copy file="${build.resources}/classloader/resource/dtds/sampleX.dtd"
+      tofile="${ear2.dist}/loading.tmp/dtds/sample2.dtd"/>
+    <zip destfile="${ear2.dist}/loading.sar" basedir="${ear2.dist}/loading.tmp"/>
+    <delete dir="${ear2.dist}/loading.tmp"/>
+
+    <!-- build loadinclazz.sar -->
+    <jar destfile="${build.lib}/loadingclazz.sar">
+      <metainf dir="${build.resources}/classloader/clazz">
+        <include name="jboss-service.xml"/>
+      </metainf>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/clazz/**"/>
+      </fileset>
+    </jar>
+
+    <!-- Build version 1 of the singleton.jar -->
+    <copy tofile="${build.gen-src}/org/jboss/test/classloader/scoping/singleton/MySingleton.java"
+      file="${source.java}/org/jboss/test/classloader/scoping/singleton/MySingleton_V1.txt"
+      overwrite="true"/>
+    <checksum property="v1singletonmd5"
+      file="${build.gen-src}/org/jboss/test/classloader/scoping/singleton/MySingleton.java"/>
+    <echo message="V1 MySingleton.java cksum: ${v1singletonmd5}"/>
+    <copy todir="${build.classes}/org/jboss/test/classloader/scoping/singleton"
+      overwrite="true">
+      <fileset dir="${source.java}/org/jboss/test/classloader/scoping/singleton">
+        <include name="jboss-service.xml"/>
+      </fileset>
+      <filterset>
+        <filter token="VERSION" value="V1"/>
+      </filterset>
+    </copy>
+
+    <javac destdir="${build.classes}" optimize="${javac.optimize}"
+      source="${javac.source}" target="${javac.target}" debug="${javac.debug}">
+      <src path="${build.gen-src}"/>
+      <src path="${source.java}"/>
+      <classpath refid="tests.classpath"/>
+      <include name="org/jboss/test/classloader/scoping/singleton/**"/>
+    </javac>
+    <jar destfile="${build.lib}/singleton1.sar">
+      <metainf dir="${build.classes}/org/jboss/test/classloader/scoping/singleton">
+        <include name="jboss-service.xml"/>
+      </metainf>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/scoping/singleton/*"/>
+        <exclude name="org/jboss/test/classloader/scoping/singleton/*.xml"/>
+      </fileset>
+    </jar>
+
+    <!-- Build version 2 of the singleton.jar -->
+    <delete dir="${build.classes}/org/jboss/test/classloader/scoping/singleton"/>
+    <copy tofile="${build.gen-src}/org/jboss/test/classloader/scoping/singleton/MySingleton.java"
+      file="${source.java}/org/jboss/test/classloader/scoping/singleton/MySingleton_V2.txt"
+      overwrite="true"/>
+    <checksum property="v2singletonmd5"
+      file="${build.gen-src}/org/jboss/test/classloader/scoping/singleton/MySingleton.java"/>
+    <echo message="V2 MySingleton.java cksum: ${v2singletonmd5}"/>
+    <copy todir="${build.classes}/org/jboss/test/classloader/scoping/singleton"
+      overwrite="true">
+      <fileset dir="${source.java}/org/jboss/test/classloader/scoping/singleton">
+        <include name="jboss-service.xml"/>
+      </fileset>
+      <filterset>
+        <filter token="VERSION" value="V2"/>
+      </filterset>
+    </copy>
+
+    <javac destdir="${build.classes}" optimize="${javac.optimize}"
+      source="${javac.source}" target="${javac.target}" debug="${javac.debug}">
+      <src path="${build.gen-src}"/>
+      <src path="${source.java}"/>
+      <classpath refid="tests.classpath"/>
+      <include name="org/jboss/test/classloader/scoping/singleton/**"/>
+    </javac>
+    <jar destfile="${build.lib}/singleton2.sar">
+      <metainf dir="${build.classes}/org/jboss/test/classloader/scoping/singleton">
+        <include name="jboss-service.xml"/>
+      </metainf>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/scoping/singleton/*"/>
+        <exclude name="org/jboss/test/classloader/scoping/singleton/*.xml"/>
+      </fileset>
+    </jar>
+
+    <jar destfile="${build.lib}/log4j113-ejb.jar">
+      <metainf dir="${build.resources}/classloader/scoping/override/log4j113/META-INF">
+        <include name="ejb-jar.xml"/>
+        <include name="jboss.xml"/>
+      </metainf>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/scoping/override/ejb/log4j113/*"/>
+      </fileset>
+      <fileset dir="${build.resources}/classloader/scoping/override/log4j113">
+        <include name="*.jar"/>
+      </fileset>
+    </jar>
+
+      <war destfile="${build.lib}/log4j113.war"
+      webxml="${build.resources}/classloader/scoping/override/log4j113/WEB-INF/web.xml">
+      <webinf dir="${build.resources}/classloader/scoping/override/log4j113/WEB-INF">
+        <include name="jboss-web.xml"/>
+      </webinf>
+      <lib dir="${build.resources}/classloader/scoping/override/log4j113">
+        <include name="*.jar"/>
+      </lib>
+      <classes dir="${build.classes}">
+        <include name="org/jboss/test/classloader/scoping/override/web/**"/>
+      </classes>
+      <classes dir="${build.resources}/classloader/scoping/override/log4j113">
+        <include name="log4j.properties"/>
+      </classes>
+    </war>
+
+     <war destfile="${build.lib}/common-logging.war"
+        webxml="${build.resources}/classloader/scoping/override/common-logging/web.xml">
+        <webinf
+           dir="${build.resources}/classloader/scoping/override/common-logging">
+           <include name="jboss-web.xml"/>
+        </webinf>
+        <!-- Need to include log4j.jar to allow the singleton config to be
+         reinitialized in the context of the war to find the war log4j.xml.
+         -->
+        <lib dir="${apache.log4j.lib}">
+          <include name="log4j.jar" />
+        </lib>
+        <classes dir="${build.classes}">
+          <include
+             name="org/jboss/test/classloader/scoping/override/web/comlog/*"/>
+        </classes>
+        <classes
+           dir="${build.resources}/classloader/scoping/override/common-logging">
+          <include name="commons-logging.properties"/>
+          <include name="log4j.xml"/>
+        </classes>
+     </war>
+
+  	<!-- Similar to commons-logging.war but includes the current commons-logging.jar
+  	in the war WEB-INF/lib
+  	-->
+   <war destfile="${build.lib}/cl11-withjar.war"
+      webxml="${build.resources}/classloader/scoping/override/common-logging/web.xml">
+      <webinf
+         dir="${build.resources}/classloader/scoping/override/common-logging">
+         <include name="jboss-web.xml"/>
+      </webinf>
+      <!-- Need to include log4j.jar to allow the singleton config to be
+       reinitialized in the context of the war to find the war log4j.xml.
+       -->
+      <lib dir="${apache.log4j.lib}">
+        <include name="log4j.jar" />
+      </lib>
+      <lib dir="${apache.logging.lib}">
+        <include name="commons-logging.jar" />
+      </lib>
+      <classes dir="${build.classes}">
+        <include
+           name="org/jboss/test/classloader/scoping/override/web/comlog/*"/>
+      </classes>
+      <classes
+         dir="${build.resources}/classloader/scoping/override/common-logging">
+        <include name="commons-logging.properties"/>
+      </classes>
+   	<zipfileset dir="${build.resources}/classloader/scoping/override/common-logging"
+   		fullpath="WEB-INF/classes/log4j.xml">
+         <include name="log4j-cl11.xml"/>
+   	</zipfileset>
+   </war>
+
+      <war destfile="${build.lib}/oldxerces.war"
+      webxml="${build.resources}/classloader/scoping/override/xml/web.xml">
+      <webinf dir="${build.resources}/classloader/scoping/override/xml">
+        <include name="jboss-web.xml"/>
+      </webinf>
+      <lib dir="${build.resources}/classloader/scoping/override/xml">
+        <include name="*.jar"/>
+      </lib>
+      <fileset dir="${build.resources}/classloader/scoping/override/xml">
+        <include name="test.jsp"/>
+      </fileset>
+    </war>
+
+    <!-- build classpath.sar -->
+    <jar destfile="${build.lib}/classpath.sar">
+      <metainf dir="${build.resources}/classloader/classpath">
+        <include name="jboss-service.xml"/>
+      </metainf>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/classpath/**"/>
+      </fileset>
+    </jar>
+
+    <!-- build scopedtx.jar -->
+    <jar destfile="${build.lib}/scopedtx.jar">
+      <metainf dir="${build.resources}/classloader/scoping/transaction/META-INF"/>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/scoping/transaction/**"/>
+      </fileset>
+    </jar>
+
+    <!-- Build the shared-jndi.war/sar -->
+    <jar destfile="${build.lib}/shared-jndi.sar">
+      <metainf dir="${build.resources}/classloader/scoping/naming/xml">
+        <include name="jboss-service.xml"/>
+      </metainf>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/scoping/naming/service/*"/>
+      </fileset>
+    </jar>
+    <war destfile="${build.lib}/shared-jndi.war"
+      webxml="${build.resources}/classloader/scoping/naming/xml/web.xml">
+      <webinf dir="${build.resources}/classloader/scoping/naming/xml">
+        <include name="jboss-web.xml"/>
+      </webinf>
+      <classes dir="${build.classes}">
+        <include name="org/jboss/test/classloader/scoping/naming/service/BindValue.class"/>
+        <include name="org/jboss/test/classloader/scoping/naming/web/*"/>
+      </classes>
+    </war>
+
+  	<!-- Build classloader leak test archives -->
+    <jar destfile="${build.lib}/classloader-leak-test.sar">
+      <metainf dir="${build.resources}/classloader/leak/sar/META-INF">
+        <include name="jboss-service.xml"/>
+      </metainf>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/leak/clstore/*"/>
+      </fileset>
+      <fileset dir="${jboss.profiler.jvmti.lib}">
+      	<include name="jboss-profiler-jvmti.jar"/>
+      </fileset>
+    </jar>
+    <war destfile="${build.lib}/classloader-leak-simple.war"
+        webxml="${build.resources}/classloader/leak/war/WEB-INF/web.xml">
+    	<webinf dir="${build.resources}/classloader/leak/war/WEB-INF">
+    		<include name="jboss-web.xml"/>
+    	</webinf>
+    	<classes dir="${build.classes}">
+    		<include name="org/jboss/test/classloader/leak/web/*"/>
+    		<exclude name="org/jboss/test/classloader/leak/web/Ejb*"/>
+    	</classes>
+        <fileset dir="${build.resources}/classloader/leak/war">
+          <include name="simple.jsp"/>
+        </fileset>
+    </war>
+    <war destfile="${build.lib}/classloader-leak-in-war.war"
+        webxml="${build.resources}/classloader/leak/war/WEB-INF/web.xml">
+    	<webinf dir="${build.resources}/classloader/leak/war/WEB-INF">
+    		<include name="jboss-web.xml"/>
+    	</webinf>
+    	<classes dir="${build.classes}">
+    		<include name="org/jboss/test/classloader/leak/web/*"/>
+    		<exclude name="org/jboss/test/classloader/leak/web/Ejb*"/>
+    	</classes>
+        <fileset dir="${build.resources}/classloader/leak/war">
+          <include name="simple.jsp"/>
+        </fileset>
+    	<lib dir="${apache.logging.lib}">
+    		<include name="commons-logging.jar"/>
+    	</lib>
+    </war>
+    <war destfile="${build.lib}/classloader-leak-simple-ejb.war"
+        webxml="${build.resources}/classloader/leak/war/ejb2/WEB-INF/web.xml">
+    	<classes dir="${build.classes}">
+    		<include name="org/jboss/test/classloader/leak/web/*"/>
+    		<exclude name="org/jboss/test/classloader/leak/web/Ejb3Servlet"/>
+    	</classes>
+        <fileset dir="${build.resources}/classloader/leak/war">
+          <include name="*.jsp"/>
+        </fileset>
+        <fileset dir="${build.resources}/classloader/leak/war/ejb2">
+          <include name="*.jsp"/>
+        </fileset>
+    </war>
+    <war destfile="${build.lib}/classloader-leak-in-war-ejb.war"
+        webxml="${build.resources}/classloader/leak/war/ejb2/WEB-INF/web.xml">
+    	<classes dir="${build.classes}">
+    		<include name="org/jboss/test/classloader/leak/web/*"/>
+    		<exclude name="org/jboss/test/classloader/leak/web/Ejb3Servlet"/>
+    	</classes>
+        <fileset dir="${build.resources}/classloader/leak/war">
+          <include name="*.jsp"/>
+        </fileset>
+        <fileset dir="${build.resources}/classloader/leak/war/ejb2">
+          <include name="*.jsp"/>
+        </fileset>
+    	<lib dir="${apache.logging.lib}">
+    		<include name="commons-logging.jar"/>
+    	</lib>
+    </war>
+    <jar destfile="${build.lib}/classloader-leak-ejb.jar"
+    	manifest="${build.resources}/classloader/leak/ejb/META-INF/MANIFEST.MF">
+      <metainf dir="${build.resources}/classloader/leak/ejb/META-INF"/>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/leak/ejb/**"/>
+      </fileset>
+    </jar>
+  	<ear destfile="${build.lib}/classloader-leak-simple.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application.xml">
+  		<fileset dir="${build.lib}">
+  			<include name="classloader-leak-simple-ejb.war"/>
+  			<include name="classloader-leak-ejb.jar"/>
+  		</fileset>
+    </ear>
+  	<ear destfile="${build.lib}/classloader-leak-simple-isolated.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application.xml">
+  		<metainf dir="${build.resources}/classloader/leak/ear/META-INF">
+  			<include name="jboss-app.xml"/>
+  		</metainf>
+  		<fileset dir="${build.lib}">
+  			<include name="classloader-leak-simple-ejb.war"/>
+  			<include name="classloader-leak-ejb.jar"/>
+  		</fileset>
+    </ear> 	
+  	<ear destfile="${build.lib}/classloader-leak-noweb.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application-noweb.xml">
+  		<fileset dir="${build.lib}">
+  			<include name="classloader-leak-ejb.jar"/>
+  		</fileset>
+    </ear>
+  	<ear destfile="${build.lib}/classloader-leak-noweb-isolated.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application-noweb.xml">
+  		<metainf dir="${build.resources}/classloader/leak/ear/META-INF">
+  			<include name="jboss-app.xml"/>
+  		</metainf>
+  		<fileset dir="${build.lib}">
+  			<include name="classloader-leak-ejb.jar"/>
+  		</fileset>
+    </ear> 		
+  	<mkdir dir="${build.resources}/classloader/leak/ear/lib"/>
+  	<copy todir="${build.resources}/classloader/leak/ear/lib"
+  	    file="${apache.logging.lib}/commons-logging.jar"/>
+  	<ear destfile="${build.lib}/classloader-leak-in-ear.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application.xml">
+  		<fileset dir="${build.lib}">
+  			<include name="classloader-leak-simple-ejb.war"/>
+  			<include name="classloader-leak-ejb.jar"/>
+  		</fileset>
+  		<fileset dir="${build.resources}/classloader/leak/ear">
+  			<include name="lib/**"/>
+  		</fileset>
+    </ear>
+  	<ear destfile="${build.lib}/classloader-leak-in-ear-isolated.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application.xml">
+  		<metainf dir="${build.resources}/classloader/leak/ear/META-INF">
+  			<include name="jboss-app.xml"/>
+  		</metainf>
+  		<fileset dir="${build.lib}">
+  			<include name="classloader-leak-simple-ejb.war"/>
+  			<include name="classloader-leak-ejb.jar"/>
+  		</fileset>
+  		<fileset dir="${build.resources}/classloader/leak/ear">
+  			<include name="lib/**"/>
+  		</fileset>
+    </ear> 	
+  	<ear destfile="${build.lib}/classloader-leak-dual.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application-dual.xml">
+  		<fileset dir="${build.lib}">
+  			<include name="classloader-leak-in-war-ejb.war"/>
+  			<include name="classloader-leak-ejb.jar"/>
+  		</fileset>
+  		<fileset dir="${build.resources}/classloader/leak/ear">
+  			<include name="lib/**"/>
+  		</fileset>
+    </ear>
+  	<ear destfile="${build.lib}/classloader-leak-dual-isolated.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application-dual.xml">
+  		<metainf dir="${build.resources}/classloader/leak/ear/META-INF">
+  			<include name="jboss-app.xml"/>
+  		</metainf>
+  		<fileset dir="${build.lib}">
+  			<include name="classloader-leak-in-war-ejb.war"/>
+  			<include name="classloader-leak-ejb.jar"/>
+  		</fileset>
+  		<fileset dir="${build.resources}/classloader/leak/ear">
+  			<include name="lib/**"/>
+  		</fileset>
+    </ear> 	
+  	
+  	<!-- EJB3 versions of the classloader leak deployments -->
+    <war destfile="${build.lib}/classloader-leak-simple-ejb3.war"
+        webxml="${build.resources}/classloader/leak/war/ejb3/WEB-INF/web.xml">
+    	<webinf dir="${build.resources}/classloader/leak/war/ejb3/WEB-INF">
+    		<include name="jboss-web.xml"/>
+    	</webinf>
+    	<classes dir="${build.classes}">
+    		<include name="org/jboss/test/classloader/leak/web/*"/>
+    		<exclude name="org/jboss/test/classloader/leak/web/EjbServlet"/>
+    	</classes>
+        <fileset dir="${build.resources}/classloader/leak/war">
+          <include name="*.jsp"/>
+        </fileset>
+        <fileset dir="${build.resources}/classloader/leak/war/ejb3">
+          <include name="*.jsp"/>
+        </fileset>
+    </war>
+    <jar destfile="${build.lib}/classloader-leak-ejb3.jar"
+    	manifest="${build.resources}/classloader/leak/ejb3/META-INF/MANIFEST.MF">
+      <metainf dir="${build.resources}/classloader/leak/ejb3/META-INF"/>
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/test/classloader/leak/ejb3/**"/>
+      </fileset>
+    </jar>
+  	<ear destfile="${build.lib}/classloader-leak-simple-ejb3.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application-ejb3.xml">
+  		<fileset dir="${build.lib}">
+  			<include name="classloader-leak-simple-ejb3.war"/>
+		    <include name="classloader-leak-ejb3.jar"/>
+  		</fileset>
+    </ear>
+  	<ear destfile="${build.lib}/classloader-leak-simple-isolated-ejb3.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application-ejb3.xml">
+  		<metainf dir="${build.resources}/classloader/leak/ear/META-INF">
+  			<include name="jboss-app.xml"/>
+  		</metainf>
+  		<fileset dir="${build.lib}">
+  			<include name="classloader-leak-simple-ejb3.war"/>
+            <include name="classloader-leak-ejb3.jar"/>
+  		</fileset>
+    </ear> 	
+  	<ear destfile="${build.lib}/classloader-leak-noweb-ejb3.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application-noweb-ejb3.xml">
+  		<fileset dir="${build.lib}">
+            <include name="classloader-leak-ejb3.jar"/>
+  		</fileset>
+    </ear>
+  	<ear destfile="${build.lib}/classloader-leak-noweb-isolated-ejb3.ear"
+  	  appxml="${build.resources}/classloader/leak/ear/META-INF/application-noweb-ejb3.xml">
+  		<metainf dir="${build.resources}/classloader/leak/ear/META-INF">
+  			<include name="jboss-app.xml"/>
+  		</metainf>
+  		<fileset dir="${build.lib}">
+            <include name="classloader-leak-ejb3.jar"/>
+  		</fileset>
+    </ear> 	
+  	
+  </target>
+</project>

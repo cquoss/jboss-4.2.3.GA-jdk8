@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jboss-app>
+   <loader-repository>
+      jboss.test.cts:loader=test-cif.ear
+      <!--
+      <loader-repository-config>
+         java2ParentDelegation=false
+      </loader-repository-config>
+      -->
+   </loader-repository>
+   <module>
+      <service>cif-ds.xml</service>
+   </module>
+</jboss-app>

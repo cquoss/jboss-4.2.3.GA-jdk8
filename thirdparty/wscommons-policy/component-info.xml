@@ -1,0 +1,20 @@
+<project name="wscommons-policy-component-info">
+
+   <!-- ============================================================ -->
+   <!-- WS-COMMONS POLICY                                            -->
+   <!-- ============================================================ -->
+
+   <component id="wscommons-policy"
+           version="1.0"
+            licenseType="apache-2.0"
+            projectHome="http://ws.apache.org/commons/policy/"
+            description="An implementation of WS-Policy specification"
+      >
+      <artifact id="policy.jar"/>
+      <export>
+         <include input="policy.jar"/>
+      </export>
+   </component>
+
+
+</project>

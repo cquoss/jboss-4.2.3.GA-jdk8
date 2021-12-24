@@ -1,0 +1,24 @@
+<project name="jboss/web-component-info">
+
+   <component id="jboss/web"
+      licenseType="lgpl"
+      version="2.0.1.GA"
+      description="JBoss Web 2.0.1.GA">
+      <artifact id="el-api.jar"/>
+      <artifact id="jasper-jdt.jar"/>
+      <artifact id="jbossweb.jar"/>
+      <artifact id="jbossweb-extras.jar"/>
+      <artifact id="jsp-api.jar"/>
+      <artifact id="servlet-api.jar"/>
+      <artifact id="jbossweb-src.zip"/>
+      <export>
+         <include input="el-api.jar"/>
+         <include input="jasper-jdt.jar"/>
+         <include input="jbossweb.jar"/>
+         <include input="jbossweb-extras.jar"/>
+         <include input="jsp-api.jar"/>
+         <include input="servlet-api.jar"/>
+      </export>
+   </component>
+
+</project>

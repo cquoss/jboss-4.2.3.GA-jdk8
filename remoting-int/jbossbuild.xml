@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<!--
+ JBoss, the OpenSource J2EE webOS
+ 
+ Distributable under LGPL license.
+ See terms of license at gnu.org.
+-->
+
+<!-- ================================================================== -->
+<!-- ejb3  component definition                                        -->
+<!-- ================================================================== -->
+
+<project name="project" 
+         default="build" 
+         basedir="."
+>
+   <!-- The main build -->
+   <import file="../../tools/etc/jbossbuild/tasks.xml"/>
+   <import file="component-info.xml"/>
+
+   <!-- =============================================================== -->
+   <!-- The component definition                                        -->
+   <!-- =============================================================== -->
+
+   <componentdef component="remoting-int"
+                 description="remoting-int">
+
+      <!-- ============================================================ -->
+      <!-- The main source                                              -->
+      <!-- ============================================================ -->
+
+      <source id="main" >
+         <include component="apache-log4j"/>
+         <include component="jboss/remoting"/>
+    
+         <include component="junit"/>
+         <include component="common"/>
+         <include component="j2se"/>
+         <include component="aop"/>
+         <include component="security"/>
+
+      </source>
+
+      <!-- ============================================================ -->
+      <!-- jbossas-remoting.jar                                                -->
+      <!-- ============================================================ -->
+      <artifactdef artifact="jboss-remoting-int.jar" requiredJDK="1.4">
+         <include input="main">
+            <include pattern="org/jboss/remoting/**"/>
+            <include pattern="org/jboss/aspects/remoting/**"/>
+         </include>
+      </artifactdef>
+
+   </componentdef>
+
+   <!-- Generate the targets -->   
+   <generate generate="jbossas/remoting"/>
+
+</project>

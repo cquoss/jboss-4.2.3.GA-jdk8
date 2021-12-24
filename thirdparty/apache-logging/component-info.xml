@@ -1,0 +1,14 @@
+<project name="apache-commons-logging">
+   <component id="apache-logging"
+              licenseType="apache-2.0"
+              version="1.1.0.jboss"
+              projectHome="http://jakarta.apache.org/commons/logging/"
+         description="Yet another logging api. This is the 1.1 release with the reflective log4j logger patch.">
+      <artifact id="commons-logging.jar"/>
+      <artifact id="commons-logging-src.zip"/>
+      <export>
+         <include input="commons-logging.jar"/>
+      </export>
+   </component>
+
+</project>

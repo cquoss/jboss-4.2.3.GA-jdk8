@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!ELEMENT person (first-name, last-name, date-of-birth, phones, addresses)>
+
+<!ELEMENT first-name (#PCDATA)>
+<!ELEMENT last-name (#PCDATA)>
+<!ELEMENT date-of-birth (#PCDATA)>
+
+<!ELEMENT phones (phone*)>
+<!ELEMENT phone (#PCDATA)>
+
+<!ELEMENT addresses (address*)>
+<!ELEMENT address (street)>
+<!ELEMENT street (#PCDATA)>

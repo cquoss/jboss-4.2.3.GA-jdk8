@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<server>
+
+   <mbean code="org.jboss.web.tomcat.service.JBossWeb"
+      name="jboss.web:service=WebServer" xmbean-dd="META-INF/webserver-xmbean.xml">
+
+      <!-- Get the flag indicating if the normal Java2 parent first class
+           loading model should be used over the servlet 2.3 web container first
+           model.
+      -->
+      <attribute name="Java2ClassLoadingCompliance">true</attribute>
+
+      <attribute name="LenientEjbLink">true</attribute>
+
+      <!-- A flag indicating if the JBoss Loader should be used. This loader
+           uses a unified class loader as the class loader rather than the tomcat
+           specific class loader.
+      -->
+      <attribute name="UseJBossWebLoader">true</attribute>
+
+      <!-- The name of the request attribute under with the authenticated JAAS
+      Subject is stored on successful authentication. If null or empty then
+      the Subject will not be stored.
+      -->
+      <!--
+      <attribute name="SubjectAttributeName">j_subject</attribute>
+      -->
+
+      <!--
+        *******************************************************
+        ****************** CLUSTERING *************************
+        *******************************************************
+        In order to activate HTTP Session clustering for Tomcat
+        make sure you run JBoss's "all" configuration i.e.
+        "run -c all"
+        (the default configuration doesn't contain clustering)
+
+        Furthermore, you may change SnapshotMode and
+        SnapshotInterval attributes below to indicate when to
+        synchronize changes with the other node(s).
+
+        If you use Apache+mod_jk(2) you will most probably use
+        the AJP1.3 connector below. Thus, if you so wish,
+        you may comment (i.e. deactivate) the HTTP connector
+        as it won't be used anymore.
+
+        *******************************************************
+        *******************************************************
+        *******************************************************
+       -->
+
+      <!--
+        If you are using clustering, the following two attributes
+        define when the sessions are replicated to the other nodes.
+        The default value, "instant", synchronously replicates changes
+        to the other nodes. In this case, the "SnapshotInterval" attribute
+        is not used.
+        The "interval" mode, in association with the "SnapshotInterval"
+        attribute, indicates that Tomcat will only replicates modified
+        sessions every "SnapshotInterval" miliseconds at most.
+      -->
+      <attribute name="SnapshotMode">instant</attribute> <!-- you may switch to "interval" -->
+      <attribute name="SnapshotInterval">2000</attribute>
+      <!-- A flag indicating if the local vm session value should be used if
+      it exists. When true, the existing vm local session values are used and
+      updates are replicated, but updates to the same session on other nodes
+      do not update the local session value. This mode is only useful for
+      failover. When false, the session value is obtained from the distributed
+      cache. This mode can be used with load balancing.
+      -->
+      <attribute name="UseLocalCache">true</attribute>
+
+      <attribute name="Domain">jboss.web</attribute>
+   </mbean>
+
+</server>
+

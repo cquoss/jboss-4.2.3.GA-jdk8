@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:jboss:bean-deployer bean-deployer_1_0.xsd"
+            xmlns="urn:jboss:bean-deployer">
+   
+   <bean name="PersistenceManager" class="org.jboss.mq.pm.none.PersistenceManager"/>
+   
+   <bean name="StateManager" class="org.jboss.mq.sm.none.NullStateManager"/>
+   
+   <bean name="MessageCache" class="org.jboss.mq.kernel.MessageCache">
+      <property name="persistenceManager"><inject bean="PersistenceManager"/></property>
+   </bean>
+   
+   <bean name="DestinationManager" class="org.jboss.mq.kernel.DestinationManager">
+      <property name="persistenceManagerInstance"><inject bean="PersistenceManager"/></property>
+      <property name="stateManagerInstance"><inject bean="StateManager"/></property>
+      <property name="messageCacheInstance"><inject bean="MessageCache"/></property>
+   </bean>
+
+   <bean name="JMSServer" class="org.jboss.mq.server.JMSDestinationManager">
+      <constructor factoryMethod="getInterceptor">
+         <factory bean="DestinationManager"/>
+      </constructor>
+   </bean>
+   
+   <bean name="ClientMonitor" class="org.jboss.mq.server.jmx.ClientMonitorInterceptor">
+      <property name="clientTimeout">5000000</property> <!-- DOESN'T HAPPEN! -->
+   </bean>
+
+   <bean name="ClientMonitorInterceptor" class="org.jboss.mq.server.ClientMonitorInterceptor">
+      <constructor factoryMethod="getInterceptor">
+         <factory bean="ClientMonitor"/>
+      </constructor>
+      <property name="next"><inject bean="JMSServer"/></property>
+   </bean>
+      
+</deployment>

@@ -1,0 +1,26 @@
+<project name="tests-jbossmq-jars">
+   <!-- jbossmq test -->
+   <target name="_jars-jbossmq">
+      <mkdir dir="${build.lib}"/>
+      
+      <!-- build jbossmqtest.jar -->
+      <jar destfile="${build.lib}/jbossmqtest.jar">
+         <fileset dir="${build.classes}">
+            <include name="org/jboss/test/jbossmq/**"/>
+         </fileset>
+      </jar>
+      
+      <copy tofile="${build.lib}/jbossmq-recovery-service.xml"
+         file="${build.resources}/jbossmq/jbossmq-recovery-service.xml"/>
+      
+      <copy tofile="${build.lib}/overridden-uil2-service.xml"
+         file="${build.resources}/jbossmq/overridden-uil2-service.xml"/>
+      
+      <copy tofile="${build.lib}/receivers-arraylist-service.xml"
+         file="${build.resources}/jbossmq/receivers-arraylist-service.xml"/>
+      
+      <copy tofile="${build.lib}/receivers-linkedlist-service.xml"
+         file="${build.resources}/jbossmq/receivers-linkedlist-service.xml"/>
+      
+   </target>
+</project>

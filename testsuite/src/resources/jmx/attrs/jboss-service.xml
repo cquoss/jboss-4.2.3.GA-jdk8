@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE server
+    PUBLIC "-//JBoss//DTD MBean Service 3.2//EN"
+    "http://www.jboss.org/j2ee/dtd/jboss-service_3_2.dtd">
+
+<server>
+
+   <mbean code="org.jboss.test.jmx.attrs.AttrTests"
+      name="test:name=AttrTests,case=#1">
+      <attribute name="XmlString"><![CDATA[
+<depinfo>
+<value name='abc'>A Value</value>
+</depinfo>]]>
+      </attribute>
+      <attribute name="SysPropRef">${java.vm.version}</attribute>
+      <attribute name="TrimedString">  123456789    
+      </attribute>
+   </mbean>
+
+   <mbean code="org.jboss.test.jmx.attrs.AttrTests"
+      name="test:name=AttrTests,case=#2">
+      <attribute name="SysPropRef" replace="false">${java.vm.version}</attribute>
+      <attribute name="TrimedString" trim="false"> 123456789 </attribute>
+   </mbean>
+
+   <mbean code="org.jboss.test.jmx.attrs.AttrTests"
+      name="test:name=AttrTests,case=#3"
+      xmbean-dd="">
+      <xmbean>
+         <description>An xmbean deployment test</description>
+         <attribute access="read-write" getMethod="getSysPropRef" setMethod="setSysPropRef">
+            <description>An attribute whoose value is a ${x} sys property ref</description>
+            <name>SysPropRef</name>
+            <type>java.lang.String</type>
+            <descriptors>
+               <value replace="true">${java.vm.version}</value>
+            </descriptors>
+         </attribute>
+         <attribute access="read-write" getMethod="getTrimedString" setMethod="setTrimedString">
+            <description>A string that may contain whitespace</description>
+            <name>TrimedString</name>
+            <type>java.lang.String</type>
+            <descriptors>
+               <value trim="true"> 123456789 </value>
+            </descriptors>
+         </attribute>
+
+      </xmbean>
+   </mbean>
+
+   <mbean code="org.jboss.test.jmx.attrs.AttrTests"
+      name="test:name=AttrTests,case=#4"
+      xmbean-dd="">
+      <xmbean>
+         <description>An xmbean deployment test</description>
+         <attribute access="read-write" getMethod="getSysPropRef" setMethod="setSysPropRef">
+            <description>An attribute whoose value is a ${x} sys property ref</description>
+            <name>SysPropRef</name>
+            <type>java.lang.String</type>
+            <descriptors>
+               <value replace="false">${java.vm.version}</value>
+            </descriptors>
+         </attribute>
+         <attribute access="read-write" getMethod="getTrimedString" setMethod="setTrimedString">
+            <description>A string that may contain whitespace</description>
+            <name>TrimedString</name>
+            <type>java.lang.String</type>
+            <descriptors>
+               <value trim="false"> 123456789 </value>
+            </descriptors>
+         </attribute>
+
+      </xmbean>
+   </mbean>
+
+</server>

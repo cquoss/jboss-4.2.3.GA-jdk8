@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<jboss-web>
+   <replication-config>
+      <replication-field-batch-mode>FALSE</replication-field-batch-mode>
+   </replication-config>
+</jboss-web>

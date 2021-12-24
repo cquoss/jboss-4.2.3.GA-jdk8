@@ -1,0 +1,16 @@
+<project name="sun-javamail-component-info">
+
+   <component id="sun-javamail"
+              version="1.4"
+              licenseType="cddl"
+              projectHome="https://glassfish.dev.java.net/javaee5/mail/"
+              description="JavaMail APIs from glashfish(http://wiki.java.net/bin/view/Projects/GlassFishCodeDependencies)"
+   >
+      <artifact id="mail.jar"/>
+      <export>
+         <include input="mail.jar"/>
+      </export>
+   </component>
+
+
+</project>

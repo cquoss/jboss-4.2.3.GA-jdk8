@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--  JBoss, the OpenSource J2EE webOS                                      -->
+<!--                                                                        -->
+<!--  Distributable under LGPL license.                                     -->
+<!--  See terms of license at http://www.gnu.org.                           -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+
+<!-- $Id: build32.xml 31925 2005-06-08 07:17:52Z tdiesler $ -->
+
+<project default="module-jars" name="JBoss/JAXRPC">
+
+  <!-- ================================================================== -->
+  <!-- Configuration                                                      -->
+  <!-- ================================================================== -->
+
+  <!--
+     | Configure the build system.
+     |
+     | This target is invoked by the Buildmagic initialization logic and
+     | should contain module specific configuration elements.
+   -->
+
+  <target name="configure" >
+
+    <!-- =================== -->
+    <!-- Basic Configuration -->
+    <!-- =================== -->
+
+    <property name="module.source" value="${basedir}/src"/>
+    <property name="source.java" value="${module.source}/main"/>
+    <property name="build.dir" value="${basedir}/output"/>
+    <property name="build.classes" value="${build.dir}/classes"/>
+    <property name="build.lib" value="${build.dir}/lib"/>
+
+    <property environment="env" />
+    <property name="jboss32.home" value="${env.JBOSS_HOME32}"/>
+    <echo message="jboss32.home = ${jboss32.home}"/>
+
+    <!-- ========= -->
+    <!-- Libraries -->
+    <!-- ========= -->
+
+    <!-- The combined library classpath -->
+    <path id="build.classpath">
+      <pathelement path="${jboss32.home}/client/activation.jar"/>
+      <pathelement path="${jboss32.home}/client/commons-collections.jar"/>
+      <pathelement path="${jboss32.home}/client/commons-discovery.jar"/>
+      <pathelement path="${jboss32.home}/client/commons-logging.jar"/>
+      <pathelement path="${jboss32.home}/client/jboss-common-client.jar"/>
+      <pathelement path="${jboss32.home}/client/jboss-jaxrpc.jar"/>
+      <pathelement path="${jboss32.home}/client/jboss-j2ee.jar"/>
+      <pathelement path="${jboss32.home}/client/jboss-saaj.jar"/>
+      <pathelement path="${jboss32.home}/client/mail.jar"/>
+      <pathelement path="${jboss32.home}/client/namespace.jar"/>
+      <pathelement path="${jboss32.home}/client/wsdl4j.jar"/>
+      <pathelement path="${jboss32.home}/server/all/deploy/jbossweb-tomcat50.sar/servlet-api.jar"/>
+      <pathelement path="${jboss32.home}/server/all/lib/jsse.jar"/>
+    </path>
+    <property name="build.classpath" refid="build.classpath"/>  
+
+    <!-- ===== -->
+    <!-- Tasks -->
+    <!-- ===== -->
+
+    <!-- JDK-1.4 excludes -->
+    <available property="javac.excludes" classname="java.lang.StackTraceElement" value="dummy"/>
+
+    <!-- JDK-1.3 excludes -->
+    <property name="javac.excludes" value="
+      org/jboss/axis/components/net/JSSESocketFactory.java
+      org/jboss/axis/components/net/SunJSSESocketFactory.java
+      org/jboss/axis/components/net/SunFakeTrustSocketFactory.java"/>
+
+    <property name="source.java" value="${module.source}/main"/>
+
+  </target>
+
+  <!-- JDK Detection -->
+  <available classname="java.lang.StackTraceElement" property="HAVE_JDK_1.4"/>
+  <available classname="java.lang.Enum" property="HAVE_JDK_1.5"/>
+  <fail if="HAVE_JDK_1.4">
+     Unsupported Java version: You need JDK1.3 to build this JBoss Axis
+  </fail>
+  <fail if="HAVE_JDK_1.5">
+     Unsupported Java version: You need JDK1.3 to build JBoss Axis
+  </fail>
+
+  <!-- ================================================================== -->
+  <!-- Compile                                                            -->
+  <!-- ================================================================== -->
+
+  <!--
+     |  Compile everything.
+     |
+     |  This target should depend on other compile-* targets for each
+     |  different type of compile that needs to be performed, short of
+     |  documentation compiles.
+    -->
+
+  <target name="compile"
+    description="Compile all source files."
+    depends="configure">
+
+    <mkdir dir="${build.classes}"/>
+    <javac destdir="${build.classes}">
+      <src path="${source.java}"/>
+      <classpath refid="build.classpath"/>
+    </javac>
+
+    <copy toDir="${build.classes}">
+      <fileset dir="${source.java}">
+        <include name="org/jboss/axis/**/*.properties"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Archives                                                           -->
+  <!-- ================================================================== -->
+
+  <!--
+     | Build all jar files.
+   -->
+
+  <target name="module-jars"
+    description="Build the jaxrpc jars."
+    depends="compile">
+
+    <!-- Build axis-ws4ee.jar -->
+    <mkdir dir="${build.lib}"/>
+    <jar jarfile="${build.lib}/axis-ws4ee32.jar">
+      <fileset dir="${build.classes}">
+        <include name="org/jboss/axis/**"/>
+        <include name="org/w3c/dom/**"/>
+      </fileset>
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <section name="axis-ws4ee">
+          <attribute name="Specification-Title" value="JBoss Axis"/>
+          <attribute name="Specification-Version" value="4.0.2"/>
+          <attribute name="Specification-Vendor" value="JBoss Inc"/>
+          <attribute name="Implementation-Title" value="JBoss Axis"/>
+          <attribute name="Implementation-Version" value="4.0.2"/>
+          <attribute name="Implementation-Vendor" value="JBoss Inc"/>
+        </section>
+      </manifest>
+    </jar>
+
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Misc.                                                              -->
+  <!-- ================================================================== -->
+
+  <target name="clean" depends="configure"
+    description="Clean the build">
+    <delete dir="${build.dir}" />
+  </target>
+
+</project>
+
+

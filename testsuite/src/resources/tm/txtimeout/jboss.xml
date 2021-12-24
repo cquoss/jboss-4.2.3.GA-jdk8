@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<jboss>
+
+  <enterprise-beans>
+     <session>
+        <ejb-name>TxTimeout</ejb-name>
+        <jndi-name>jbosstest/tm/TxTimeout</jndi-name>
+        <exception-on-rollback>true</exception-on-rollback>
+        <method-attributes>
+           <method>
+              <method-name>testOverriddenTimeoutExpires</method-name>
+              <transaction-timeout>5</transaction-timeout>
+           </method>
+           <method>
+              <method-name>testOverriddenTimeoutDoesNotExpire</method-name>
+              <transaction-timeout>20</transaction-timeout>
+           </method>
+         </method-attributes>
+     </session>
+  </enterprise-beans>
+
+</jboss>

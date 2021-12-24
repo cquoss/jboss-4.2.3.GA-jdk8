@@ -1,0 +1,34 @@
+<project name="jbossas-libs-component-info">
+
+   <!-- The jbossbuild repository component info descriptor for the base
+   jbossas jars.
+   $Id: core-jars-component-info.xml 58071 2006-11-03 12:51:35Z dimitris@jboss.org $
+   -->
+   <component id="jbossas/core-libs"
+              version="4.2.0.GA"
+              licenseType="lgpl"
+              projectHome="http://www.jboss.org"
+              description="The core JBossAS server libs"
+   >
+      <artifact id="jboss-common.jar"/>
+      <artifact id="jboss-jmx.jar"/>
+      <artifact id="jboss-xml-binding.jar" />
+      <artifact id="jboss-system.jar" />
+
+      <import componentref="dom4j.jar">
+         <compatible version="1.6.1"/>
+         <compatible version="1.6.1jboss"/>
+      </import>
+      <import componentref="oswego-concurrent">
+        <compatible version="1.3.4"/>
+      </import>
+
+      <export>
+         <include input="jboss-common.jar"/>
+         <include input="jboss-jmx.jar"/>
+         <include input="jboss-xml-binding.jar"/>
+         <include input="jboss-system.jar"/>
+      </export>
+   </component>
+</project>
+   

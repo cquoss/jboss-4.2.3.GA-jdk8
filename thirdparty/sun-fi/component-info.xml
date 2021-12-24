@@ -1,0 +1,19 @@
+<project name="sun-fi">
+
+   <component id="sun-fi"
+              licenseType="cddl"
+              version="1.2.2"
+              projectHome="https://fi.dev.java.net"
+              description="Open Source implementation of the Fast Infoset (http://asn1.elibel.tm.fr/xml/finf.htm) Standard for Binary XML">
+
+      <artifact id="FastInfoset.jar"/>
+      <artifact id="FastInfosetUtilities.jar"/>
+
+      <export>
+         <include input="FastInfoset.jar"/>
+         <include input="FastInfosetUtilities.jar"/>
+      </export>
+   </component>
+
+
+</project>

@@ -1,0 +1,28 @@
+<Server> 
+
+   <!-- Use a custom version of StandardService that allows the
+   connectors to be started independent of the normal lifecycle
+   start to allow web apps to be deployed before starting the
+   connectors.
+   -->
+   <Service name="jboss.web" className="org.jboss.web.tomcat.service.StandardService">
+
+      <!-- A HTTP/1.1 Connector on port 8080 -->
+      <Connector port="8080" address="${jboss.bind.address}"
+         maxThreads="250" strategy="ms" maxHttpHeaderSize="8192"
+         emptySessionPath="true"
+         enableLookups="false" redirectPort="8443" acceptCount="100"
+         connectionTimeout="20000" disableUploadTimeout="true"/>  
+
+      <Engine name="jboss.web" defaultHost="localhost"> 
+         <Realm className="org.jboss.web.tomcat.security.JBossSecurityMgrRealm"
+            certificatePrincipal="org.jboss.security.auth.certs.SubjectDNMapping" />   
+		 
+		 <Host name="localhost"
+            autoDeploy="false" deployOnStartup="false" deployXML="false"
+		    configClass="org.jboss.web.tomcat.security.config.JBossContextConfig">
+		 </Host> 
+      </Engine> 
+   </Service>
+
+</Server>

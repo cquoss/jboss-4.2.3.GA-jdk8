@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema
+   targetNamespace="http://example.org/ns/books/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:bk="http://example.org/ns/books/" 
+   elementFormDefault="qualified"
+   attributeFormDefault="unqualified"
+   xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
+
+   <xsd:annotation>
+      <xsd:appinfo>
+         <jaxb:schemaBindings>
+            <jaxb:package name="org.jboss.test.xml.book"/>
+         </jaxb:schemaBindings>
+      </xsd:appinfo>
+   </xsd:annotation>
+
+   <xsd:element name="book">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element name="title" type="xsd:string"/>
+            <xsd:element name="author" type="xsd:string"/>
+            <xsd:element name="character" minOccurs="0" maxOccurs="unbounded">
+               <xsd:annotation>
+                  <xsd:appinfo>
+                     <jaxb:property name="characters" collectionType="java.util.ArrayList"/>
+                  </xsd:appinfo>
+               </xsd:annotation>
+
+               <xsd:complexType>
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <jaxb:class implClass="org.jboss.test.xml.book.BookCharacter"/>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+
+                  <xsd:sequence>
+                     <xsd:element name="name" type="xsd:string"/>
+                     <xsd:element name="friend-of" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+
+                     <xsd:element name="since" type="xsd:date">
+                        <xsd:annotation>
+                           <xsd:appinfo>
+                              <jaxb:property>
+                                 <jaxb:baseType>
+                                    <jaxb:javaType
+                                       name="java.lang.String"
+                                       parseMethod="org.jboss.test.xml.book.DateDatatypeConverter.unmarshal"
+                                       printMethod="org.jboss.test.xml.book.DateDatatypeConverter.marshal"/>
+                                 </jaxb:baseType>
+                              </jaxb:property>
+                           </xsd:appinfo>
+                        </xsd:annotation>
+                     </xsd:element>
+
+                     <xsd:element name="qualification" type="xsd:string"/>
+                  </xsd:sequence>
+               </xsd:complexType>
+            </xsd:element>
+         </xsd:sequence>
+         <xsd:attribute name="isbn" type="xsd:string"/>
+      </xsd:complexType>
+   </xsd:element>
+</xsd:schema>

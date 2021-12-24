@@ -1,0 +1,270 @@
+<?xml version="1.0"?>
+
+<!--
+   | Targets that create separate server configurations
+-->
+ 
+<!-- $Id: build-integration.xml 42813 2006-03-27 18:24:30Z asaldhana $ -->
+<project name="main.server.config.jacc" xmlns:server="http://jboss.org/ns/test/ant/server">
+
+<!--
+|  Define the Pattern Sets Here
+|
+--> 
+<!-- A patternset that requires jboss to run with a JACC security manager -->
+  <patternset id="jacc.includes">
+    <include name="org/jboss/test/jacc/test/*TestCase.class"/>
+    <include name="org/jboss/test/web/test/UserInRoleUnitTestCase.class"/>
+    <include name="org/jboss/test/cmp2/audit/test/*TestCase.class"/>
+    <include name="org/jboss/test/cmp2/commerce/*TestCase.class"/>
+    <include name="org/jboss/test/cmp2/cmrstress/*TestCase.class"/>
+    <include name="org/jboss/test/cmp2/cmrtransaction/test/*TestCase.class"/>
+    <include name="org/jboss/test/cmp2/perf/test/*TestCase.class"/>
+    <include name="org/jboss/test/cmp2/relationship/*TestCase.class"/>
+    <include name="org/jboss/test/cmp2/simple/SimpleUnitTestCase.class"/>
+    <include name="org/jboss/test/webservice/jbws309/*TestCase.class"/>
+    <exclude name="org/jboss/test/jacc/test/external/*TestCase.class"/>
+  </patternset>
+  <patternset id="jacc.excludes">
+    <exclude name="**/test/jacc/test/*"/>
+  </patternset>
+  <patternset id="jacc.external.includes">
+    <include name="org/jboss/test/jacc/test/external/*TestCase.class"/>
+  </patternset>
+  <patternset id="jacc.allstarrole.includes">
+    <include name="org/jboss/test/jacc/test/allstarrole/*TestCase.class"/>
+  </patternset>
+
+<!-- Tests of the JACC security implementation -->
+  <target name="tests-jacc-security"
+    description="Tests run against a jboss server with JACC configured">
+    <!-- Create the ssl enabled tomcat config -->
+    <create-config baseconf="default" newconf="jacc">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/hsqldb-ds.xml"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jbossws.sar/**"/>
+        <include name="deploy/client-deployer-service.xml"/>
+        <include name="deploy/ear-deployer.xml"/>
+        <include name="deploy/ejb-deployer.xml"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <include name="deploy/jmx-console.war/**"/>
+        <include name="deploy/jbossjca-service.xml"/>
+        <include name="deploy/jboss-local-jdbc.rar"/>
+        <include name="deploy/mail-service.xml"/>
+        <include name="deploy/jms/**"/>
+        <include name="deploy/jboss-aop.deployer/**"/>
+        <include name="deploy/jboss-aop-jdk50.deployer/**"/>
+        <include name="deploy/jboss-bean.deployer/**"/>
+        <include name="deploy/ejb3-interceptors-aop.xml"/>
+        <include name="deploy/ejb3.deployer/**"/>
+        <include name="lib/**"/>
+      </patternset>
+    </create-config>
+    <server:start name="jacc"/>
+
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+
+    <property name="jbosstest.secure" value="true"/>
+    <property name="jboss.security.jacc" value="true"/>
+    <property name="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+
+    <propertyset id="jacc-tests-props">
+      <propertyref prefix="java.security.auth"/>
+      <propertyref prefix="jboss.security"/>
+    </propertyset>
+    <run-junit junit.patternset="jacc.includes" junit.configuration="JACC" junit.syspropertyset="jacc-tests-props"/>
+
+    <server:stop name="jacc"/>
+  </target>
+
+  <target name="tests-jacc-securitymgr"
+    description="Tests run against a jboss server with JACC configured + security manager">
+    <!-- Create the security manager enabled jacc -->
+    <create-config baseconf="default" newconf="jacc-securitymgr" newconf-src="jacc">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/hsqldb-ds.xml"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jbossws.sar/**"/>
+        <include name="deploy/client-deployer-service.xml"/>
+        <include name="deploy/ear-deployer.xml"/>
+        <include name="deploy/ejb-deployer.xml"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <include name="deploy/jmx-console.war/**"/>
+        <include name="deploy/jbossjca-service.xml"/>
+        <include name="deploy/jboss-local-jdbc.rar"/>
+        <include name="deploy/mail-service.xml"/>
+        <include name="deploy/jms/**"/>
+        <include name="lib/**"/>
+        <include name="deploy/jboss-aop.deployer/**"/>
+        <include name="deploy/jboss-aop-jdk50.deployer/**"/>
+        <include name="deploy/jboss-bean.deployer/**"/>
+        <include name="deploy/ejb3-interceptors-aop.xml"/>
+        <include name="deploy/ejb3.deployer/**"/>
+      </patternset>
+    </create-config>
+    <!-- -->
+    <unzip dest="${jboss.dist}/server/jacc-securitymgr/deploy/jboss-web.deployer">
+      <fileset dir="${jboss.dist}/server/jacc-securitymgr/deploy/jboss-web.deployer">
+        <patternset>
+          <exclude name="META-INF/*"/>
+        </patternset>
+        <include name="jasper-jdt.jar"/>
+      </fileset>
+    </unzip>
+    <server:start name="jacc-securitymgr"/>
+
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+
+    <property name="jbosstest.secure" value="true"/>
+    <property name="jboss.security.jacc" value="true"/>
+    <property name="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+    
+    <propertyset id="jacc-tests-props">
+      <propertyref prefix="java.security.auth"/>
+      <propertyref prefix="jboss.security"/>
+    </propertyset>
+
+    <run-junit junit.patternset="jacc.includes" junit.configuration="JACC+SecurityMgr" junit.syspropertyset="jacc-tests-props"/>
+
+    <server:stop name="jacc-securitymgr"/>
+  </target>
+
+  <target name="tests-jacc-security-external"
+    description="Tests run against a jboss server with JACC configured with an external policy provider">
+    <create-config baseconf="default" newconf="jacc-security-external" newconf-src="jacc">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/hsqldb-ds.xml"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jbossws.sar/**"/>
+        <include name="deploy/client-deployer-service.xml"/>
+        <include name="deploy/ear-deployer.xml"/>
+        <include name="deploy/ejb-deployer.xml"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <include name="deploy/jmx-console.war/**"/>
+        <include name="deploy/jbossjca-service.xml"/>
+        <include name="deploy/jboss-local-jdbc.rar"/>
+        <include name="deploy/mail-service.xml"/>
+        <include name="deploy/jms/**"/>
+        <include name="lib/**"/>
+        <include name="deploy/jboss-aop.deployer/**"/>
+        <include name="deploy/jboss-aop-jdk50.deployer/**"/>
+        <include name="deploy/ejb3-interceptors-aop.xml"/>
+        <include name="deploy/ejb3.deployer/**"/>
+      </patternset>
+    </create-config>
+    <!-- -->
+    <unzip dest="${jboss.dist}/server/jacc-security-external/deploy/jboss-web.deployer">
+      <fileset dir="${jboss.dist}/server/jacc-security-external/deploy/jboss-web.deployer">
+        <patternset>
+          <exclude name="META-INF/*"/>
+        </patternset>
+        <include name="jasper-compiler.jar"/>
+        <include name="jasper-compiler-jdt.jar"/>
+      </fileset>
+    </unzip>
+    <!-- Copy the jacc securityconstraint provider jar -->
+    <copy todir="${jboss.dist}/server/jacc-security-external/lib" file="${build.lib}/jacc-securityconstraint.jar"/>
+    <!-- Append extra attributes to the JACCAuthorizationRealm -->
+    <replace file="${jboss.dist}/server/jacc-security-external/deploy/jboss-web.deployer/server.xml">
+      <replacetoken><![CDATA[className="org.jboss.web.tomcat.security.JaccAuthorizationRealm"]]></replacetoken>
+      <replacevalue><![CDATA[className="org.jboss.web.tomcat.security.JaccAuthorizationRealm" unprotectedResourceDelegation="true" securityConstraintProviderClass="org.jboss.test.security.test.CustomSecurityConstraintProvider" ]]></replacevalue>
+    </replace>
+    <!-- Replace the policy provider with the test provider -->
+    <replace file="${jboss.dist}/server/jacc-security-external/deploy/jacc-service.xml">
+      <replacetoken><![CDATA[org.jboss.security.jacc.DelegatingPolicy]]></replacetoken>
+      <replacevalue><![CDATA[org.jboss.test.jacc.test.external.TestExternalPolicyProvider]]></replacevalue>
+    </replace>
+
+    <server:start name="jacc-security-external"/>
+
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+
+    <property name="jbosstest.secure" value="true"/>
+    <property name="jboss.security.jacc" value="true"/>
+    <property name="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+    <propertyset id="jacc-tests-props">
+      <propertyref prefix="java.security.auth"/>
+    </propertyset>
+
+    <propertyset id="jacc-tests-props">
+      <propertyref prefix="java.security.auth"/>
+      <propertyref prefix="jboss.security"/>
+    </propertyset>
+
+    <run-junit junit.patternset="jacc.external.includes" junit.configuration="jacc-security-external" junit.syspropertyset="jacc-tests-props"/>
+
+    <server:stop name="jacc-security-external"/>
+  </target>
+
+  <target name="tests-jacc-security-allstarrole"
+    description="Tests run against a jboss server with JACC configured with an external policy provider that would allow all star role">
+    <create-config baseconf="default" newconf="jacc-security-allstarrole" newconf-src="jacc">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/hsqldb-ds.xml"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jbossws.sar/**"/>
+        <include name="deploy/client-deployer-service.xml"/>
+        <include name="deploy/ear-deployer.xml"/>
+        <include name="deploy/ejb-deployer.xml"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <include name="deploy/jmx-console.war/**"/>
+        <include name="deploy/jbossjca-service.xml"/>
+        <include name="deploy/jboss-local-jdbc.rar"/>
+        <include name="deploy/mail-service.xml"/>
+        <include name="deploy/jms/**"/>
+        <include name="lib/**"/>
+        <include name="deploy/jboss-aop.deployer/**"/>
+        <include name="deploy/jboss-aop-jdk50.deployer/**"/>
+        <include name="deploy/ejb3-interceptors-aop.xml"/>
+        <include name="deploy/ejb3.deployer/**"/>
+      </patternset>
+    </create-config>
+    <!-- -->
+    <unzip dest="${jboss.dist}/server/jacc-security-allstarrole/deploy/jboss-web.deployer">
+      <fileset dir="${jboss.dist}/server/jacc-security-allstarrole/deploy/jboss-web.deployer">
+        <patternset>
+          <exclude name="META-INF/*"/>
+        </patternset>
+        <include name="jasper-compiler.jar"/>
+        <include name="jasper-compiler-jdt.jar"/>
+      </fileset>
+    </unzip>
+    <!-- Copy the jacc allStarRolePolicyProvider jar -->
+    <copy todir="${jboss.dist}/server/jacc-security-allstarrole/lib" file="${build.lib}/jacc-allStarRolePolicyProvider.jar"/>
+    <!-- Replace the policy provider with the test provider -->
+    <replace file="${jboss.dist}/server/jacc-security-allstarrole/deploy/jacc-service.xml">
+      <replacetoken><![CDATA[code="org.jboss.security.jacc.DelegatingPolicy"]]></replacetoken>
+      <replacevalue><![CDATA[code="org.jboss.test.jacc.test.allstarrole.AllStarRoleJaccPolicy"]]></replacevalue>
+    </replace>
+
+    <server:start name="jacc-security-allstarrole"/>
+
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+
+  	<property name="jbosstest.secure" value="true"/>
+    <property name="jboss.security.jacc" value="true"/>
+    <property name="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+    <propertyset id="jacc-tests-props">
+      <propertyref prefix="java.security.auth"/>
+    </propertyset>
+
+    <propertyset id="jacc-tests-props">
+      <propertyref prefix="java.security.auth"/>
+      <propertyref prefix="jboss.security"/>
+    </propertyset>
+
+    <run-junit junit.patternset="jacc.allstarrole.includes" junit.configuration="jacc-security-allstarrole" junit.syspropertyset="jacc-tests-props"/>
+
+  	<server:stop name="jacc-security-allstarrole"/>
+</target>
+
+</project>

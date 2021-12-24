@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="org/jboss/ejb3/MC*|org/jboss/ejb3/client/|org/jboss/ejb3/clientmodule/|org/jboss/ejb3/deployers/|org/jboss/ejb3/embedded/" kind="src" path="src/main"/>
+	<classpathentry kind="src" path="docs/tutorial/ssl/src"/>
+	<classpathentry excluding="org/jboss/ejb3/test/**/*EmbeddedTest.java|org/jboss/ejb3/test/appclient/|org/jboss/ejb3/test/clusteredservice/|org/jboss/ejb3/test/standalone/" kind="src" output="output/eclipse-test-classes" path="src/test"/>
+	<classpathentry excluding="*" kind="src" path="docs/embedded-tutorial/advanced-deployment/archive/src"/>
+	<classpathentry excluding="*" kind="src" path="docs/embedded-tutorial/advanced-deployment/archive-by-resource/src"/>
+	<classpathentry excluding="*" kind="src" path="docs/embedded-tutorial/advanced-deployment/deploy-dir/src"/>
+	<classpathentry excluding="*" kind="src" path="docs/embedded-tutorial/advanced-deployment/deploy-dir-by-resource/src"/>
+	<classpathentry excluding="*" kind="src" path="docs/embedded-tutorial/advanced-deployment/microcontainer-deployment/src"/>
+	<classpathentry excluding="*" kind="src" path="docs/embedded-tutorial/embedded-war/src"/>
+	<classpathentry excluding="*" kind="src" path="docs/embedded-tutorial/mdb-standalone/src"/>
+	<classpathentry excluding="*" kind="src" path="docs/embedded-tutorial/simple-deployment/src"/>
+	<classpathentry excluding="*" kind="src" path="docs/embedded-tutorial/test-with-junit/src"/>
+	<classpathentry kind="src" path="docs/tutorial/consumer_deployment_descriptor/src"/>
+	<classpathentry kind="src" path="docs/tutorial/ejb21_client_adaptors/src"/>
+	<classpathentry kind="src" path="docs/tutorial/extended_pc/src"/>
+	<classpathentry kind="src" path="docs/tutorial/jboss_deployment_descriptor/src"/>
+	<classpathentry kind="src" path="docs/tutorial/packaging/src"/>
+	<classpathentry kind="src" path="docs/tutorial/service_deployment_descriptor/src"/>
+	<classpathentry kind="src" path="docs/tutorial/clusteredentity/src"/>
+	<classpathentry kind="src" path="docs/tutorial/asynch/src"/>
+	<classpathentry kind="src" path="docs/tutorial/blob/src"/>
+	<classpathentry kind="src" path="docs/tutorial/callbacks/src"/>
+	<classpathentry kind="src" path="docs/tutorial/clustering/src"/>
+	<classpathentry kind="src" path="docs/tutorial/composite/src"/>
+	<classpathentry kind="src" path="docs/tutorial/consumer/src"/>
+	<classpathentry kind="src" path="docs/tutorial/dependent/src"/>
+	<classpathentry kind="src" path="docs/tutorial/ear/src"/>
+	<classpathentry kind="src" path="docs/tutorial/entity/src"/>
+	<classpathentry kind="src" path="docs/tutorial/injection/src"/>
+	<classpathentry kind="src" path="docs/tutorial/interceptor/src"/>
+	<classpathentry kind="src" path="docs/tutorial/jndibinding/src"/>
+	<classpathentry kind="src" path="docs/tutorial/joininheritance/src"/>
+	<classpathentry kind="src" path="docs/tutorial/mdb/src"/>
+	<classpathentry kind="src" path="docs/tutorial/mdb_deployment_descriptor/src"/>
+	<classpathentry kind="src" path="docs/tutorial/merge/src"/>
+	<classpathentry kind="src" path="docs/tutorial/relationships/src"/>
+	<classpathentry kind="src" path="docs/tutorial/secondary/src"/>
+	<classpathentry kind="src" path="docs/tutorial/security/src"/>
+	<classpathentry kind="src" path="docs/tutorial/service/src"/>
+	<classpathentry kind="src" path="docs/tutorial/singleinheritance/src"/>
+	<classpathentry kind="src" path="docs/tutorial/stateful/src"/>
+	<classpathentry kind="src" path="docs/tutorial/stateful_deployment_descriptor/src"/>
+	<classpathentry kind="src" path="docs/tutorial/stateless/src"/>
+	<classpathentry kind="src" path="docs/tutorial/stateless_deployment_descriptor/src"/>
+	<classpathentry kind="src" path="docs/tutorial/tableperinheritance/src"/>
+	<classpathentry kind="src" path="docs/tutorial/timer/src"/>
+	<classpathentry kind="src" path="/ejb3x"/>
+	<classpathentry kind="src" path="/j2ee"/>
+	<classpathentry kind="lib" path="/thirdparty/trove/lib/trove.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/common/lib/jboss-common.jar" sourcepath="/thirdparty/jboss/common/lib/jboss-common-sources.jar"/>
+	<classpathentry kind="src" path="/security"/>
+	<classpathentry kind="src" path="/system"/>
+	<classpathentry kind="lib" path="/thirdparty/javassist/lib/javassist.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/oswego-concurrent/lib/concurrent.jar"/>
+	<classpathentry kind="src" path="/naming"/>
+	<classpathentry kind="src" path="/aspects"/>
+	<classpathentry kind="src" path="/transaction"/>
+	<classpathentry kind="lib" path="/thirdparty/jgroups/lib/jgroups.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/hibernate/lib/hibernate3.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/hibernate-annotations/lib/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-logging/lib/commons-logging.jar"/>
+	<classpathentry kind="src" path="/cluster"/>
+	<classpathentry kind="lib" path="/thirdparty/junit/lib/junit.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-log4j/lib/log4j.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/remoting/lib/jboss-remoting.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/server"/>
+	<classpathentry kind="lib" path="/thirdparty/hibernate-entitymanager/lib/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-servlet/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/apache-httpclient/lib/commons-httpclient.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/cache/lib/jboss-cache-jdk50.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jmx"/>
+	<classpathentry kind="lib" path="/thirdparty/hibernate-entitymanager/lib/hibernate-entitymanager.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-javamail/lib/mail.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/serialization/lib/jboss-serialization.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-container.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-dependency.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/microcontainer/lib/jboss-microcontainer.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/quartz/lib/quartz-all.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws/lib/jboss-jaxrpc.jar" sourcepath="/thirdparty/jboss/jbossws/lib/jbossws-core-src.zip"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/connector"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossxb/lib/jboss-xml-binding.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iiop"/>
+	<classpathentry kind="lib" path="/thirdparty/jacorb/lib/jacorb.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/aop/lib/jboss-aop-jdk50.jar"/>
+	<classpathentry kind="lib" path="src/resources/test"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws/lib/jboss-jaxws.jar" sourcepath="/thirdparty/jboss/jbossws/lib/jbossws-core-src.zip"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws/lib/jboss-saaj.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws/lib/jbossws-client.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/dom4j/lib/dom4j.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/dom4j-jarjar/lib/dom4j-jarjar.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/test"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws-spi/lib/jbossws-spi.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/jbossws-common/lib/jbossws-common.jar"/>
+	<classpathentry kind="output" path="output/eclipse-classes"/>
+</classpath>

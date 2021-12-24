@@ -1,0 +1,27 @@
+<project name="hibernate-component-info">
+
+   <component id="hibernate"
+              licenseType="lgpl"
+              version="3.2.4.SP1_CP01-brew"
+              projectHome="http://hibernate.org/"
+              description="ultra-high performance object/relational persistence"
+              scm=":ext:cvs.devel.redhat.com:/cvs/hibernate3"
+              tag="hibernate3-3_2_4_1-0jpp_ep1_1">
+      <!-- Built using JDK 1.4 -->
+
+      <artifact id="hibernate3.jar"/>
+
+      <import componentref="antlr">
+          <compatible version="2.7.5H3"/>
+          <compatible version="2.7.6rc1"/>
+          <compatible version="2.7.6.ga"/>
+          <compatible version="2.7.6-brew"/>
+      </import>
+
+      <export>
+         <include input="hibernate3.jar"/>
+       </export>
+
+   </component>
+
+</project>

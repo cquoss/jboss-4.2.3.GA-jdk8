@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server>
+<server>
+   <!-- First HASingleton, Election policy is to choose the oldest node as master -->
+   <mbean code="org.jboss.ha.singleton.examples.HASingletonMBeanExample" 
+          name="jboss.examples:service=HASingletonMBeanExample_1">
+   </mbean>
+
+   <mbean code="org.jboss.ha.singleton.HASingletonElectionPolicySimple"
+          name="jboss.examples:service=HASingletonMBeanExample-HASingletonElectionPolicySimple_1">
+     <attribute name="Position">0</attribute>
+   </mbean>
+
+   <mbean code="org.jboss.ha.singleton.HASingletonController" 
+          name="jboss.examples:service=HASingletonMBeanExample-HASingletonController_1">
+      
+      <depends optional-attribute-name="ClusterPartition"
+         proxy-type="attribute">test:service=ElectionPolicyTestPartition</depends>
+      <depends>jboss.examples:service=HASingletonMBeanExample_1</depends>
+      <depends optional-attribute-name="ElectionPolicy"
+         proxy-type="attribute">jboss.examples:service=HASingletonMBeanExample-HASingletonElectionPolicySimple_1</depends>
+      <attribute name="TargetName">jboss.examples:service=HASingletonMBeanExample_1</attribute>
+      <attribute name="TargetStartMethod">startSingleton</attribute>
+      <attribute name="TargetStopMethod">stopSingleton</attribute>
+      <attribute name="TargetStopMethodArgument">true</attribute>
+   </mbean>
+
+   <!-- Second HASingleton, Election policy is to choose the youngest node as master -->
+   <mbean code="org.jboss.ha.singleton.examples.HASingletonMBeanExample" 
+          name="jboss.examples:service=HASingletonMBeanExample_2">
+   </mbean>
+
+   <mbean code="org.jboss.ha.singleton.HASingletonElectionPolicySimple"
+          name="jboss.examples:service=HASingletonMBeanExample-HASingletonElectionPolicySimple_2">
+     <attribute name="Position">-1</attribute>
+   </mbean>
+
+   <mbean code="org.jboss.ha.singleton.HASingletonController" 
+          name="jboss.examples:service=HASingletonMBeanExample-HASingletonController_2">
+      
+      <depends optional-attribute-name="ClusterPartition"
+         proxy-type="attribute">test:service=ElectionPolicyTestPartition</depends>
+      <depends>jboss.examples:service=HASingletonMBeanExample_2</depends>
+      <depends optional-attribute-name="ElectionPolicy"
+         proxy-type="attribute">jboss.examples:service=HASingletonMBeanExample-HASingletonElectionPolicySimple_2</depends>
+      <attribute name="TargetName">jboss.examples:service=HASingletonMBeanExample_2</attribute>
+      <attribute name="TargetStartMethod">startSingleton</attribute>
+      <attribute name="TargetStopMethod">stopSingleton</attribute>
+      <attribute name="TargetStopMethodArgument">true</attribute>
+   </mbean>
+
+   <!-- Third HASingleton, Election policy is to choose the 2nd oldest node as master -->
+   <mbean code="org.jboss.ha.singleton.examples.HASingletonMBeanExample" 
+          name="jboss.examples:service=HASingletonMBeanExample_3">
+   </mbean>
+
+   <mbean code="org.jboss.ha.singleton.HASingletonElectionPolicySimple"
+          name="jboss.examples:service=HASingletonMBeanExample-HASingletonElectionPolicySimple_3">
+     <attribute name="Position">1</attribute>
+   </mbean>
+
+   <mbean code="org.jboss.ha.singleton.HASingletonController" 
+          name="jboss.examples:service=HASingletonMBeanExample-HASingletonController_3">
+      
+      <depends optional-attribute-name="ClusterPartition"
+         proxy-type="attribute">test:service=ElectionPolicyTestPartition</depends>
+      <depends>jboss.examples:service=HASingletonMBeanExample_3</depends>
+      <depends optional-attribute-name="ElectionPolicy"
+         proxy-type="attribute">jboss.examples:service=HASingletonMBeanExample-HASingletonElectionPolicySimple_3</depends>
+      <attribute name="TargetName">jboss.examples:service=HASingletonMBeanExample_3</attribute>
+      <attribute name="TargetStartMethod">startSingleton</attribute>
+      <attribute name="TargetStopMethod">stopSingleton</attribute>
+      <attribute name="TargetStopMethodArgument">true</attribute>
+   </mbean>
+
+   <!-- Fourth HASingleton, No election policy defined. By default, the oldest node is selected -->
+   <mbean code="org.jboss.ha.singleton.examples.HASingletonMBeanExample" 
+          name="jboss.examples:service=HASingletonMBeanExample_4">
+   </mbean>
+
+   <mbean code="org.jboss.ha.singleton.HASingletonController" 
+          name="jboss.examples:service=HASingletonMBeanExample-HASingletonController_4">
+      
+      <depends optional-attribute-name="ClusterPartition"
+         proxy-type="attribute">test:service=ElectionPolicyTestPartition</depends>
+      <depends>jboss.examples:service=HASingletonMBeanExample_4</depends>
+      <attribute name="TargetName">jboss.examples:service=HASingletonMBeanExample_4</attribute>
+      <attribute name="TargetStartMethod">startSingleton</attribute>
+      <attribute name="TargetStopMethod">stopSingleton</attribute>
+      <attribute name="TargetStopMethodArgument">true</attribute>
+   </mbean>
+
+   <!-- ==================================================================== -->
+   <!-- Partition used by the above beans                                    -->
+   <!-- ==================================================================== -->
+
+   <mbean code="org.jboss.ha.framework.server.ClusterPartition"
+      name="test:service=ElectionPolicyTestPartition">      
+
+      <!-- Name of the partition being built -->
+      <attribute name="PartitionName">ElectionPolicyTestPartition</attribute>
+
+      <!-- The address used to determine the node name -->
+      <attribute name="NodeAddress">${jboss.bind.address}</attribute>
+
+      <!-- Determine if deadlock detection is enabled -->
+      <attribute name="DeadlockDetection">False</attribute>
+     
+      <!-- Keep this timeout short -->
+      <attribute name="StateTransferTimeout">2000</attribute>
+
+      <!-- The JGroups protocol configuration -->
+      <attribute name="PartitionConfig">
+         <!--
+         The default UDP stack:
+         - If you have a multihomed machine, set the UDP protocol's bind_addr attribute to the
+         appropriate NIC IP address, e.g bind_addr="192.168.0.2".
+         - On Windows machines, because of the media sense feature being broken with multicast
+         (even after disabling media sense) set the UDP protocol's loopback attribute to true
+         -->
+         <Config>
+            <UDP mcast_addr="${jboss.partition.udpGroup:228.1.2.3}" mcast_port="33333"
+               ip_ttl="8" ip_mcast="true"
+               mcast_send_buf_size="800000" mcast_recv_buf_size="150000"
+               ucast_send_buf_size="800000" ucast_recv_buf_size="150000"
+               loopback="false"/>
+            <PING timeout="2000" num_initial_members="3"
+               up_thread="true" down_thread="true"/>
+            <MERGE2 min_interval="10000" max_interval="20000"/>
+            <FD_SOCK down_thread="false" up_thread="false"/>
+            <FD shun="true" up_thread="true" down_thread="true"
+               timeout="20000" max_tries="5"/>
+            <VERIFY_SUSPECT timeout="3000" num_msgs="3"
+               up_thread="true" down_thread="true"/>
+            <pbcast.NAKACK gc_lag="50" retransmit_timeout="300,600,1200,2400,4800"
+               max_xmit_size="8192"
+               up_thread="true" down_thread="true"/>
+            <UNICAST timeout="300,600,1200,2400,4800" window_size="100" min_threshold="10"
+               down_thread="true"/>
+            <pbcast.STABLE desired_avg_gossip="20000"
+               up_thread="true" down_thread="true"/>
+            <FRAG frag_size="8192"
+               down_thread="true" up_thread="true"/>
+            <pbcast.GMS join_timeout="5000" join_retry_timeout="2000"
+               shun="true" print_local_addr="true"/>
+            <pbcast.STATE_TRANSFER up_thread="true" down_thread="true"/>
+         </Config>
+
+         <!-- Alternate TCP stack: customize it for your environment, change bind_addr and initial_hosts -->
+         <!--
+         <Config>
+            <TCP bind_addr="thishost" start_port="7800" loopback="true"/>
+            <TCPPING initial_hosts="thishost[7800],otherhost[7800]" port_range="3" timeout="3500"
+               num_initial_members="3" up_thread="true" down_thread="true"/>
+            <MERGE2 min_interval="5000" max_interval="10000"/>
+            <FD_SOCK down_thread="false" up_thread="false"/>
+            <FD shun="true" up_thread="true" down_thread="true"
+               timeout="20000" max_tries="5"/>
+            <VERIFY_SUSPECT timeout="1500" down_thread="false" up_thread="false" />
+            <pbcast.NAKACK down_thread="true" up_thread="true" gc_lag="100"
+               retransmit_timeout="3000"/>
+            <pbcast.STABLE desired_avg_gossip="20000" down_thread="false" up_thread="false" />
+            <pbcast.GMS join_timeout="5000" join_retry_timeout="2000" shun="false"
+               print_local_addr="true" down_thread="true" up_thread="true"/>
+            <pbcast.STATE_TRANSFER up_thread="true" down_thread="true"/>
+         </Config>
+         -->
+      </attribute>
+
+   </mbean>
+
+</server>

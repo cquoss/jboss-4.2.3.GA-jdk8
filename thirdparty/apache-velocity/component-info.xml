@@ -1,0 +1,22 @@
+<project name="apache-velocity-component-info">
+
+   <component id="apache-velocity"
+              version="1.4jboss-brew"
+              licenseType="apache-2.0"
+              projectHome="http://jakarta.apache.org/velocity"
+              description="Velocity is a Java-based template engine.
+              This jboss patch allows ',' and ':' characters to be in a
+              variable character set to work around the problem that velocity
+              has no way to escape ${x:y} and ${x,y:z} constructs that should
+              just pass through the template engine unchanged"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/velocity-jboss"
+              tag="velocity-jboss-1_4-1_el4ep1_1">
+      <!-- Build using JDK 1.4 -->
+      <artifact id="velocity.jar"/>
+      <export>
+         <include input="velocity.jar"/>
+      </export>
+   </component>
+
+</project>
+

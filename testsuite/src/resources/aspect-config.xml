@@ -1,0 +1,187 @@
+<a:aspects 
+	xmlns:a="org.jboss.aspect"
+	xmlns:di="org.jboss.aspect.interceptors.DelegatingInterceptor"
+	xmlns:ai="org.jboss.aspect.interceptors.CoercibleInterceptor"
+	xmlns:jii="org.jboss.aspect.interceptors.JMXInvokerInterceptor"
+	>
+
+    <!-- ================================================================ -->
+    <!-- Used by AspectUnitTestCase . -->
+    <!-- ================================================================ -->				   
+	<a:aspect a:name="AspectUnitTestCase.Empty">
+	</a:aspect>
+
+	<a:aspect a:name="AspectUnitTestCase.AddOne">
+		<a:interceptor a:class="org.jboss.test.aspect.test.AddOneInterceptor"/>
+	</a:aspect>
+
+	<a:aspect a:name="AspectUnitTestCase.IDDelegateObjectA">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+					   di:delegate="org.jboss.test.aspect.bean.IDDelegateObjectA"/>
+	</a:aspect>
+		
+	<a:interceptor 	a:name="A" 
+					a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+				   di:delegate="org.jboss.test.aspect.bean.TargetObjectA"/>
+				   
+
+	<a:interceptor 	a:name="B" 
+					a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+				   di:delegate="org.jboss.test.aspect.bean.TargetObjectB"/>
+				   
+	<a:interceptor 	a:name="AddOne" 
+					a:class="org.jboss.test.aspect.test.AddOneInterceptor"/>
+					
+	<a:stack 	    a:name="ABandAddOne">
+		<a:interceptor-ref a:name="AddOne"/>
+		<a:interceptor-ref a:name="A"/>
+		<a:interceptor-ref a:name="B"/>	
+	</a:stack>
+					
+	
+	<a:aspect a:name="AspectUnitTestCase.testStack">
+		<a:stack>
+			<a:interceptor-ref a:name="AddOne"/>
+			<a:interceptor-ref a:name="A"/>
+			<a:interceptor-ref a:name="B"/>	
+		</a:stack>
+	</a:aspect>
+	
+	
+	<a:aspect a:name="AspectUnitTestCase.testStackRef">
+		<a:stack-ref a:name="ABandAddOne"/>
+	</a:aspect>
+
+
+	<a:aspect a:name="AspectUnitTestCase.testStackInStack">
+		<a:interceptor a:class="org.jboss.test.aspect.test.AddOneInterceptor"/>
+		<a:stack>
+			<a:stack>
+				<a:interceptor-ref a:name="A"/>
+			</a:stack>
+			<a:interceptor-ref a:name="B"/>	
+		</a:stack>
+	</a:aspect>
+
+
+	<a:aspect a:name="AspectUnitTestCase.A">
+		<a:interceptor-ref a:name="A"/>
+	</a:aspect>
+	
+	<a:aspect a:name="AspectUnitTestCase.ABA">
+		<a:interceptor-ref a:name="A"/>
+		<a:interceptor-ref a:name="B"/>	
+		<a:interceptor-ref a:name="A"/>
+	</a:aspect>
+
+	<a:aspect a:name="AspectUnitTestCase.BAB">
+		<a:interceptor-ref a:name="B"/>
+		<a:interceptor-ref a:name="A"/>	
+		<a:interceptor-ref a:name="B"/>
+	</a:aspect>
+
+
+	<a:aspect a:name="AspectUnitTestCase.ABFiltered">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+		               a:filter="testInterfaceAM.*"
+					   di:delegate="org.jboss.test.aspect.bean.TargetObjectA"/>
+		<a:interceptor a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+					   di:delegate="org.jboss.test.aspect.bean.TargetObjectB"/>
+	</a:aspect>
+
+	
+	<!-- ================================================================ -->
+	<!-- Used by DelegatingInterceptorUnitTestCase . -->
+	<!-- ================================================================ -->				   
+	<a:aspect a:name="DelegatingInterceptorUnitTestCase.A">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+					   di:delegate="org.jboss.test.aspect.bean.TargetObjectA"/>
+	</a:aspect>
+
+	<a:aspect a:name="DelegatingInterceptorUnitTestCase.ASingleton">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+					   di:delegate="org.jboss.test.aspect.bean.TargetObjectA"
+					   di:singleton="true"/>
+	</a:aspect>
+				   
+	<a:aspect a:name="DelegatingInterceptorUnitTestCase.AB">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+					   di:delegate="org.jboss.test.aspect.bean.TargetObjectA"/>
+		<a:interceptor a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+					   di:delegate="org.jboss.test.aspect.bean.TargetObjectB"/>
+	</a:aspect>
+	
+
+	<!-- ================================================================ -->
+	<!-- Used by CoercibleInterceptorUnitTestCase . -->
+	<!-- ================================================================ -->				   
+	<a:aspect a:name="CoercibleInterceptorUnitTestCase.A">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.CoercibleInterceptor"
+					   ai:class="org.jboss.test.aspect.bean.ITestInterfaceA"
+					   ai:implementation="org.jboss.test.aspect.bean.TargetObjectA"/>
+	</a:aspect>
+
+	<a:aspect a:name="CoercibleInterceptorUnitTestCase.ASingleton">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.CoercibleInterceptor"
+					   ai:class="org.jboss.test.aspect.bean.ITestInterfaceA"
+					   ai:implementation="org.jboss.test.aspect.bean.TargetObjectA"
+					   ai:singleton="true"/>
+	</a:aspect>
+				   
+	<a:aspect a:name="CoercibleInterceptorUnitTestCase.AB">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.CoercibleInterceptor"
+					   ai:class="org.jboss.test.aspect.bean.ITestInterfaceA"
+					   ai:implementation="org.jboss.test.aspect.bean.TargetObjectA"/>
+		<a:interceptor a:class="org.jboss.aspect.interceptors.CoercibleInterceptor"
+					   ai:class="org.jboss.test.aspect.bean.ITestInterfaceB"
+					   ai:implementation="org.jboss.test.aspect.bean.TargetObjectB"/>
+	</a:aspect>
+
+
+	<!-- ================================================================ -->
+	<!-- Used by StackModificationUnitTestCase . -->
+	<!-- ================================================================ -->				   
+	<a:aspect a:name="StackModificationUnitTestCase.A">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+					   di:delegate="org.jboss.test.aspect.bean.TargetObjectA"/>
+	</a:aspect>
+
+	<a:aspect a:name="StackModificationUnitTestCase.AddOneA">
+		<a:interceptor a:class="org.jboss.test.aspect.test.AddOneInterceptor"/>
+		<a:interceptor a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+					   di:delegate="org.jboss.test.aspect.bean.TargetObjectA"/>
+	</a:aspect>
+
+
+	<!-- ================================================================ -->
+	<!-- Used by StackModificationUnitTestCase . -->
+	<!-- ================================================================ -->				   
+	<a:aspect a:name="PerformanceReport.Empty">
+	</a:aspect>
+
+	<a:aspect a:name="PerformanceReport.A">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.DelegatingInterceptor"
+					   di:delegate="org.jboss.test.aspect.bean.TargetObjectA"/>
+	</a:aspect>
+
+	<!-- ================================================================ -->
+	<!-- Used by JMXInvokerInterceptorTestCase . -->
+	<!-- ================================================================ -->				   
+	<a:aspect a:name="JMXInvokerInterceptorTestCase.MockMMBean">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.JMXInvokerInterceptor"
+					   jii:mbean="jboss-test:service=MockMMBean">
+			<jii:expose-interface jii:class="org.jboss.test.aspect.bean.ITestInterfaceA"/>					 
+			<jii:expose-interface jii:class="org.jboss.test.aspect.bean.ITestInterfaceB"/>
+		</a:interceptor>
+	</a:aspect>
+	
+    <!-- ================================================================ -->
+    <!-- Used by GetSetInterceptorUnitTestCase  -->
+    <!-- ================================================================ -->				   
+	<a:aspect a:name="GetSetInterceptorUnitTestCase.C" 
+	          a:interfaces="org.jboss.test.aspect.bean.IPerson">
+		<a:interceptor a:class="org.jboss.aspect.interceptors.GetSetInterceptor"/>
+	</a:aspect>
+	
+	
+</a:aspects>

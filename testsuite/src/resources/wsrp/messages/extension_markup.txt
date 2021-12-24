@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+ <soapenv:Body>
+  <urn:getMarkup xmlns:urn="urn:oasis:names:tc:wsrp:v1:types">
+   <urn:registrationContext xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+     <urn:portletContext>
+       <urn:portletHandle>samples.CachedCounterPortlet</urn:portletHandle>
+     </urn:portletContext>
+     <urn:runtimeContext>
+       <urn:userAuthentication>wsrp:none</urn:userAuthentication>
+       <urn:portletInstanceKey>T400580891145574387623</urn:portletInstanceKey>
+       <urn:namespacePrefix>T400580891145574387623</urn:namespacePrefix>
+       <urn:extensions>
+          <urn1:DummyMain xmlns:urn1="urn:dummy:wsrp:ext:v1:types">
+            <urn1:dummysmall>text</urn1:dummysmall>
+          </urn1:DummyMain>
+       </urn:extensions>
+      </urn:runtimeContext>
+      <urn:userContext xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+      <urn:markupParams>
+        <urn:secureClientCommunication>false</urn:secureClientCommunication>
+        <urn:locales>en-US</urn:locales><urn:locales>en</urn:locales>
+        <urn:mimeTypes>text/html</urn:mimeTypes>
+        <urn:mimeTypes>text/xml</urn:mimeTypes>
+        <urn:mimeTypes>application/xml</urn:mimeTypes>
+        <urn:mimeTypes>application/xhtml+xml</urn:mimeTypes>
+        <urn:mimeTypes>text/plain</urn:mimeTypes>
+        <urn:mimeTypes>image/png</urn:mimeTypes>
+        <urn:mimeTypes>*/*</urn:mimeTypes>
+        <urn:mode>wsrp:view</urn:mode>
+        <urn:windowState>wsrp:normal</urn:windowState>
+        <urn:clientData>
+          <urn:userAgent>Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.2) Gecko/20060308 Firefox/1.5.0.2</urn:userAgent>
+        </urn:clientData>
+        <urn:markupCharacterSets>UTF-8</urn:markupCharacterSets>
+       </urn:markupParams>
+     </urn:getMarkup>
+   </soapenv:Body>
+</soapenv:Envelope>  

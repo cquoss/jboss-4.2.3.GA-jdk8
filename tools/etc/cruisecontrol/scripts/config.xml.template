@@ -1,0 +1,71 @@
+    <project name="PROJECTNAME" buildafterfailed="false">
+        <!-- Bootstrappers are run every time the build runs,
+             *before* the modification checks -->
+        <bootstrappers>
+            <currentbuildstatusbootstrapper file="logs/PROJECTNAME/buildstatus.txt"/>
+        </bootstrappers>
+
+        <!-- Defines where cruise looks for changes, to decide whether to run the build -->
+        <!-- quietperiod - (300) num seconds to wait for no changes before doing a build -->
+        <modificationset quietperiod="1200">
+            <cvs localworkingcopy="checkout/PROJECTNAME"
+                CVSTAGATTRIBUTE
+                />
+            <!--        <cvs cvsroot=":ext:kimptoc@cvs.sourceforge.net:/cvsroot/jboss"/>-->
+        </modificationset>
+
+        <!-- Configures the actual build loop, how often and which build file/target -->
+        <!-- interval - (300) num seconds between checks -->
+        <schedule interval="600">
+            <ant buildfile="build-jboss-head.xml" target="BUILDTARGET" uselogger="false" usedebug="false" antWorkingDir="scripts"/>
+        </schedule>
+
+        <!-- directory to write build logs to -->
+        <!-- todo - may need to specify a merge dir element - chris -->
+        <log dir="logs/PROJECTNAME"/>
+
+        <!-- Publishers are run *after* a build completes -->
+        <publishers>
+            <artifactspublisher
+                dir="scripts/logbuild/PROJECTNAME"
+                dest="artifacts/PROJECTNAME"/>
+
+            <currentbuildstatuspublisher file="logs/PROJECTNAME/buildstatus.txt"/>
+            <!-- TODO it would be good to parameterize these changing bits -->
+            <!-- CHANGE TO LOCALHOST and jboss-dev when live -->
+<!--
+            <email mailhost="MAILSERVER"
+                returnaddress="EMAILFROM"
+                skipusers="true"
+                buildresultsurl="http://WEBHOST/cc">
+                <always address="EMAILTO"/>
+            </email>
+-->
+            <!-- CHANGE TO cruisecontrol install dir and reporting host-->
+            <htmlemail mailhost="MAILSERVER"
+                css="CCDIR/reporting/jsp/css/cruisecontrol.css"
+                xsldir="CCDIR/reporting/jsp/xsl"
+                logdir="logs/PROJECTNAME"
+                returnaddress="EMAILFROM"
+                buildresultsurl="http://WEBHOST/cc/buildresults/PROJECTNAME"
+                skipusers="true">
+                <!-- CHANGE TO jboss-dev WHEN LIVE -->
+                <always address="EMAILTO"/>
+            </htmlemail>
+
+        </publishers>
+        <plugin name="cvs" classname="net.sourceforge.cruisecontrol.sourcecontrols.CVS"/>
+        <plugin name="currentbuildstatusbootstrapper"
+            classname="net.sourceforge.cruisecontrol.bootstrappers.CurrentBuildStatusBootstrapper"/>
+        <plugin name="ant"
+            classname="net.sourceforge.cruisecontrol.builders.AntBuilder"/>
+        <plugin name="pause"
+            classname="net.sourceforge.cruisecontrol.PauseBuilder"/>
+        <!--	<plugin name="email"
+                classname="net.sourceforge.cruisecontrol.publishers.HTMLEmailPublisher"/> -->
+        <plugin name="currentbuildstatuspublisher"
+            classname="net.sourceforge.cruisecontrol.publishers.CurrentBuildStatusPublisher"/>
+        <plugin name="artifactspublisher"
+            classname="net.sourceforge.cruisecontrol.publishers.ArtifactsPublisher"/>
+
+    </project>

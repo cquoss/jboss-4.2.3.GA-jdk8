@@ -1,0 +1,18 @@
+<project name="gnu-getopt-component-info">
+   <!-- ============================================================ -->
+   <!-- GNU Getopt                                                   -->
+   <!-- ============================================================ -->
+   <component id="gnu-getopt"
+              licenseType="lgpl"
+              version="1.0.12-brew"
+              projectHome="http://www.urbanophile.com/arenn/hacking/download.html"
+              description="Java getopt classes for short and long argument parsing"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/gnu-getopt"
+              tag="gnu-getopt-1_0_12-1jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="getopt.jar"/>
+      <export>
+         <include input="getopt.jar"/>
+      </export>
+   </component>
+</project>

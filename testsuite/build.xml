@@ -1,0 +1,3129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+   <!ENTITY libraries SYSTEM "../thirdparty/libraries.ent">
+   <!ENTITY modules SYSTEM "../tools/etc/buildmagic/modules.ent">
+]>
+
+<!-- ============================================================ -->
+<!--  JBoss, the OpenSource J2EE webOS                            -->
+<!--  Distributable under LGPL license.                           -->
+<!--  See terms of license at http://www.gnu.org.                 -->
+<!-- ============================================================ -->
+
+<!-- $Id: build.xml 75702 2008-07-11 15:45:13Z rrajesh $ -->
+
+<project default="main" name="JBoss/Testsuite" xmlns:server="http://jboss.org/ns/test/ant/server">
+
+  <import file="../tools/etc/buildmagic/build-common.xml"/>
+
+  <!-- Targets for integration tests -->
+  <import file="build-integration.xml"/>
+
+  <!-- Tests requiring separate server configurations -->
+  <import file="imports/config/configs.xml"/>
+
+  <!-- ======================================================== -->
+  <!-- Initialization                                           -->
+  <!-- ======================================================== -->
+  <tstamp>
+    <format property="TIMENOW" pattern="yyyy-MM-dd.HH-mm" timezone="GMT"/>
+  </tstamp>
+  <echo message="${TIMENOW}" file="run.tstamp"/>
+
+  <property name="results_web" value="http://jboss.sourceforge.net/junit-results/32"/>
+  <property name="buildlog.level" value="info"/>
+
+  <!-- Set a hostname property based on COMPUTERNAME for win32, HOSTNAME
+  otherwise and initialize the node0/node1 cluster hostnames to localhost
+  and ${hostname} by default. If you cannot route multicast traffic between
+  localhost and hostname, then you need to specify node0 and node1 binding
+  in the local.properties that can in order to be able to run the clustering
+  tests.
+  -->
+  <condition property="hostname" value="${env.COMPUTERNAME}">
+    <os family="windows"/>
+  </condition>
+  <condition property="hostname" value="${env.HOSTNAME}">
+    <not>
+      <os family="windows"/>
+    </not>
+  </condition>
+
+  <!--We will use local.properties file to provide some configuration
+  to the testsuite mainly for the Clustering framework. Please
+  do not checkin your local.properties file into CVS-->
+  <property file="local.properties"/>
+
+  <!-- Cluster node0 defaults -->
+  <property name="node0" value="localhost"/>
+  <property name="node0.http.url" value="http://${node0}:8080"/>
+  <property name="node0.jndi.url" value="jnp://${node0}:1099"/>
+  <property name="node0.hajndi.url" value="jnp://${node0}:1100"/>
+  <!-- Cluster node1 defaults -->
+  <property name="node1" value="${hostname}"/>
+  <property name="node1.http.url" value="http://${node1}:8080"/>
+  <property name="node1.jndi.url" value="jnp://${node1}:1099"/>
+  <property name="node1.hajndi.url" value="jnp://${node1}:1100"/>
+
+  <!-- UDP Group -->
+  <!-- The value of the -u option passed to jboss -->
+  <!-- A blank value will prevent the -u option from being passed -->
+  <!-- Override this in the local.properties or pass to Ant as -DupdGroup=128.x.x.x -->
+  <property name="udpGroup" value=""/>
+  <!-- Same thing, but passed to the client -->
+  <property name="jbosstest.udpGroup" value="${udpGroup}"/>
+  
+  <!-- =================== -->
+  <!-- Basic Configuration -->
+  <!-- =================== -->
+
+  <!-- Module name(s) & version -->
+  <property name="module.name" value="testsuite"/>
+  <property name="module.Name" value="JBoss Testsuite"/>
+  <property name="module.version" value="DEV"/>
+
+  <!-- ========= -->
+  <!-- Libraries -->
+  <!-- ========= -->
+
+  &libraries;
+
+  <!-- The combined library classpath -->
+  <path id="library.classpath">
+    <path refid="apache.avalon.classpath"/>
+    <path refid="apache.bcel.classpath"/>
+    <path refid="apache.commons.classpath"/>
+    <path refid="apache.jaxme.classpath"/>
+    <path refid="apache.log4j.classpath"/>
+    <path refid="apache.scout.classpath"/>
+    <path refid="apache.xerces.classpath"/>
+    <path refid="apache.xml.commons.classpath"/>
+    <path refid="dom4j.dom4j.classpath"/>
+    <path refid="hibernate3.classpath"/>
+    <path refid="hsqldb.hsqldb.classpath"/>
+    <path refid="ibm.wsdl4j.classpath"/>
+    <path refid="jacorb.jacorb.classpath"/>
+    <path refid="javassist.classpath"/>
+    <path refid="jboss.jaxr.classpath"/>
+    <path refid="jboss.jbossws.classpath"/>
+    <path refid="jboss.jbossxb.classpath"/>
+    <path refid="jboss.microcontainer.classpath"/>
+    <path refid="jboss.profiler.jvmti.classpath"/>
+    <path refid="jboss.remoting.classpath"/>
+    <path refid="jboss.web.classpath"/>
+    <path refid="jgroups.jgroups.classpath"/>
+    <path refid="joesnmp.joesnmp.classpath"/>
+    <path refid="junit.junit.classpath"/>
+    <path refid="juddi.juddi.classpath"/>
+    <path refid="objectweb.joramtests.classpath"/>
+    <path refid="odmg.classpath"/>
+    <path refid="oswego.concurrent.classpath"/>
+    <path refid="sun.jaxb.classpath"/>
+    <path refid="sun.jaf.classpath"/>
+    <path refid="sun.jsf.classpath"/>
+    <path refid="sun.javamail.classpath"/>
+    <path refid="sun.servlet.classpath"/>
+    <path refid="trove.classpath"/>
+  </path>
+
+  <!-- ======= -->
+  <!-- Modules -->
+  <!-- ======= -->
+
+  &modules;
+
+  <!-- InternalServer -->
+  <!-- This could be a mistake.  Perhaps, though, it would be a good idea to separate
+  tests that need internal jboss classes from those that don't.  When I put it in, only
+  the jca XATxConnectionManagerUnitTestCase needed an internal class (the tx manager)-->
+  <property name="jboss.internal-server.root" value="${project.root}/server/output"/>
+  <property name="jboss.internal-server.lib" value="${jboss.internal-server.root}/lib"/>
+  <path id="jboss.internal-server.classpath">
+    <pathelement path="${jboss.server.lib}/jboss.jar"/>
+    <pathelement path="${jboss.server.lib}/jboss-system.jar"/>
+  </path>
+
+  <!-- The combined dependant module classpath -->
+  <path id="dependentmodule.classpath">
+    <path refid="jboss.aop.classpath"/>
+    <path refid="jboss.aspects.classpath"/>
+    <path refid="jboss.cache.classpath"/>
+    <path refid="jboss.cluster.classpath"/>
+    <path refid="jboss.common.classpath"/>
+    <path refid="jboss.deployment.classpath"/>
+    <path refid="jboss.ejb3.classpath"/>
+    <path refid="jboss.ejb3x.classpath"/>
+    <path refid="jboss.hibernate.classpath"/>
+    <path refid="jboss.iiop.classpath"/>
+    <path refid="jboss.internal-server.classpath"/>
+    <path refid="jboss.j2ee.classpath"/>
+    <path refid="jboss.jca.classpath"/>
+    <path refid="jboss.jmx.classpath"/>
+    <path refid="jboss.management.classpath"/>
+    <path refid="jboss.messaging-mq.classpath"/>
+    <path refid="jboss.naming.classpath"/>
+    <path refid="jboss.security.classpath"/>
+    <path refid="jboss.server.classpath"/>
+    <path refid="jboss.system.classpath"/>
+    <path refid="jboss.test.classpath"/>
+    <path refid="jboss.tomcat.classpath"/>
+    <path refid="jboss.transaction.classpath"/>
+    <path refid="jboss.varia.classpath"/>
+    <path refid="jboss.serialization.classpath"/>
+  </path>
+
+  <!-- RMI Stub generation -->
+  <patternset id="rmic.includes" description="The patternset passed to the compile-stubs target">
+    <include name="org/jboss/test/cluster/test/DistributedStateTestCase$TestListener.class"/>
+    <include name="org/jboss/test/cluster/test/DRMTestCase$TestListener.class"/>
+    <include name="org/jboss/test/cts/test/ClientCallbackImpl.class"/>
+    <include name="org/jboss/test/jmx/invoker/BadListener.class"/>
+    <include name="org/jboss/test/jmx/invoker/Listener.class"/>
+  </patternset>
+
+  <!-- ===== -->
+  <!-- Tasks -->
+  <!-- ===== -->
+
+  <!-- Where source files live -->
+  <property name="source.java" value="${module.source}/main"/>
+  <property name="source.java.5" value="${module.source}/jdk15"/>
+  <property name="source.etc" value="${module.source}/etc"/>
+  <property name="source.docs" value="${module.source}/docs"/>
+  <property name="source.resources" value="${module.source}/resources"/>
+  <property name="source.stylesheets" value="${module.source}/stylesheets"/>
+
+  <!-- Where build generated files will go -->
+  <property name="build.classes" value="${module.output}/classes"/>
+  <property name="build.classes14" value="${module.output}/classes14"/>
+  <property name="build.lib" value="${module.output}/lib"/>
+  <property name="build.api" value="${module.output}/api"/>
+  <property name="build.etc" value="${module.output}/etc"/>
+  <property name="build.docs" value="${module.output}/docs"/>
+  <property name="build.resources" value="${module.output}/resources"/>
+  <property name="build.stylesheets" value="${module.output}/stylesheets"/>
+  <property name="build.reports" value="${module.output}/reports"/>
+  <property name="build.testlog" value="${module.output}/log"/>
+  <property name="build.gen-src" value="${module.output}/gen-src/"/>
+
+  <!-- Install/Release structure -->
+  <property name="install.id" value="${module.name}-${module.version}"/>
+  <property name="release.id" value="${install.id}"/>
+  <property name="install.root" value="${module.output}/${install.id}"/>
+
+  <!-- classpath and local.classpath must have a value using with a path -->
+  <property name="classpath" value=""/>
+  <property name="local.classpath" value=""/>
+
+  <!-- The combined thirdparty classpath -->
+  <path id="thirdparty.classpath">
+    <path refid="library.classpath"/>
+    <path refid="dependentmodule.classpath"/>
+  </path>
+
+  <!-- Classpath to build the tests -->
+  <path id="tests.compile.classpath">
+    <pathelement path="${classpath}"/>
+    <pathelement path="${local.classpath}"/>
+    <pathelement path="${project.tools}/lib/ant.jar"/>
+    <pathelement path="${project.tools}/lib/ant-junit.jar"/>
+    <path refid="jboss.jmx.classpath"/>
+    <path refid="thirdparty.classpath"/>
+  </path>
+
+  <!-- Import the jboss server run targets -->
+  <import file="imports/server-config.xml"/>
+
+  <!-- Classpath to run the tests -->
+  <path id="tests.classpath">
+    <fileset dir="${jboss.dist}/client">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathelement path="${classpath}"/>
+    <pathelement path="${local.classpath}"/>
+    <pathelement path="${project.tools}/lib/ant.jar"/>
+    <pathelement path="${project.tools}/lib/ant-junit.jar"/>
+    <path refid="jboss.jmx.classpath"/>
+    <path refid="thirdparty.classpath"/>
+  </path>
+
+  <!-- Classpath to build the tests -->
+  <path id="javac.classpath">
+    <path refid="thirdparty.classpath"/>
+  </path>
+
+  <!-- The classpath required to build javadocs. -->
+  <path id="javadoc.classpath">
+    <path refid="tests.compile.classpath"/>
+  </path>
+
+  <!-- Packages to include when generating api documentation -->
+  <property name="javadoc.packages" value="org.jboss.*"/>
+
+  <!-- Override JUnit defaults -->
+  <property name="junit.timeout" value="180000"/> <!-- 3 minutes -->
+  <property name="jbosstest.iterationcount" value="10"/>
+  <property name="jbosstest.threadcount" value="5"/>
+  <property name="jbosstest.beancount" value="5"/>
+  <property name="jbosstest.nodeploy" value="false"/>
+  <property name="jbosstest.src.etc" value="${source.etc}"/>
+  <property name="junit.batchtest.todir" value="${build.reports}"/>
+  <property name="junit.jvm.options" value="-Ddummy"/>
+  <!-- Override JUnit Marathon defaults -->
+  <property name="marathon.timeout" value="3900000"/> <!-- 65 minutes -->
+  <property name="marathon.duration" value="3600000"/> <!-- 60 minutes -->
+  <property name="marathon.threadcount" value="100"/>
+  <propertyset id="jbosstest-props">
+    <propertyref prefix="jbosstest."/>
+  </propertyset>
+
+  <target name="init">
+    <record name="${basedir}/build.log" append="yes" action="start" loglevel="error"/>
+    <!-- Setup the version 1 classes so the tests compile -->
+    <mkdir dir="${build.gen-src}/org/jboss/test/cts/interfaces"/>
+    <copy tofile="${build.gen-src}/org/jboss/test/cts/interfaces/CtsCmp2Local.java" file="${source.java}/org/jboss/test/cts/interfaces/CtsCmp2Local_V1.txt"
+      overwrite="false"/>
+    <mkdir dir="${build.gen-src}/org/jboss/test/classloader/scoping/singleton"/>
+    <copy tofile="${build.gen-src}/org/jboss/test/classloader/scoping/singleton/MySingleton.java"
+      file="${source.java}/org/jboss/test/classloader/scoping/singleton/MySingleton_V1.txt" overwrite="false"/>
+  </target>
+
+  <!-- retrieve items from the repository, store them in the -->
+  <!-- thirdparty folder, and create a testsuite-libraries.ent file -->
+  <!-- then generate a new libraries.ent file and include it in  -->
+  <!-- the build                                                 -->
+  <target name="createthirdparty" unless="inhibit.downloads" depends="check.inhibit.downloads, set.proxy">
+    <ant antfile="build-thirdparty.xml" target="generate-lib-file"/>
+  </target>
+
+  <!-- check if thirdparty libraries are to be downloaded -->
+  <target name="check.inhibit.downloads">
+    <condition property="inhibit.downloads">
+      <or>
+        <uptodate property="dependencies.current" srcfile="build-thirdparty.xml" targetfile="../thirdparty/testsuite-libraries.ent"/>
+        <istrue value="${nodownload}"/>
+      </or>
+    </condition>
+  </target>
+
+  <!-- check if the the user has specied proxy settings -->
+  <target name="check.proxy">
+    <condition property="hasproxy">
+      <and>
+        <isset property="proxy.host"/>
+        <isset property="proxy.port"/>
+        <not>
+          <equals arg1="" arg2="${proxy.host}" trim="true"/>
+        </not>
+        <not>
+          <equals arg1="" arg2="${proxy.port}" trim="true"/>
+        </not>
+      </and>
+    </condition>
+  </target>
+
+  <!-- set proxy settings -->
+  <target name="set.proxy" if="hasproxy" depends="check.proxy">
+    <echo>Proxy is set to ${proxy.host}:${proxy.port}</echo>
+    <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}"/>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Compile                                                            -->
+  <!-- ================================================================== -->
+  <import file="imports/code-generation.xml"/>
+
+  <!--
+  |  Compile everything.
+  |
+  |  This target should depend on other compile-* targets for each
+  |  different type of compile that needs to be performed, short of
+  |  documentation compiles.
+  -->
+  <target name="compile" depends="init, compile-classes, compile-compatibility-classes, compile-xmbean-dds, compile-stubs, compile-etc, compile-stylesheets, compile-resources"
+    description="Compile all source files."/>
+
+  <!-- Compile all class files -->
+  <target name="compile-classes" depends="compile-bean-sources, compile-mbean-sources, compile-proxycompiler-bean-sources, compile-classes-only">
+  </target>
+
+  <target name="compile-annotated-classes-50" if="HAVE_JDK_1.5">
+    <mkdir dir="${build.classes}"/>
+
+    <!-- Make sure that jdk 50 aspect library comes first, since that contains the
+    JDK 5 version of the annotation types
+    -->
+    <path id="annotations.classpath">
+      <pathelement path="${jboss.aop.lib}/jboss-aop-jdk50.jar"/>
+      <pathelement path="${jboss.aspects.lib}/jboss-aspect-library-jdk50.jar"/>
+      <path refid="tests.compile.classpath"/>
+    </path>
+    <javac destdir="${build.classes}" optimize="${javac.optimize}" source="1.5" target="1.5" debug="${javac.debug}" depend="${javac.depend}" verbose="${javac.verbose}"
+      deprecation="${javac.deprecation}" includeAntRuntime="${javac.include.ant.runtime}" includeJavaRuntime="${javac.include.java.runtime}"
+      failonerror="${javac.fail.onerror}">
+      <src path="${source.java.5}"/>
+      <classpath refid="annotations.classpath"/>
+    </javac>
+  </target>
+
+  <target name="compile-classes-only" depends="compile-annotated-classes-50">
+    <mkdir dir="${build.classes}"/>
+    <javac destdir="${build.classes}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" debug="${javac.debug}" depend="${javac.depend}"
+      verbose="${javac.verbose}" deprecation="${javac.deprecation}" includeAntRuntime="${javac.include.ant.runtime}" includeJavaRuntime="${javac.include.java.runtime}"
+      failonerror="${javac.fail.onerror}">
+      <src path="${source.java}"/>
+      <src path="${build.gen-src}"/>
+      <exclude name="org/jboss/test/aop/bean/Annotated*" if="HAVE_JDK_1.5"/>
+      <exclude name="org/jboss/test/xml/JaxpXPathBaseTestCase*" if="HAVE_JDK_1.4"/>
+      <classpath refid="tests.compile.classpath"/>
+    </javac>
+  </target>
+
+  <target name="compile-compatibility-classes">
+    <mkdir dir="${build.classes14}"/>
+    <javac srcdir="${source.java}" destdir="${build.classes14}" optimize="${javac.optimize}" source="1.4" target="1.4" debug="${javac.debug}" depend="${javac.depend}"
+      verbose="${javac.verbose}" deprecation="${javac.deprecation}" includeAntRuntime="${javac.include.ant.runtime}" includeJavaRuntime="${javac.include.java.runtime}"
+      failonerror="${javac.fail.onerror}">
+      <include name="org/jboss/test/testbyvalue/test/**/*TestCase.java"/>
+      <include name="org/jboss/test/client/**/*TestCase.java"/>
+      <include name="org/jboss/test/bmp/**/*TestCase.java"/>
+      <include name="org/jboss/test/cmp2/**/*TestCase.java"/>
+      <include name="org/jboss/test/jbossmq/test/JBossMQUnitTest.java"/>
+      <include name="org/jboss/test/pooled/test/**/BeanStressTestCase.java"/>   
+      <include name="org/jboss/test/compatibility/test/matrix/MatrixTestContainer.java"/>
+      <include name="org/jboss/ant/taskdefs/XMLJUnitMultipleResultFormatter.java"/>      
+      <classpath refid="tests.compile.classpath"/>
+    </javac>
+  </target>
+  
+  <target name="compile-stubs">
+    <rmic base="${build.classes}" sourcebase="${build.classes}" verify="${rmic.verify}" iiop="${rmic.iiop}" iiopopts="${rmic.iiopopts}" idl="${rmic.idl}"
+      idlopts="${rmic.idlops}" debug="${rmic.debug}" stubVersion="${rmic.stubVersion}">
+      <classpath refid="tests.compile.classpath"/>
+      <patternset refid="rmic.includes"/>
+    </rmic>
+  </target>
+
+  <!-- Compile resource files -->
+  <target name="compile-resources">
+    <mkdir dir="${build.resources}"/>
+    <copy todir="${build.resources}" filtering="yes">
+      <fileset dir="${source.resources}">
+        <exclude name="webservice/**"/>
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- Compile stylesheets files -->
+  <target name="compile-stylesheets">
+    <mkdir dir="${build.stylesheets}"/>
+    <copy todir="${build.stylesheets}" filtering="yes">
+      <fileset dir="${source.stylesheets}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- Compile etc files (manifests and such) -->
+  <target name="compile-etc">
+    <mkdir dir="${build.etc}"/>
+    <copy todir="${build.etc}" filtering="yes">
+      <fileset dir="${source.etc}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- Import the test jars build targets -->
+  <import file="imports/test-jars.xml"/>
+
+  <!-- Propagate the dist directory as a jbosstest system property -->
+  <property name="jbosstest.dist" value="${jboss.dist}"/>
+
+  <!-- ================================================================== -->
+  <!-- Cleaning                                                           -->
+  <!-- ================================================================== -->
+
+  <!-- Clean up all build output -->
+  <target name="clean" depends="_default:clean" description="Cleans up most generated files.">
+  </target>
+
+  <!-- Clean up all build output -->
+  <target name="clobber" depends="_default:clobber" description="Cleans up all generated files.">
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Misc.                                                              -->
+  <!-- ================================================================== -->
+
+  <target name="main" description="Executes the default target (most)." depends="createthirdparty, most"/>
+
+  <target name="all" description="Builds everything." depends="jars"/>
+
+  <target name="most" description="Builds almost everything." depends="jars"/>
+
+  <target name="help" description="Displays the project help">
+    <echo> The main targets are: + jars : compile the tests and build the test jars + tests : the main tests entry points which runs all normal unit tests Use ant -projecthelp to list all documented
+      targets. </echo>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Tests                                                              -->
+  <!-- ================================================================== -->
+
+  <macrodef name="wait-on-host">
+    <attribute name="seconds" default="120"/>
+    <attribute name="host" default="${node0}"/>
+    <sequential>
+      <echo message="Waiting for @{host} to start..."/>
+      <waitfor maxwait="@{seconds}" maxwaitunit="second" checkevery="5" checkeveryunit="second" timeoutproperty="startup.timeout">
+        <http url="http://@{host}:8080/"/>
+      </waitfor>
+      <fail message="Timeout waiting for nodes to start" if="startup.timeout"/>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="wait-on-shutdown">
+    <attribute name="seconds" default="120"/>
+    <attribute name="conf"/>
+    <sequential>
+      <echo message="Waiting for '@{conf}' server to stop..."/>
+      <waitfor maxwait="@{seconds}" maxwaitunit="second" checkevery="5" checkeveryunit="second" timeoutproperty="shutdown.timeout">
+        <available file="server.log">
+          <filepath>
+            <fileset dir="${jboss.dist}/server/@{conf}/log/" includes="server.log">
+              <contains text="[org.jboss.system.server.Server] Shutdown complete"/>
+            </fileset>
+          </filepath>
+        </available>
+      </waitfor>
+      <fail message="Timeout waiting for '@{conf}' server to shutdown." if="shutdown.timeout"/>
+    </sequential>
+  </macrodef>
+
+  <!-- patternsets for that require clustering to be enabled -->
+  <patternset id="cluster.field.includes">
+    <include name="org/jboss/test/cluster/test/*FieldBasedTestCase.class"/>
+    <include name="org/jboss/test/cluster/test/StateTransferTestCase.class"/>
+    <include name="org/jboss/test/cluster/test/UndeployFieldTestCase.class"/>
+  </patternset>
+  <patternset id="cluster.http.includes">
+    <!-- TODO move these into their own dir so we can handle this easily -->
+    <include name="org/jboss/test/cluster/test/*TestCase.class"/>
+    <exclude name="org/jboss/test/cluster/test/CrossServerCalls*"/>
+    <exclude name="org/jboss/test/cluster/test/DistributedState*"/>
+    <exclude name="org/jboss/test/cluster/test/DRM*"/>
+    <exclude name="org/jboss/test/cluster/test/FamilyCluster*"/>
+    <exclude name="org/jboss/test/cluster/test/HAJndi*"/>
+    <!-- Problem tests -->
+    <exclude name="org/jboss/test/cluster/test/*ConcurrentTestCase.class"/>
+    <exclude name="org/jboss/test/cluster/test/FormAuthFailoverTestCase.class"/>
+    <!-- Exclude the FIELD granularity tests, as they require a different config -->
+    <exclude name="org/jboss/test/cluster/test/*FieldBasedTestCase.class"/>
+    <exclude name="org/jboss/test/cluster/test/StateTransferTestCase.class"/>
+    <exclude name="org/jboss/test/cluster/test/UndeployFieldTestCase.class"/>
+    <exclude name="org/jboss/test/cluster/test/HASingletonElectionPolicyTestCase.class"/>
+  </patternset>
+  <patternset id="cluster.http.jk.includes">
+    <include name="org/jboss/test/cluster/web/jk/test/*TestCase.class"/>
+  </patternset>
+  <patternset id="cluster.non.http.includes">
+    <include name="org/jboss/test/cluster/test/CrossServerCallsUnitTestCase.class"/>
+    <include name="org/jboss/test/cluster/test/DistributedStateTestCase.class"/>
+    <include name="org/jboss/test/cluster/test/DRMTestCase.class"/>
+    <include name="org/jboss/test/cluster/test/FamilyClusterInfoUnitTestCase.class"/>
+    <include name="org/jboss/test/cluster/test/HAJndiTestCase.class"/>
+    <include name="org/jboss/test/cluster/partition/test/*TestCase.class"/>
+    <!-- PartitionRestartUnitTestCase fails with TCP stack and JG 2.2.7 -->
+    <exclude name="org/jboss/test/cluster/partition/test/PartitionRestartUnitTestCase.class"/>
+    <include name="org/jboss/test/cluster/jmx/test/*TestCase.class"/>
+    <include name="org/jboss/test/testbeancluster/test/*TestCase.class"/>
+    <include name="org/jboss/test/ha/farm/test/*TestCase.class"/>
+    <include name="org/jboss/test/cluster/test/HASingletonElectionPolicyTestCase.class"/>
+  </patternset>
+  <!-- With JG 2.2.7, only run this test with UDP; known failure with TCP -->
+  <patternset id="cluster.non.http.udp.includes">
+    <include name="org/jboss/test/cluster/partition/test/PartitionRestartUnitTestCase.class"/>
+  </patternset>
+  <patternset id="cluster.excludes">
+    <exclude name="org/jboss/test/cluster/test/*TestCase.class"/>
+    <exclude name="org/jboss/test/cluster/test/web/jk/test/*TestCase.class"/>
+    <exclude name="org/jboss/test/cluster/partition/test/*TestCase.class"/>
+    <exclude name="org/jboss/test/cluster/jmx/test/*TestCase.class"/>
+    <exclude name="org/jboss/test/testbeancluster/test/*TestCase.class"/>
+    <exclude name="org/jboss/test/ha/farm/test/*TestCase.class"/>
+  </patternset>
+  <patternset id="one.test.includes">
+    <include name="${test}"/>
+  </patternset>
+  <patternset id="apache_tomcat.cluster.includes">
+    <include name="org/jboss/test/cluster/apache_tomcat/*TestCase.class"/>
+  </patternset>
+  <patternset id="ha.includes">
+    <include name="org/jboss/test/ha/jmx/test/*TestCase.class"/>
+    <include name="org/jboss/test/ha/singleton/test/*TestCase.class"/>
+  </patternset>
+  <!-- A patternset for that require a security config -->
+  <patternset id="security.includes">
+    <include name="**/test/naming/test/Security*"/>
+    <include name="**/test/security/test/*UnitTestCase.class"/>
+    <include name="**/test/security/test/auth/*UnitTestCase.class"/>
+    <include name="**/test/security/test/ejb/*TestCase.class"/>
+    <include name="**/test/jca/test/SecurityContextUnitTestCase.class"/>
+    <include name="**/test/jmx/test/RMIAdaptorAuth*TestCase.class"/>
+    <include name="**/test/jmx/test/Secure*TestCase.class"/>
+    <include name="**/test/perf/test/SecurePerfStressTestCase.class"/>
+    <include name="**/test/timer/test/SecureTimerUnitTestCase.class"/>
+  </patternset>
+  <patternset id="security.excludes">
+    <exclude name="**/test/naming/test/Security*"/>
+    <exclude name="**/test/security/test/*UnitTestCase.class"/>
+    <exclude name="**/test/jca/test/SecurityContextUnitTestCase.class"/>
+    <exclude name="**/test/jmx/test/Secure*"/>
+    <exclude name="**/test/jrmp/test/DynLoadingUnitTestCase.class"/>
+    <exclude name="**/test/jrmp/test/DynLoadingFromSARUnitTestCase.class"/>
+    <exclude name="**/test/jrmp/test/DynLoadingFromSARUnpackedUnitTestCase.class"/>
+    <exclude name="**/test/perf/test/SecurePerfStressTestCase.class"/>
+    <exclude name="**/test/timer/test/SecureTimerUnitTestCase.class"/>
+    <exclude name="**/test/jmx/test/RMIAdaptorAuth*TestCase.class"/>
+  </patternset>
+  <!-- A patternset that requires jboss to run with a security manager -->
+  <patternset id="securitymgr.includes">
+    <include name="**/test/securitymgr/test/*TestCase.class"/>
+  </patternset>
+  <patternset id="securitymgr.excludes">
+    <exclude name="**/test/securitymgr/test/*"/>
+  </patternset>
+  
+  <patternset id="custom-secmgr.includes">
+    <include name="**/test/**/CustomSecurityManagerTestCase.class"/>
+  </patternset>
+
+  <!-- Tests needing non-clustered tomcat SSO -->
+  <patternset id="tc-sso.includes">
+    <include name="org/jboss/test/web/test/SingleSignOnUnitTestCase.class"/>
+    <include name="org/jboss/test/web/test/WebProgrammaticLoginTestCase.class"/>
+  </patternset>
+  <patternset id="tc-sso.excludes">
+    <exclude name="org/jboss/test/web/test/SingleSignOnUnitTestCase.class"/>
+    <exclude name="org/jboss/test/web/test/WebProgrammaticLoginTestCase.class"/>
+  </patternset>
+  <!-- Tests needing clustered tomcat SSO -->
+  <patternset id="tc-sso-clustered.includes">
+    <include name="org/jboss/test/web/test/ClusteredSingleSignOnUnitTestCase.class"/>
+  </patternset>
+  <patternset id="tc-sso-clustered.excludes">
+    <exclude name="org/jboss/test/web/test/ClusteredSingleSignOnUnitTestCase.class"/>
+  </patternset>
+  <!-- Tests needing tomcat federation -->
+  <patternset id="tc-federation.includes">
+    <include name="org/jboss/test/web/security/*TestCase.class"/>
+    <exclude name="org/jboss/test/web/security/GenericHeaderAuthUnitTestCase.class"/>
+    <include name="org/jboss/test/web/test/FormAuthUnitTestCase.class"/>
+  </patternset>
+  <!-- Tests needing tomcat SSL -->
+  <patternset id="tc-ssl.includes">
+    <include name="org/jboss/test/web/test/ssl/*TestCase.class"/>
+  </patternset>
+  <patternset id="tc-ssl.excludes">
+    <exclude name="org/jboss/test/web/test/ssl/*"/>
+  </patternset>
+  <!-- Tests needing tomcat WebCtxLoader set via the UseJBossWebLoader setting -->
+  <patternset id="tomcat.webctx.includes">
+    <include name="org/jboss/test/web/test/WebCtxLoaderTestCase.class"/>
+    <include name="org/jboss/test/web/test/MultipleTomcatServicesTestCase.class"/>
+  </patternset>
+  <!-- Webservice SSL Tests -->
+  <patternset id="webservice-ssl.includes">
+    <include name="org/jboss/test/webservice/secure/**/*TestCase.class"/>
+    <exclude name="org/jboss/test/webservice/secure/noenv/**/*TestCase.class"/>
+  </patternset>
+  <patternset id="webservice-ssl.noenv.includes">
+    <include name="org/jboss/test/webservice/secure/noenv/**/*TestCase.class"/>
+  </patternset>
+  <!-- Tests needing IIOP setup -->
+  <patternset id="iiop.includes">
+    <include name="org/jboss/test/*iiop/test/*TestCase.class"/>
+    <exclude name="org/jboss/test/txiiop/test/*TestCase.class"/>
+  </patternset>
+  <patternset id="iiop.excludes">
+    <exclude name="org/jboss/test/*iiop/test/*"/>
+  </patternset>
+  <!-- Tests needing webservice setup -->
+  <patternset id="webservice.includes">
+    <include name="org/jboss/test/webservice/**/*TestCase.class"/>
+  </patternset>
+  <patternset id="webservice.excludes">
+    <exclude name="org/jboss/test/webservice/jbws309/**"/>
+  </patternset>
+  <!-- Tests needing xml binding setup -->
+  <patternset id="jbossxb.includes">
+    <include name="org/jboss/test/xml/*TestCase.class"/>
+  </patternset>
+  <patternset id="jbossxb.excludes">
+    <exclude name="org/jboss/test/xml/*TestCase.class"/>
+  </patternset>
+  <patternset id="jaxr.includes">
+    <include name="org/jboss/test/jaxr/scout/**/*TestCase.class"/>
+  </patternset>
+  <!-- Tests needing deployment service setup -->
+  <patternset id="deployment-service.includes">
+    <include name="org/jboss/test/deployment/test/*TestCase.class"/>
+  </patternset>
+  <patternset id="deployment-service.excludes">
+    <exclude name="org/jboss/test/deployment/test/*TestCase.class"/>
+  </patternset>
+  <!-- The compatibility tests need extra memory -->
+  <patternset id="compatibility.includes">
+    <include name="org/jboss/test/compatibility/test/*TestCase.class"/>
+  </patternset>
+  <patternset id="compatibility.excludes">
+    <exclude name="org/jboss/test/compatibility/test/*TestCase.class"/>
+  </patternset>
+  <!-- Binding service tests -->
+  <patternset id="binding-manager.includes">
+    <include name="org/jboss/test/binding/*TestCase.class"/>
+  </patternset>
+  <patternset id="binding-manager.excludes">
+    <exclude name="org/jboss/test/binding/*TestCase.class"/>
+  </patternset>
+  <!-- Classloader Leak Tests -->
+  <patternset id="classloader-leak.includes">
+    <include name="org/jboss/test/classloader/leak/test/*TestCase.class"/>
+  </patternset>
+  <patternset id="classloader-leak.excludes">
+    <exclude name="org/jboss/test/classloader/leak/test/*TestCase.class"/>
+  </patternset>
+
+  <!-- Tests that are currently broken -->
+  <patternset id="badtest.excludes">
+    <exclude name="org/jboss/test/aop/test/RemotingUnitTestCase"/>
+    <!-- Needs apache ? -->
+    <exclude name="org/jboss/test/cluster/httpsessionreplication/**"/>
+    <exclude name="org/jboss/test/cache/test/local/ConcurrentTransactionalUnitTestCase.class"/>
+    <!-- JBAS-2026 -->
+    <exclude name="org/jboss/test/jmx/test/JarInSarJSR77UnitTestCase.class"/>
+    <!-- JBAS-4328, test showing potential jbossmq message expiration limitation -->
+    <exclude name="org/jboss/test/jbossmq/test/JBAS4328UnitTestCase.class"/>
+    <!-- JBPAPP-125 -->
+    <exclude name="org/jboss/test/jbossmq/test/UnackedUnitTestCase.class"/>
+    <!-- JBPAPP-149 -->
+    <exclude name="org/jboss/test/jbossmq/test/SecurityUnitTestCase.class"/>
+    <!-- JBAS-4271, test intermittently fails -->
+    <exclude name="org/jboss/test/pooled/test/SSLSocketsUnitTestCase.class"/>
+  </patternset>
+
+  <patternset id="aop-with-classloader.excludes">
+    <!-- Needs to be started either with the bootclasspath or -javaagent classloader hooks -->
+    <exclude name="org/jboss/test/aop/test/Scoped*.class"/>
+  </patternset>
+  <patternset id="aop-with-classloader.includes">
+    <include name="org/jboss/test/aop/test/Scoped*TestCase.class"/>
+  </patternset>
+
+  <!-- The union of the excludes -->
+  <patternset id="all.excludes">
+    <patternset refid="aop-with-classloader.excludes"/>
+    <patternset refid="badtest.excludes"/>
+    <patternset refid="binding-manager.excludes"/>
+    <patternset refid="classloader-leak.excludes"/>
+    <patternset refid="cluster.excludes"/>
+    <patternset refid="compatibility.excludes"/>
+    <patternset refid="deployment-service.excludes"/>
+    <patternset refid="iiop.excludes"/>
+    <patternset refid="jacc.excludes"/>
+    <patternset refid="jbossxb.excludes"/>
+    <patternset refid="security.excludes"/>
+    <patternset refid="securitymgr.excludes"/>
+    <patternset refid="tc-sso-clustered.excludes"/>
+    <patternset refid="tc-sso.excludes"/>
+    <patternset refid="tc-ssl.excludes"/>
+    <patternset refid="webservice.excludes"/>
+  </patternset>
+
+  <!-- A target that allows for conditional dependency on the compilation and
+
+  -->
+  <target name="maybejars" unless="nojars">
+    <antcall target="jars" inheritRefs="true"/>
+  </target>
+
+  <!-- The top level entry point for all tests that can be run against
+  variations of the standard jboss dist. This does not include long
+  running benchmark oriented tests.
+  -->
+  <target name="tests" description="Execute all non-benchmark tests." depends="maybejars">
+    <record name="${basedir}/build.log" append="no" action="start" loglevel="${buildlog.level}"/>
+    <property name="nojars" value="true"/>
+    <antcall target="jboss-minimal-tests"/>
+    <antcall target="jboss-all-config-tests"/>
+    <antcall target="tests-security-manager"/>
+    <antcall target="tests-clustering-all-stacks"/>
+    <antcall target="tomcat-ssl-tests"/>
+    <antcall target="tomcat-sso-tests"/>
+    <antcall target="tomcat-sso-clustered-tests"/>
+    <antcall target="tomcat-webctx-tests"/>
+    <antcall target="tomcat-federation-tests"/>
+    <antcall target="test-example-binding-manager"/>
+    <antcall target="tests-jacc-security"/>
+    <antcall target="tests-jacc-securitymgr"/>
+    <antcall target="tests-jacc-security-external"/>
+    <antcall target="tests-custom-securitymgr"/>
+    <antcall target="tests-compatibility"/>
+    <antcall target="tests-webservice-ssl"/>
+    <antcall target="tests-unified"/>
+    <antcall target="tests-aop-scoped"/>
+    <antcall target="tests-classloader-leak"/>
+    <antcall target="tests-report"/>
+    <record name="${basedir}/build.log" action="stop"/>
+  </target>
+
+  <target name="tests-unified">
+    <create-unifiedInvoker-server conf="unified-jboss" serial="jboss"/>
+    <replace file="${jboss.dist}/server/unified-jboss/conf/standardjboss.xml">
+      <replacefilter token="&lt;interceptor call-by-value=&quot;true&quot;&gt;org.jboss.invocation.MarshallingInvokerInterceptor&lt;/interceptor&gt;"
+        value="&lt;interceptor call-by-value=&quot;true&quot;&gt;org.jboss.invocation.DataContainerMarshallingInvokerInterceptor&lt;/interceptor&gt;"/>
+    </replace>
+
+    <server:start name="unified-jboss"/>
+
+    <antcall target="test-unified-unit">
+      <param name="unified-config" value="UnifiedInvoker JBossSerialization"/>
+    </antcall>
+    <server:stop name="unified-jboss"/>
+
+    <create-unifiedInvoker-server conf="unified-java" serial="java"/>
+    <server:start name="unified-java"/>
+    <antcall target="test-unified-unit">
+      <param name="unified-config" value="UnifiedInvoker JavaSerialization"/>
+    </antcall>
+    <server:stop name="unified-java"/>
+  </target>
+
+  <!-- parameters:
+  unitifed-config -->
+  <target name="test-unified-unit">
+    <patternset id="unified.include">
+      <include name="org/jboss/test/bmp/test/*UnitTestCase.class"/>
+      <include name="org/jboss/test/cmp2/**/*UnitTestCase.class"/>
+      <include name="org/jboss/test/testbyvalue/test/**/*UnitTestCase.class"/>
+      <include name="org/jboss/test/testbean/test/BeanUnitTestCase.class"/>
+    </patternset>
+
+    <antcall target="test-execute-units">
+      <param name="includes.refid" value="unified.include"/>
+      <param name="jboss-junit-configuration" value="${unified-config}"/>
+    </antcall>
+  </target>
+
+  <!--
+  parameters :
+  <param name="includes.refid" />
+  <param name="jboss-junit-configuration" />
+  -->
+  <target name="test-execute-units">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}" failureProperty="tests.failure">
+
+      <sysproperty key="jboss.dist" value="${jboss.dist}"/>
+      <sysproperty key="jboss.internal-server.serverroot" value="${jboss.dist}/server"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="jbosstest.cluster.node0" value="${node0}"/>
+      <sysproperty key="jbosstest.cluster.node0.http.url" value="${node0.http.url}"/>
+      <sysproperty key="jbosstest.cluster.node0.jndi.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.cluster.node1" value="${node1}"/>
+      <sysproperty key="jbosstest.cluster.node1.http.url" value="${node1.http.url}"/>
+      <sysproperty key="jbosstest.cluster.node1.jndi.url" value="${node1.jndi.url}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <!--Lets pass some parameters from local.properties file as system properties-->
+      <syspropertyset>
+        <propertyref prefix="org.apache."/>
+      </syspropertyset>
+      <syspropertyset>
+        <propertyref prefix="apache"/>
+      </syspropertyset>
+      <syspropertyset>
+        <propertyref prefix="node"/>
+      </syspropertyset>
+
+      <!--jvmarg value="${junit.jvm.options}"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8789,server=y,suspend=y"/>
+      <jvmarg value="-Djava.compiler=NONE"/>
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xnoagent"/-->
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!-- definition of the property for keeping results between configuration -->
+      <sysproperty key="jboss-junit-configuration" value="${jboss-junit-configuration}"/>
+      <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-${jboss-junit-configuration}.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <patternset refid="${includes.refid}"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="tests-stress" description="Execute all stress tests." depends="tests-standard-stress,
+             tests-report">
+  </target>
+
+  <target name="jboss-minimal-tests" description="Validate the minimal config">
+    <server:start name="minimal"/>
+    <echo message="Minimal server started, deploy shutdown hook and wait"/>
+    <!-- Deploy a service that calls System.exit(0) in its stop -->
+    <copy file="${build.lib}/shutdown.sar" todir="${jboss.dist}/server/minimal/deploy"/>
+    <sleep seconds="6"/>
+    <!-- Remove the service to trigger a System.exit(0) -->
+    <echo message="Undeploy shutdown hook, trigger minimal server shutdown and wait"/>
+    <delete file="${jboss.dist}/server/minimal/deploy/shutdown.sar"/>
+    <sleep seconds="11"/>
+    <echo message="Minimal server should be stopped"/>
+  </target>
+
+  <target name="jboss-all-config-tests" description="The units tests which are run against the jboss all config">
+    <server:start name="all"/>
+    <antcall target="tests-standard-unit"/>
+    <antcall target="tests-client-unit"/>
+    <antcall target="tests-security-basic-unit"/>
+    <antcall target="tests-standard-stress"/>
+    <antcall target="tests-jbossmx-compliance"/>
+    <antcall target="tests-jbossmx-implementation"/>
+    <antcall target="tests-jbossmx-performance"/>
+    <antcall target="tests-iiop"/>
+    <antcall target="tests-scout-jaxr"/>
+    <antcall target="tests-webservice"/>
+    <antcall target="tests-txtimer"/>
+    <server:stop name="all"/>
+  </target>
+
+  <!-- Test netbooting a subset of the default configuration
+  -->
+  <target name="netboot-tests" description="Tests run against a custom netboot configuration">
+    <!-- Create the netboot config starting with the default config -->
+    <create-config baseconf="default" newconf="netboot">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="lib/**"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <exclude name="deploy/jboss-web.deployer/ROOT.war/**"/>
+      </patternset>
+    </create-config>
+    <property name="netboot.deploy" value="${jboss.dist}/server/netboot/deploy/ROOT.war"/>
+    <!-- -->
+    <copy todir="${netboot.deploy}/lib">
+      <fileset dir="${jboss.dist}/lib"/>
+    </copy>
+    <copy todir="${netboot.deploy}/server/default">
+      <fileset dir="${jboss.dist}/server/default">
+        <include name="conf/**"/>
+        <include name="lib/**"/>
+        <include name="deploy/**"/>
+        <exclude name="deploy/jboss-web.deployer/**"/>
+        <exclude name="deploy/http-invoker.sar/**"/>
+        <exclude name="deploy/jmx-console.war/**"/>
+        <exclude name="deploy/jboss-aop.deployer/**"/>
+        <exclude name="deploy/jboss-ws4ee.sar/**"/>
+        <exclude name="deploy/management/**"/>
+        <exclude name="deploy/jboss-hibernate.deployer/**"/>
+        <exclude name="deploy/jms/jbossmq-httpil.sar/**"/>
+      </fileset>
+    </copy>
+    <jar basedir="${jboss.dist}/server/default/deploy/jboss-web.deployer" destfile="${netboot.deploy}/server/default/deploy/jboss-web.deployer"/>
+    <start-jboss conf="netboot"/>
+    <wait-on-host port="18080"/>
+    <!-- Start the netboot instance -->
+    <java classname="org.jboss.Main" fork="true" spawn="true" dir="${jboss.dist}/bin">
+      <classpath refid="jboss.boot.classpath"/>
+      <jvmarg line="-Xmx128m"/>
+      <arg value="--netboot=http://${node0}:18080/"/>
+      <arg value="-b"/>
+      <arg value="${node0}"/>
+    </java>
+    <wait-on-host/>
+    <stop-jboss/>
+
+    <!--
+    <run-junit junit.patternset="netboot.includes"
+    />
+    -->
+    <stop-jboss url="jnp://${node0}:11099"/>
+  </target>
+
+  <target name="tests-apache-tomcat-clustering" description="Execute clustering tests requiring an apache load balanced two TC nodes.">
+    <echo message="Will read config info from local.propeties file in testsuite dir"/>
+    <!-- Definition of apache is in imports/server-config.xml -->
+    <apache location="${apache.location}" action-type="start"/>
+    <create-cluster-node conf="node0"/>
+    <server:start name="node0"/>
+    <create-cluster-node conf="node1"/>
+    <server:start name="node1"/>
+    <echo message="Nodes have started, waiting for cluster to stablize..."/>
+
+    <!-- Need a custom condition that queries for the node membership == 2 -->
+    <echo message="Going to call target tests-clustering-unit"/>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="apache_tomcat.cluster.includes"/>
+      <param name="jboss-junit-configuration" value="Tomcat Clustering"/>
+    </antcall>
+    <server:stop name="node0"/>
+    <server:stop name="node1"/>
+    <apache location="${apache.location}" action-type="stop"/>
+  </target>
+
+  <!-- Tests for the ha stuff Ivelin wrote-->
+  <target name="tests-ha" description="Execute ha tests.">
+    <echo message="Going to call target tests-ha-unit"/>
+    <antcall target="tests-ha-unit"></antcall>
+  </target>
+
+  <!-- Run all clustering tests with two JGroups stacks (UDP and TCP)-->
+  <target name="tests-clustering-all-stacks" description="Execute clustering tests requiring two nodes.">
+    <!-- Test the default UDP stack -->
+    <antcall target="tests-clustering">
+      <param name="jboss-junit-configuration" value="UDP"/>
+    </antcall>
+
+    <!-- Test a TCP stack. -->
+    <antcall target="tests-clustering">
+      <param name="jgroups-stack" value="TCP"/>
+      <param name="jboss-junit-configuration" value="TCP"/>
+    </antcall>
+
+  </target>
+
+  <!-- Depending on the value of the ${jboss-junit-configuration} variable, uses different JGroups stacks -->
+  <target name="tests-clustering" description="Execute clustering tests requiring two nodes.">
+
+    <!-- If jboss-junit-configuration wasn't passed in, set it now -->
+    <property name="jboss-junit-configuration" value="UDP"/>
+
+    <antcall target="tests-clustering-configure" inheritRefs="true"/>
+
+    <server:start name="cluster-${jboss-junit-configuration}-0"/>
+    <server:start name="cluster-${jboss-junit-configuration}-1"/>
+
+    <echo message="Going to call target tests-clustering-unit for non-HTTP tests"/>
+
+    <antcall target="tests-clustering-udp" inheritRefs="true"/>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="cluster.non.http.includes"/>
+      <param name="jboss-junit-configuration" value="Default-${jboss-junit-configuration}"/>
+      <param name="jbosstest.cluster.node0.config" value="cluster-${jboss-junit-configuration}-0"/>
+      <param name="jbosstest.cluster.node1.config" value="cluster-${jboss-junit-configuration}-1"/>
+    </antcall>
+
+    <echo message="Going to call target tests-clustering-unit for HTTP tests (ASYNC, no BR)"/>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="cluster.http.includes"/>
+      <param name="jboss-junit-configuration" value="Default-${jboss-junit-configuration}"/>
+      <param name="jbosstest.cluster.node0.config" value="cluster-${jboss-junit-configuration}-0"/>
+      <param name="jbosstest.cluster.node1.config" value="cluster-${jboss-junit-configuration}-1"/>
+    </antcall>
+
+    <server:stop name="cluster-${jboss-junit-configuration}-0"/>
+    <server:stop name="cluster-${jboss-junit-configuration}-1"/>
+
+    <sleep seconds="4"/>
+
+    <echo message="Going to call target tests-clustering-unit again for FIELD granularity tests (ASYNC, no BR)"/>
+
+    <antcall target="tests-clustering-field-configure" inheritRefs="true"/>
+
+    <server:start name="cluster-field-${jboss-junit-configuration}-0"/>
+    <server:start name="cluster-field-${jboss-junit-configuration}-1"/>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="cluster.field.includes"/>
+      <param name="jboss-junit-configuration" value="Default-${jboss-junit-configuration}"/>
+      <param name="jbosstest.cluster.node0.config" value="cluster-field-${jboss-junit-configuration}-0"/>
+      <param name="jbosstest.cluster.node1.config" value="cluster-field-${jboss-junit-configuration}-1"/>
+    </antcall>
+
+    <server:stop name="cluster-field-${jboss-junit-configuration}-0"/>
+    <server:stop name="cluster-field-${jboss-junit-configuration}-1"/>
+
+    <sleep seconds="4"/>
+
+    <echo message="Going to call target tests-clustering-unit again with new configuration (SYNC, no BR)"/>
+
+    <antcall target="tests-clustering-sync-configure"/>
+
+    <server:start name="cluster-${jboss-junit-configuration}-SYNC-0"/>
+    <server:start name="cluster-${jboss-junit-configuration}-SYNC-1"/>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="cluster.http.jk.includes"/>
+      <param name="jboss-junit-configuration" value="SyncModeNUseJvm-${jboss-junit-configuration}"/>
+      <param name="jbosstest.cluster.node0.config" value="cluster-${jboss-junit-configuration}-SYNC-0"/>
+      <param name="jbosstest.cluster.node1.config" value="cluster-${jboss-junit-configuration}-SYNC-1"/>
+    </antcall>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="cluster.http.includes"/>
+      <param name="jboss-junit-configuration" value="SyncModeNUseJvm-${jboss-junit-configuration}"/>
+    </antcall>
+
+    <server:stop name="cluster-${jboss-junit-configuration}-SYNC-0"/>
+    <server:stop name="cluster-${jboss-junit-configuration}-SYNC-1"/>
+
+    <sleep seconds="4"/>
+
+    <echo message="Going to call target tests-clustering-unit again for FIELD granularity tests with new configuration (SYNC, no BR)"/>
+
+    <antcall target="tests-clustering-field-sync-configure"/>
+
+    <server:start name="cluster-field-${jboss-junit-configuration}-SYNC-0"/>
+    <server:start name="cluster-field-${jboss-junit-configuration}-SYNC-1"/>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="cluster.field.includes"/>
+      <param name="jboss-junit-configuration" value="SyncModeNUseJvm-${jboss-junit-configuration}"/>
+      <param name="jbosstest.cluster.node0.config" value="cluster-field-${jboss-junit-configuration}-SYNC-0"/>
+      <param name="jbosstest.cluster.node1.config" value="cluster-field-${jboss-junit-configuration}-SYNC-1"/>
+    </antcall>
+
+    <server:stop name="cluster-field-${jboss-junit-configuration}-SYNC-0"/>
+    <server:stop name="cluster-field-${jboss-junit-configuration}-SYNC-1"/>
+
+    <sleep seconds="4"/>
+
+    <echo message="Going to call target tests-clustering-unit again with new configuration (SYNC, with BR)"/>
+
+    <antcall target="tests-clustering-br-configure"/>
+
+    <server:start name="cluster-${jboss-junit-configuration}-BR-0"/>
+    <server:start name="cluster-${jboss-junit-configuration}-BR-1"/>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="cluster.http.includes"/>
+      <param name="jboss-junit-configuration" value="BuddyReplEnabled-${jboss-junit-configuration}"/>
+    	<param name="jbosstest.cluster.web.cache.br" value="true"/>
+      <param name="jbosstest.cluster.node0.config" value="cluster-${jboss-junit-configuration}-BR-0"/>
+      <param name="jbosstest.cluster.node1.config" value="cluster-${jboss-junit-configuration}-BR-1"/>
+    </antcall>
+
+    <server:stop name="cluster-${jboss-junit-configuration}-BR-0"/>
+    <server:stop name="cluster-${jboss-junit-configuration}-BR-1"/>
+
+    <sleep seconds="4"/>
+
+    <echo message="Going to call target tests-clustering-unit again for FIELD granularity tests with new configuration (SYNC, with BR)"/>
+
+    <antcall target="tests-clustering-field-br-configure"/>
+
+    <server:start name="cluster-field-${jboss-junit-configuration}-BR-0"/>
+    <server:start name="cluster-field-${jboss-junit-configuration}-BR-1"/>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="cluster.field.includes"/>
+      <param name="jboss-junit-configuration" value="BuddyReplEnabled-${jboss-junit-configuration}"/>
+      <param name="jbosstest.cluster.node0.config" value="cluster-field-${jboss-junit-configuration}-BR-0"/>
+      <param name="jbosstest.cluster.node1.config" value="cluster-field-${jboss-junit-configuration}-BR-1"/>
+    </antcall>
+
+    <server:stop name="cluster-field-${jboss-junit-configuration}-BR-0"/>
+    <server:stop name="cluster-field-${jboss-junit-configuration}-BR-1"/>
+
+  </target>
+
+  <target name="tests-clustering-udp" unless="jgroups-stack">
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="cluster.non.http.udp.includes"/>
+      <param name="jboss-junit-configuration" value="Default-${jboss-junit-configuration}"/>
+      <param name="jbosstest.cluster.node0.config" value="cluster-${jboss-junit-configuration}-0"/>
+      <param name="jbosstest.cluster.node1.config" value="cluster-${jboss-junit-configuration}-1"/>
+    </antcall>
+
+  </target>
+
+  <target name="tests-clustering-configure" unless="${tests.clustering.skip.startup}">
+    <create-cluster-node conf="cluster-${jboss-junit-configuration}-0" host="${node0}"/>
+    <create-cluster-node conf="cluster-${jboss-junit-configuration}-1" host="${node1}"/>
+  </target>
+
+  <target name="tests-clustering-field-configure" unless="${tests.clustering.skip.startup}">
+    <create-cluster-node conf="cluster-field-${jboss-junit-configuration}-0" host="${node0}"/>
+    <create-cluster-node conf="cluster-field-${jboss-junit-configuration}-1" host="${node1}"/>
+
+    <echo message="Modifying the node0 and node1 Tomcat configuration for FIELD"/>
+    <http-cluster-field-node-config-change conf="cluster-field-${jboss-junit-configuration}-0"/>
+    <http-cluster-field-node-config-change conf="cluster-field-${jboss-junit-configuration}-1"/>
+  </target>
+
+  <target name="tests-clustering-sync-configure" unless="${tests.clustering.skip.startup}">
+    <create-cluster-node conf="cluster-${jboss-junit-configuration}-SYNC-0" host="${node0}"/>
+    <create-cluster-node conf="cluster-${jboss-junit-configuration}-SYNC-1" host="${node1}"/>
+
+    <echo message="Modifying the node0 and node1 Tomcat configuration for REPL_SYNC/UseJK"/>
+    <http-cluster-node-config-change conf="cluster-${jboss-junit-configuration}-SYNC-0" useBuddyRepl="false"/>
+    <http-cluster-node-config-change conf="cluster-${jboss-junit-configuration}-SYNC-1" useBuddyRepl="false"/>
+  </target>
+
+  <target name="tests-clustering-field-sync-configure" unless="${tests.clustering.skip.startup}">
+    <create-cluster-node conf="cluster-field-${jboss-junit-configuration}-SYNC-0" host="${node0}"/>
+    <create-cluster-node conf="cluster-field-${jboss-junit-configuration}-SYNC-1" host="${node1}"/>
+
+    <echo message="Modifying the node0 and node1 Tomcat configuration for FIELD"/>
+    <http-cluster-field-node-config-change conf="cluster-field-${jboss-junit-configuration}-SYNC-0"/>
+    <http-cluster-field-node-config-change conf="cluster-field-${jboss-junit-configuration}-SYNC-1"/>
+
+    <echo message="Modifying the node0 and node1 Tomcat configuration for REPL_SYNC/UseJK"/>
+    <http-cluster-node-config-change conf="cluster-field-${jboss-junit-configuration}-SYNC-0" useBuddyRepl="false"/>
+    <http-cluster-node-config-change conf="cluster-field-${jboss-junit-configuration}-SYNC-1" useBuddyRepl="false"/>
+  </target>
+
+  <target name="tests-clustering-br-configure" unless="${tests.clustering.skip.startup}">
+    <create-cluster-node conf="cluster-${jboss-junit-configuration}-BR-0" host="${node0}"/>
+    <create-cluster-node conf="cluster-${jboss-junit-configuration}-BR-1" host="${node1}"/>
+
+    <echo message="Modifying the node0 and node1 Tomcat configuration for REPL_SYNC/UseJK/BR"/>
+    <http-cluster-node-config-change conf="cluster-${jboss-junit-configuration}-BR-0" useBuddyRepl="true"/>
+    <http-cluster-node-config-change conf="cluster-${jboss-junit-configuration}-BR-1" useBuddyRepl="true"/>
+  </target>
+
+  <target name="tests-clustering-field-br-configure" unless="${tests.clustering.skip.startup}">
+    <create-cluster-node conf="cluster-field-${jboss-junit-configuration}-BR-0" host="${node0}"/>
+    <create-cluster-node conf="cluster-field-${jboss-junit-configuration}-BR-1" host="${node1}"/>
+
+    <echo message="Modifying the node0 and node1 Tomcat configuration for FIELD"/>
+    <http-cluster-field-node-config-change conf="cluster-field-${jboss-junit-configuration}-BR-0"/>
+    <http-cluster-field-node-config-change conf="cluster-field-${jboss-junit-configuration}-BR-1"/>
+
+    <echo message="Modifying the node0 and node1 Tomcat configuration for REPL_SYNC/UseJK/BR"/>
+    <http-cluster-node-config-change conf="cluster-field-${jboss-junit-configuration}-BR-0" useBuddyRepl="true"/>
+    <http-cluster-node-config-change conf="cluster-field-${jboss-junit-configuration}-BR-1" useBuddyRepl="true"/>
+  </target>
+
+  <!-- Tests of tomcat needing a ssl connector
+  -->
+  <target name="tomcat-ssl-tests" description="Tomcat tests requiring an SSL connector">
+    <!-- Create the ssl enabled tomcat config -->
+    <create-config baseconf="default" newconf="tomcat-ssl">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <include name="lib/**"/>
+      </patternset>
+    </create-config>
+    <server:start name="tomcat-ssl"/>
+
+    <!-- Specify the JSSE properties -->
+    <property name="javax.net.ssl.keyStore" value="${build.resources}/test-configs/tomcat-ssl/conf/client.keystore"/>
+    <property name="javax.net.ssl.keyStorePassword" value="unit-tests-client"/>
+    <property name="javax.net.ssl.trustStore" value="${build.resources}/test-configs/tomcat-ssl/conf/client.keystore"/>
+    <property name="javax.net.ssl.trustStorePassword" value="unit-tests-client"/>
+
+    <propertyset id="tomcat-ssl-tests-props">
+      <propertyref prefix="javax.net.ssl"/>
+    </propertyset>
+    <run-junit junit.patternset="tc-ssl.includes" junit.configuration="tomcat-ssl-tests" junit.syspropertyset="tomcat-ssl-tests-props"/>
+
+    <server:stop name="tomcat-ssl"/>
+  </target>
+
+  <!-- Tests of tomcat requiring SSO configured
+  -->
+  <target name="tomcat-sso-tests" description="Tomcat tests requiring SSO configured">
+    <!-- Create the sso enabled tomcat config starting with the default config -->
+    <create-config baseconf="default" newconf="tomcat-sso">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <include name="deploy/ear-deployer.xml"/>
+        <include name="deploy/ejb-deployer.xml"/>
+        <include name="deploy/hsqldb-ds.xml"/>
+        <include name="deploy/jbossjca-service.xml"/>
+        <include name="deploy/jboss-local-jdbc.rar"/>
+        <include name="deploy/jboss-jdbc-metadata.sar"/>
+        <include name="lib/**"/>
+      </patternset>
+    </create-config>
+    <server:start name="tomcat-sso"/>
+    <run-junit junit.patternset="tc-sso.includes" junit.configuration="tomcat-sso-tests"/>
+    <server:stop name="tomcat-sso"/>
+  </target>
+
+  <target name="tomcat-sso-clustered-tests" description="Tomcat tests requiring clustered SSO configured">
+    <!-- Create the sso enabled tomcat config starting with the all config -->
+    <create-cluster-sso-node newconf="tomcat-sso-cluster0"/>
+    <create-cluster-sso-node newconf="tomcat-sso-cluster1"/>
+
+    <echo message="Modifying the node0 and node1 Tomcat configuration for REPL_SYNC/UseJK"/>
+    <http-cluster-node-config-change conf="tomcat-sso-cluster0" useBuddyRepl="false"/>
+    <http-cluster-node-config-change conf="tomcat-sso-cluster1" useBuddyRepl="false"/>
+
+    <server:start name="tomcat-sso-cluster0"/>
+    <server:start name="tomcat-sso-cluster1"/>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="tc-sso-clustered.includes"/>
+      <param name="jboss-junit-configuration" value="tomcat-sso-clustered-tests"/>
+    </antcall>
+
+    <server:stop name="tomcat-sso-cluster0"/>
+    <server:stop name="tomcat-sso-cluster1"/>
+
+  </target>
+
+  <!-- Tests that require the attribute "UseJBossWebLoader" set to true -->
+  <target name="tomcat-webctx-tests" description="Tomcat tests requiring classloader set to the web loader">
+    <create-config baseconf="default" newconf="tomcat-webctx" newconf-src="tomcat-webctx">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <include name="lib/**"/>
+      </patternset>
+    </create-config>
+
+    <server:start name="tomcat-webctx"/>
+    <run-junit junit.patternset="tomcat.webctx.includes" junit.configuration="tomcat-webctx-tests"/>
+    <server:stop name="tomcat-webctx"/>
+  </target>
+
+  <!-- Tests of tomcat requiring Federation configured -->
+  <target name="tomcat-federation-tests" description="Tomcat tests requiring Federation configured">
+    <!-- Create the federation enabled tomcat config starting with the default config -->
+    <create-config baseconf="default" newconf="tomcat-federation">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jmx-console.war/**"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <include name="deploy/ear-deployer.xml"/>
+        <include name="deploy/ejb-deployer.xml"/>
+        <include name="deploy/hsqldb-ds.xml"/>
+        <include name="deploy/jbossjca-service.xml"/>
+        <include name="deploy/jboss-local-jdbc.rar"/>
+        <include name="deploy/jboss-jdbc-metadata.sar"/>
+        <include name="lib/**"/>
+      </patternset>
+    </create-config>
+    <copy file="${source.resources}/web/federation/authext/jboss-service.xml" overwrite="true"
+      todir="${jboss.dist}/server/tomcat-federation/deploy/jboss-web.deployer/META-INF"/>
+    <copy file="${build.lib}/header-auth.jar" overwrite="true" todir="${jboss.dist}/server/tomcat-federation/deploy/jboss-web.deployer"/>
+    <server:start name="tomcat-federation"/>
+    <run-junit junit.patternset="tc-federation.includes" junit.configuration="tomcat-federation-tests"/>
+    <server:stop name="tomcat-federation"/>
+  </target>
+
+  <target name="test-example-binding-manager" description="Test the example binding configuration">
+    <create-all-cluster-node conf="binding-manager1" ports="ports-01"/>
+    <create-all-cluster-node conf="binding-manager2" ports="ports-02"/>
+    <server:start name="binding-manager1"/>
+    <server:start name="binding-manager2"/>
+
+    <run-junit junit.patternset="binding-manager.includes" junit.configuration="test-example-binding-manager"/>
+
+    <server:stop name="binding-manager1"/>
+    <server:stop name="binding-manager2"/>
+  </target>
+
+  <!--
+  | Tests DeploymentService
+  -->
+  <target name="deployment-service-tests" description="Tests targeting the deployment service">
+    <!-- Create configuration -->
+    <create-config baseconf="default" newconf="deployment-service">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jmx-console.war/**"/>
+        <include name="deploy/jbossjca-service.xml"/>
+        <include name="deploy/jboss-local-jdbc.rar"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <include name="lib/**"/>
+      </patternset>
+    </create-config>
+    <!-- overlay the deployment-service stuff -->
+    <copy todir="${jboss.dist}/server/deployment-service/conf">
+      <fileset dir="${jboss.dist}/docs/examples/varia/deployment-service">
+        <include name="templates/**"/>
+      </fileset>
+    </copy>
+    <copy todir="${jboss.dist}/server/deployment-service/deploy">
+      <fileset dir="${jboss.dist}/docs/examples/varia/deployment-service">
+        <include name="deployment-service.sar"/>
+      </fileset>
+    </copy>
+    <server:start name="deployment-service"/>
+    <antcall target="deployment-service-unit-tests">
+      <param name="jboss-junit-configuration" value="DeploymentService"/>
+    </antcall>
+    <server:stop name="deployment-service"/>
+  </target>
+
+  <target name="deployment-service-unit-tests">
+    <run-junit junit.patternset="deployment-service.includes" junit.configuration="${jboss-junit-configuration}"/>
+  </target>
+
+  <!--
+  | Standard tests that should run successfully against a default JBoss
+  | server distribution build.
+  -->
+
+  <target name="tests-standard-unit">
+    <echo>
+      <![CDATA[
+   junit.timeout:              ${junit.timeout}
+   jbosstest.iterationcount:   ${jbosstest.iterationcount}
+   jbosstest.threadcount:      ${jbosstest.threadcount}
+   jbosstest.beancount:        ${jbosstest.beancount}
+       ]]>
+    </echo>
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <!-- Used for JGroups -->
+      <jvmarg value="-Dbind.address=${node0}"/>
+      <sysproperty key="jboss.dist" value="${jboss.dist}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <formatter type="xml" usefile="${junit.formatter.usefile}"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="**/*UnitTestCase.class"/>
+          <patternset refid="all.excludes"/>
+          <exclude name="**/test/xa/test/XAUnitTestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="tests-standard-stress">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-standard-stress"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-standard-stress.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="**/*StressTestCase.class"/>
+          <patternset refid="all.excludes"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="tests-clustering-unit">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}" failureProperty="tests.failure">
+
+      <sysproperty key="jboss.internal-server.serverroot" value="${jboss.dist}/server"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="jbosstest.cluster.node0" value="${node0}"/>
+      <sysproperty key="jbosstest.cluster.node0.http.url" value="${node0.http.url}"/>
+      <sysproperty key="jbosstest.cluster.node0.jndi.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.cluster.node0.serverroot" value="${jboss.dist}/server/${jbosstest.cluster.node0.config}"/>
+      <sysproperty key="jbosstest.cluster.node1" value="${node1}"/>
+      <sysproperty key="jbosstest.cluster.node1.http.url" value="${node1.http.url}"/>
+      <sysproperty key="jbosstest.cluster.node1.jndi.url" value="${node1.jndi.url}"/>
+      <sysproperty key="jbosstest.cluster.node1.serverroot" value="${jboss.dist}/server/${jbosstest.cluster.node1.config}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <!--Lets pass some parameters from local.properties file as system properties-->
+      <syspropertyset>
+        <propertyref prefix="org.apache."/>
+      </syspropertyset>
+      <syspropertyset>
+        <propertyref prefix="apache"/>
+      </syspropertyset>
+      <syspropertyset>
+        <propertyref prefix="node"/>
+      </syspropertyset>
+
+      <!--jvmarg value="${junit.jvm.options}"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8789,server=y,suspend=y"/>
+      <jvmarg value="-Djava.compiler=NONE"/>
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xnoagent"/-->
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!-- definition of the property for keeping results between configuration -->
+      <sysproperty key="jboss-junit-configuration" value="${jboss-junit-configuration}"/>
+      <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-${jboss-junit-configuration}.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <patternset refid="${cluster.includes.refid}"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="tests-ha-unit">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}" failureProperty="tests.failure">
+
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-ha-unit"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-ha-unit.xml"/>
+
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <patternset refid="ha.includes"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | Tests that need to be run by loading the testcase code from a client
+  | jar rather than the build.classes.dir. Typically these tests need to
+  | control how classes are loaded.
+  -->
+  <target name="tests-client-unit">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="jbosstest.secure" value="true"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <jvmarg value="-Djava.security.manager"/>
+      <sysproperty key="java.security.policy" value="${build.resources}/security/tst.policy"/>
+      <sysproperty key="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+
+      <classpath>
+        <pathelement path="${build.lib}/jrmp-dl-client.jar"/>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-client-unit"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-client-unit.xml"/>
+
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="org/jboss/test/jrmp/test/DynLoadingUnitTestCase.class"/>
+          <include name="org/jboss/test/jrmp/test/DynLoadingFromSARUnitTestCase.class"/>
+          <include name="org/jboss/test/jrmp/test/DynLoadingFromSARUnpackedUnitTestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | Standard security tests that should run successfully against a default
+  | JBoss server distribution build.
+  -->
+  <target name="tests-security-basic-unit">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <property name="jbosstest.secure" value="true"/>
+    <property name="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+    <propertyset id="security-tests-props">
+      <propertyref prefix="java.security.auth"/>
+    </propertyset>
+
+    <run-junit junit.patternset="security.includes" junit.configuration="tests-security-basic-unit" junit.syspropertyset="security-tests-props"/>
+  </target>
+
+  <!-- Tests of Java2 permissions. The JBoss server must be running with
+  a security manager for this test -->
+  <target name="tests-security-manager" description="Tests run against a jboss server with a security manager">
+
+    <server:start name="securitymgr"/>
+    <property name="jboss.home" location="${project.root}"/>
+    <property name="jboss.thirdparty.dir" location="${project.root}/thirdparty"/>
+    <property name="jboss.tools.dir" location="${project.root}/tools"/>
+    <property name="jbosstest.secure" value="true"/>
+    <property name="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+    <propertyset id="tests-security-manager-props">
+      <propertyref prefix="java.security"/>
+      <propertyref prefix="jboss"/>
+    </propertyset>
+
+    <patternset id="test.includes">
+      <exclude name="org/jboss/test/securitymgr/test/PolicyUnitTestCase.class"/>
+      <patternset refid="securitymgr.includes"/>
+    </patternset>
+    <run-junit junit.patternset="test.includes" junit.syspropertyset="tests-security-manager-props" junit.configuration="tests-security-manager"/>
+
+    <echo>Waiting for server to shutdown...</echo>
+    <server:stop name="securitymgr"/>
+  </target> 
+
+  <!-- Tests of the custom security manager plugin -->
+  <target name="tests-custom-securitymgr" description="Tests run against a jboss server with custom security manager configured">
+    <!-- Create the ssl enabled tomcat config -->
+    <create-config baseconf="default" newconf="custom-securitymgr">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/hsqldb-ds.xml"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jbossws.sar/**"/>
+        <include name="deploy/client-deployer-service.xml"/>
+        <include name="deploy/ear-deployer.xml"/>
+        <include name="deploy/ejb-deployer.xml"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <include name="deploy/jmx-console.war/**"/>
+        <include name="deploy/jbossjca-service.xml"/>
+        <include name="deploy/jboss-local-jdbc.rar"/>
+        <include name="deploy/mail-service.xml"/>
+        <include name="deploy/jms/**"/>
+        <include name="deploy/jboss-aop.deployer/**"/>
+        <include name="deploy/jboss-aop-jdk50.deployer/**"/>
+        <include name="lib/**"/>
+      </patternset>
+    </create-config>
+    <!-- Copy the custom security manager jar -->
+    <copy todir="${jboss.dist}/server/custom-securitymgr/lib" file="${build.lib}/custom-securitymgr.jar"/>
+
+    <!-- Replace the security manager classname -->
+    <replace file="${jboss.dist}/server/custom-securitymgr/conf/jboss-service.xml">
+      <replacetoken><![CDATA[<attribute name="SecurityManagerClassName">org.jboss.security.plugins.JaasSecurityManager</attribute>]]></replacetoken>
+      <replacevalue><![CDATA[<attribute name="SecurityManagerClassName">org.jboss.test.security.test.CustomSecurityManager</attribute>]]></replacevalue>
+    </replace>
+    <server:start name="custom-securitymgr"/>
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+
+	<property name="jbosstest.secure" value="true"/>
+    <property name="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+    <propertyset id="security-tests-props">
+      <propertyref prefix="java.security.auth"/>
+    </propertyset>
+    <!--
+    <antcall target="tests-security-basic-unit">
+    <param name="run-junit-config" value="custom-securitymgr"/>
+    </antcall> -->
+    <run-junit junit.patternset="custom-secmgr.includes" junit.configuration="tests-custom-securitymgr" junit.syspropertyset="jacc-tests-props"/>
+
+	<server:stop name="custom-securitymgr"/>
+  </target>
+
+  <target name="x">
+    <!-- Create the ssl enabled tomcat config -->
+    <create-config baseconf="default" newconf="jacc">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/hsqldb-ds.xml"/>
+        <include name="deploy/jboss-web.deployer/**"/>
+        <include name="deploy/jboss-ws4ee.sar/**"/>
+        <include name="deploy/client-deployer-service.xml"/>
+        <include name="deploy/ear-deployer.xml"/>
+        <include name="deploy/ejb-deployer.xml"/>
+        <include name="deploy/jmx-invoker-service.xml"/>
+        <include name="deploy/jmx-console.war/**"/>
+        <include name="deploy/jbossjca-service.xml"/>
+        <include name="deploy/jboss-local-jdbc.rar"/>
+        <include name="deploy/mail-service.xml"/>
+        <include name="deploy/jms/*"/>
+        <include name="lib/**"/>
+      </patternset>
+    </create-config>
+    <start-securitymgr conf="jacc"/>
+
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <waitfor maxwait="60" maxwaitunit="second" checkevery="5" checkeveryunit="second" timeoutproperty="startup.timeout">
+      <http url="http://${node0}:8080/"/>
+    </waitfor>
+    <fail message="Timeout waiting for server to start" if="startup.timeout"/>
+    <property name="jbosstest.secure" value="true"/>
+    <property name="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+    <propertyset id="jacc-tests-props">
+      <propertyref prefix="java.security.auth"/>
+    </propertyset>
+
+    <propertyset id="jacc-tests-props">
+      <propertyref prefix="java.security.auth"/>
+    </propertyset>
+
+    <patternset id="x">
+      <include name="org/jboss/test/jacc/test/EJBSpecUnitTestCase.class"/>
+    </patternset>
+
+    <run-junit junit.patternset="x" junit.configuration="JACC+SecurityMgr" junit.syspropertyset="jacc-tests-props"/>
+
+    <server:stop name="jacc-securitymgr"/>
+  </target>
+
+  <target name="tests-standalone-aop-unit">
+    <!--
+    <antcall target="tests-treecacheaop-unit" inheritRefs="true"/>
+    -->
+    <antcall target="tests-treecacheaopc-unit" inheritRefs="true"/>
+    <antcall target="tests-baseaop-unit" inheritRefs="true"/>
+  </target>
+
+  <target name="tests-compatibility" description="Checks compatibility on SerialUUID" depends="init">
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="true" timeout="900000"
+      jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <jvmarg value="-XX:MaxPermSize=768m"/>
+      <jvmarg value="-Xms256m"/>
+      <jvmarg value="-Xmx256m"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="jboss.dist" file="${jboss.dist}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="jboss.aop.path" file="${source.resources}/cache/standalone/META-INF/jboss-aop.xml"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <!-- This runs with a minimal classpath as the jboss classes need to
+      be loaded in a seperate class loader.
+      -->
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="jboss.varia.classpath"/>
+	<path refid="jboss.test.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-compatibility"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-compatibility.xml"/>
+
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <patternset refid="compatibility.includes"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="tests-treecacheaop-unit" depends="init">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg value="-Djava.system.class.loader=org.jboss.aop.standalone.SystemClassLoader"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="jboss.aop.path" file="${source.resources}/cache/standalone/META-INF/jboss-aop.xml"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}/cache/standalone"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-treecacheaop-unit"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-treecacheaop-unit.xml"/>
+
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="org/jboss/test/cache/test/standAloneAop/*AopTest.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="tests-treecacheaopc-unit" depends="init">
+    <!-- pre-compile the aop classes -->
+    <taskdef name="aopc" classname="org.jboss.aop.ant.AopC" classpathref="jboss.aop.classpath"/>
+    <path id="aop.task.classpath">
+      <path refid="javassist.classpath"/>
+      <path refid="trove.classpath"/>
+      <path refid="jboss.aop.classpath"/>
+      <path refid="jboss.common.classpath"/>
+    </path>
+
+    <aopc compilerclasspathref="aop.task.classpath">
+      <classpath refid="thirdparty.classpath"/>
+      <classpath path="${build.classes}"/>
+      <src path="${build.classes}"/>
+      <include name="org/jboss/test/cache/test/standAloneAop/**"/>
+      <aoppath path="${source.resources}/cache/standalone/META-INF/jboss-aop.xml"/>
+    </aopc>
+
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="jboss.aop.path" file="${source.resources}/cache/standalone/META-INF/jboss-aop.xml"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}/cache/standalone"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-treecacheaopc-unit"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-treecacheaopc-unit.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="org/jboss/test/cache/test/standAloneAop/*AopTest.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="tests-baseaop-unit" depends="init">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="java.system.class.loader" value="org.jboss.aop.standalone.SystemClassLoader"/>
+      <sysproperty key="jboss.aop.path" file="${source.resources}/aop/META-INF/jboss-aop.xml"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-baseaop-unit"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-baseaop-unit.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="org/jboss/test/aop/nonjunit/StandaloneTest.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | Standard Foe-Deployer tests that should run successfully against a default
+  | JBoss server distribution build.
+  -->
+  <target name="tests-foe-deployer-unit">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+
+      <jvmarg value="-Djava.security.manager"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="java.security.policy" value="${build.resources}/security/tst.policy"/>
+      <sysproperty key="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}/security"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-foe-deployer-unit"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-foe-deployer-unit.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="**/test/foedeployer/test/**TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | JBossMX implementation tests that should run correctly.
+  -->
+  <target name="tests-jbossmx-implementation">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-jbossmx-implementation"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-jbossmx-implementation.xml"/>
+
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="**/jbossmx/implementation/**/*TestCase.class"/>
+          <!-- Ignore the abstract class -->
+          <exclude name="org/jboss/test/jbossmx/implementation/TestCase.class"/>
+          <exclude name="org/jboss/test/jmx/test/SecureJMXInvokerUnitTestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | JBossMX performance tests that should run correctly.
+  -->
+  <target name="tests-jbossmx-performance">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-jbossmx-performance"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-jbossmx-performance.xml"/>
+
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="**/jbossmx/performance/**/*TestCase.class"/>
+          <!-- Ignore the abstract class -->
+          <exclude name="org/jboss/test/jbossmx/performance/TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | JBossMX compliance tests that should run correctly.
+  -->
+  <target name="tests-jbossmx-compliance">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-jbossmx-compliance"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-jbossmx-compliance.xml"/>
+
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="**/jbossmx/compliance/**/*TestCase.class"/>
+          <!-- Ignore the abstract class -->
+          <exclude name="org/jboss/test/jbossmx/compliance/TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | IIOP test cases that should run successfully
+  -->
+  <target name="tests-iiop">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg value="-Dorg.omg.CORBA.ORBClass=org.jacorb.orb.ORB"/>
+      <jvmarg value="-Dorg.omg.CORBA.ORBSingletonClass=org.jacorb.orb.ORBSingleton"/>
+      <jvmarg value="-Djacorb.orb.print_version=off"/>
+      <jvmarg value="-Djacorb.log.default.verbosity=0"/>
+      <jvmarg value="-Djacorb.interop.strict_check_on_tc_creation=off"/>
+      <jvmarg value="-Djacorb.log.loggerFactory=org.jboss.util.Log4jLoggerFactory"/>
+      <jvmarg value="-Djacorb.security.ssl.client.supported_options=0"/>
+      <jvmarg value="-Djacorb.security.ssl.client.required_options=0"/>
+      <jvmarg value="-DORBInitRef.NameService=corbaloc::${node0}:3528/JBoss/Naming/root"/>
+      <jvmarg value="-Dorg.omg.PortableInterceptor.ORBInitializerClass.org.jboss.tm.iiop.TxClientInterceptorInitializer"/>
+      <jvmarg value="-Djava.security.manager"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="java.security.policy" value="${build.resources}/security/tst.policy"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+        <path refid="jboss.iiop.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-iiop"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-iiop.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <patternset refid="iiop.includes"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!-- Test the XML binding framework -->
+  <target name="tests-xml-unit">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+        <path refid="apache.jaxme.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-xml-unit"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-xml-unit.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <patternset refid="jbossxb.includes"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | Standard JBossWS tests that should run successfully against a
+  | JBoss server distribution build that contains jboss-ws4ee.
+  -->
+
+  <target name="tests-deployment" description="Execute deployment Tests">
+
+    <mkdir dir="${build.reports}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="jbosstest.secure" value="true"/>
+
+      <jvmarg value="-Djava.security.manager"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="java.security.policy" value="${build.resources}/security/tst.policy"/>
+      <sysproperty key="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}/security"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-deployment"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-deployment.xml"/>
+
+      <formatter type="plain" usefile="${junit.formatter.usefile}"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="org/jboss/test/deployment/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | Standard JBossWS tests that should run successfully against a
+  | JBoss server distribution build that contains jboss-ws4ee.
+  -->
+
+  <target name="tests-webservice" description="Execute JBossWS Tests">
+
+    <mkdir dir="${build.reports}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" showoutput="${junit.showoutput}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="jbosstest.secure" value="true"/>
+
+      <jvmarg value="-Djava.security.manager"/>
+      <sysproperty key="java.security.policy" value="${build.resources}/security/tst.policy"/>
+      <sysproperty key="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <!-- The crimson parser cannot do schema validation, which we need for jaxrpc-mapping.xml -->
+      <sysproperty key="java.endorsed.dirs" value="${jboss.dist}/lib/endorsed"/>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}/security"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-webservice"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-webservice.xml"/>
+      <formatter type="plain" usefile="${junit.formatter.usefile}"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="org/jboss/test/webservice/**/*TestCase.class"/>
+          <exclude name="org/jboss/test/webservice/jbws309/**"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="tests-webservice-ssl" description="Tomcat tests requiring an SSL connector">
+    <!-- Create the ssl enabled tomcat config -->
+    <create-config baseconf="default" newconf="webservice-ssl">
+      <patternset>
+        <include name="**/*"/>
+      </patternset>
+    </create-config>
+    <server:start name="webservice-ssl"/>
+    <!-- Specify the JSSE properties -->
+    <property name="javax.net.ssl.keyStore" value="${build.resources}/test-configs/webservice-ssl/conf/client.keystore"/>
+    <property name="javax.net.ssl.keyStorePassword" value="unit-tests-client"/>
+    <property name="javax.net.ssl.trustStore" value="${build.resources}/test-configs/webservice-ssl/conf/client.keystore"/>
+    <property name="javax.net.ssl.trustStorePassword" value="unit-tests-client"/>
+    <property name="rootDir" value="${build.resources}"/>
+    <property name="org.jboss.security.ignoreHttpsHost" value="true"/>
+
+    <propertyset id="tests-webservice-ssl-props">
+      <propertyref prefix="javax.net.ssl"/>
+      <propertyref prefix="org.jboss.security"/>
+      <propertyref name="rootDir"/>
+    </propertyset>
+    <!-- No javax.net.ssl.* props, but we need ignoreHost -->
+    <propertyset id="tests-webservice-ssl-noenv-props">
+      <propertyref prefix="org.jboss.security"/>
+      <propertyref name="rootDir"/>
+    </propertyset>
+    <run-junit junit.patternset="webservice-ssl.includes" junit.syspropertyset="tests-webservice-ssl-props" junit.configuration="tests-webservice-ssl"/>
+    <run-junit junit.patternset="webservice-ssl.noenv.includes" junit.syspropertyset="tests-webservice-ssl-noenv-props" junit.configuration="webservice-ssl"/>
+    <server:stop name="webservice-ssl"/>
+  </target>
+
+   <!-- The scoped AOP tests need a classloader hook -->
+   <target name="tests-aop-scoped"
+      description="AOP tests requiring a native classloader hook"
+      depends="tests-aop-scoped-jdk14,tests-aop-scoped-jdk50">
+   </target>
+	
+   <target name="tests-aop-scoped-jdk14"
+      description="AOP tests requiring a native classloader hook for JDK 1.4"
+      unless="HAVE_JDK_1.5">
+
+	  <!-- create the new server configuration -->   
+      <create-config baseconf="all" newconf="scoped-aop-jdk14">
+        <patternset>
+          <include name="conf/**"/>
+          <include name="lib/**"/>
+          <include name="deploy/**"/>
+        </patternset>
+      </create-config>
+
+      <!-- Generate the JDK 1.4 classloader hook -->
+      <java classname="org.jboss.aop.hook.GeneratePluggableInstrumentedClassLoader">
+         <classpath>
+            <path refid="javassist.classpath"/>
+            <path refid="jboss.aop.classpath"/>
+         </classpath>
+         <arg value="${jboss.dist}/bin/woven-classloader"/>
+      </java>
+      <!-- copy across the jdk 1.4 pluggable instrumentor -->
+      <copy todir="${jboss.dist}/bin" file="${jboss.aop.lib}/jdk14-pluggable-instrumentor.jar"/>
+      <server:start name="scoped-aop-jdk14"/>
+
+      <antcall target="run-tests-aop-scoped" inheritRefs="true"/>
+
+      <server:stop name="scoped-aop-jdk14"/>
+
+      <delete dir="${jboss.dist}/bin/woven-classloader"/>
+      <delete file="${jboss.dist}/bin/jdk14-pluggable-instrumentor.jar"/>
+   </target>
+	
+   <target name="tests-aop-scoped-jdk50"
+      description="AOP tests requiring a native classloader hook for JDK 5.0"
+      if="HAVE_JDK_1.5">
+	
+	  <!-- create the new server configuration -->   
+      <create-config baseconf="all" newconf="scoped-aop-jdk50">
+        <patternset>
+          <include name="conf/**"/>
+          <include name="lib/**"/>
+          <include name="deploy/**"/>
+        </patternset>
+      </create-config>
+
+      <!-- copy across the pluggable instrumentor -->
+      <copy todir="${jboss.dist}/bin" file="${jboss.aop.lib}/pluggable-instrumentor.jar"/>
+      <server:start name="scoped-aop-jdk50"/>
+
+      <antcall target="run-tests-aop-scoped" inheritRefs="true"/>
+      <server:stop name="scoped-aop-jdk50"/>
+
+      <delete file="${jboss.dist}/bin/pluggable-instrumentor.jar"/>
+   </target>
+
+  <target name="run-tests-aop-scoped"
+     description="AOP tests requiring a native classloader hook">
+       <run-junit junit.patternset="aop-with-classloader.includes" junit.configuration="tests-aop-scoped"/>
+  </target>
+
+  <!--
+  | Standard jaxr tests that should run successfully against a
+  | JBoss server distribution build that contains jaxr.
+  -->
+  <!-- Test for JAXR under the Web Services Umbrella -->
+  <target name="tests-scout-jaxr">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}" failureProperty="tests.failure">
+
+      <!-- JPDA Debugging begin-->
+      <!--
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xnoagent"/>
+      <jvmarg value="-Djava.compiler=NONE"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8686"/>
+      -->
+      <!-- End JPDA Debuuging begin-->
+
+      <sysproperty key="java.endorsed.dirs" value="${jboss.dist}/lib/endorsed"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="javax.xml.registry.ConnectionFactoryClass" value="org.apache.ws.scout.registry.ConnectionFactoryImpl"/>
+      <sysproperty key="jaxr.query.url" value="http://${node0}:8080/juddi/inquiry"/>
+      <sysproperty key="jaxr.publish.url" value="http://${node0}:8080/juddi/publish"/>
+      <sysproperty key="juddi.proxy.transportClass" value="org.jboss.jaxr.juddi.transport.SaajTransport"/>
+      <sysproperty key="host.name" value="${node0}"/>
+      <sysproperty key="jndi.bind.name" value="JAXR"/>
+      <sysproperty key="jaxr.debug" value="true"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-scout-jaxr"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-scout-jaxr.xml"/>
+
+      <formatter type="plain" usefile="${junit.formatter.usefile}"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+        <fileset dir="${build.classes}">
+          <patternset refid="jaxr.includes"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | Standard EJB Timer tests that should run successfully against a default
+  | JBoss server distribution build.
+  -->
+
+  <target name="tests-txtimer">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+
+      <jvmarg value="-Djava.security.manager"/>
+      <sysproperty key="java.security.policy" value="${build.resources}/security/tst.policy"/>
+      <sysproperty key="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}/security"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-txtimer"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-txtimer.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="**/test/txtimer/test/**TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+  
+  <target name="tests-classloader-leak">
+
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <create-config baseconf="all" newconf="classloader-leak">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/**"/>
+        <include name="lib/**"/>
+      </patternset>
+    </create-config>
+    <server:start name="classloader-leak"/>
+    
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <!-- Used for JGroups -->
+      <jvmarg value="-Dbind.address=${node0}"/>
+      <sysproperty key="jboss.dist" value="${jboss.dist}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+      
+      <!--sysproperty key="jboss-junit-configuration" value="classloader-leak"/-->
+      <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-ClassloaderLeak.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <patternset refid="classloader-leak.includes"/>
+        </fileset>
+      </batchtest>
+    </junit>
+    
+    <server:stop  name="classloader-leak"/>
+    
+  </target>
+
+  <!--
+  | Run all database related tests
+  -->
+  <target name="tests-db" depends="run-db-tests, tests-report-html"/>
+
+  <target name="run-db-tests">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="jbosstest.iterationcount" value="2"/>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <!--formatter type="xml" usefile="${junit.formatter.usefile}"/-->
+       <sysproperty key="jboss-junit-configuration" value="tests-db"/>
+       <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}" extension="-tests-db.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="**/bank/**/*StressTestCase.class"/>
+          <include name="**/bmp/**/*UnitTestCase.class"/>
+          <include name="**/cmp2/**/*UnitTestCase.class"/>
+          <include name="**/cmp2/**/*StressTestCase.class"/>
+          <include name="**/dbtest/**/*UnitTestCase.class"/>
+          <include name="**/deadlock/**/*StressTestCase.class"/>
+          <include name="**/entityexc/**/*UnitTestCase.class"/>
+          <include name="**/idgen/**/*UnitTestCase.class"/>
+          <include name="**/perf/**/*UnitTestCase.class"/>
+          <include name="**/testbean/**/*UnitTestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | Run testcases in a single directory by specifing the test directory
+  | name in -Dtest=dirname in tests/dirname/test/**TestCase.class
+  -->
+  <target name="test" if="test" description="Execute a a group of tests">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <!-- Remove the test.log so each test has a fresh log -->
+    <delete file="${build.testlog}/test.log"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" showoutput="${junit.showoutput}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <!-- Used for JGroups -->
+      <jvmarg value="-Dbind.address=${node0}"/>
+      <sysproperty key="jboss.dist" value="${jboss.dist}"/>
+      <sysproperty key="java.endorsed.dirs" value="${jboss.dist}/lib/endorsed"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="jbosstest.secure" value="true"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+        <propertyref prefix="java.rmi."/>
+        <propertyref prefix="node0"/>
+        <propertyref prefix="node1"/>
+        <propertyref prefix="org.jboss."/>
+      </syspropertyset>
+      <sysproperty key="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+      <sysproperty key="javax.net.ssl.trustStore" value="${build.resources}/security/tst.keystore"/>
+      <sysproperty key="org.jboss.security.ignoreHttpsHost" value="true"/>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <!-- Include for those tests that need common security resources -->
+        <pathelement location="${build.resources}/security"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <formatter type="plain" usefile="${junit.formatter.usefile}"/>
+      <formatter type="xml" usefile="${junit.formatter.usefile}"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="org/jboss/test/${test}/**/*TestCase.class"/>
+          <patternset refid="badtest.excludes"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | Run iiop testcases in a single directory by specifing the test
+  | directory name in -Dtest=dirname in tests/dirname/test/**TestCase.class
+  -->
+  <target name="iiop-test" depends="maybejars" if="test" description="Execute a single test.">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <!-- Remove the test.log so each run has a fresh log -->
+    <delete file="${build.testlog}/test.log"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+
+      <jvmarg value="-Dorg.omg.CORBA.ORBClass=org.jacorb.orb.ORB"/>
+      <jvmarg value="-Dorg.omg.CORBA.ORBSingletonClass=org.jacorb.orb.ORBSingleton"/>
+      <jvmarg value="-Djacorb.orb.print_version=off"/>
+      <jvmarg value="-Djacorb.log.default.verbosity=0"/>
+      <jvmarg value="-Djacorb.interop.strict_check_on_tc_creation=off"/>
+      <jvmarg value="-Djacorb.log.loggerFactory=org.jboss.util.Log4jLoggerFactory"/>
+      <jvmarg value="-Djacorb.security.ssl.client.supported_options=0"/>
+      <jvmarg value="-Djacorb.security.ssl.client.required_options=0"/>
+      <jvmarg value="-Djava.security.manager"/>
+      <jvmarg value="-Djava.security.policy==${build.resources}/${test}/client.policy"/>
+      <jvmarg value="-DORBInitRef.NameService=corbaloc::${node0}:3528/JBoss/Naming/root"/>
+      <jvmarg value="-Dorg.omg.PortableInterceptor.ORBInitializerClass.org.jboss.tm.iiop.TxClientInterceptorInitializer"/>
+
+      <sysproperty key="log4j.properties" file="${build.resources}/log4j.properties"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <path refid="tests.classpath"/>
+        <path refid="jboss.iiop.classpath"/>
+      </classpath>
+
+      <formatter type="xml" usefile="${junit.formatter.usefile}"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes}">
+          <include name="org/jboss/test/${test}/**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
+  | Run a single testcase by specifing the fully qualified class name
+  | of the unit test using the test property, -Dtest=org.jboss.test....
+  | Here you specify the testcase class, not the directory
+  -->
+  <target name="one-test" if="test" description="Execute a single test.">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <!-- Remove the test.log so each test has a fresh log -->
+    <delete file="${build.testlog}/test.log"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" showoutput="${junit.showoutput}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <!-- Used for JGroups -->
+      <jvmarg value="-Dbind.address=${node0}"/>
+      <sysproperty key="jboss.dist" value="${jboss.dist}"/>
+      <sysproperty key="java.endorsed.dirs" value="${jboss.dist}/lib/endorsed"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="jbosstest.secure" value="true"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+        <propertyref prefix="java.rmi."/>
+        <propertyref prefix="node0"/>
+        <propertyref prefix="node1"/>
+        <propertyref prefix="org.jboss."/>
+      </syspropertyset>
+      <sysproperty key="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+      <sysproperty key="javax.net.ssl.trustStore" value="${build.resources}/security/tst.keystore"/>
+      <sysproperty key="org.jboss.security.ignoreHttpsHost" value="true"/>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <!-- Include for those tests that need common security resources -->
+        <pathelement location="${build.resources}/security"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <formatter type="plain" usefile="${junit.formatter.usefile}"/>
+      <formatter type="xml" usefile="${junit.formatter.usefile}"/>
+
+      <test todir="${build.reports}" name="${test}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}"
+        fork="${junit.batchtest.fork}"/>
+    </junit>
+  </target>
+
+  <target name="one-test-debug" if="test" description="Execute a single test.">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <!-- Remove the test.log so each test has a fresh log -->
+    <delete file="${build.testlog}/test.log"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg value="-verbose:gc"/>
+
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xnoagent"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8686"/>
+      <jvmarg line="${junit.jvm.options}"/>
+
+      <!-- Used for JGroups -->
+      <jvmarg value="-Dbind.address=${node0}"/>
+      <sysproperty key="jboss.dist" value="${jboss.dist}"/>
+      <sysproperty key="java.endorsed.dirs" value="${jboss.dist}/lib/endorsed"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="jbosstest.secure" value="true"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+        <propertyref prefix="java.rmi."/>
+        <propertyref prefix="node0"/>
+        <propertyref prefix="node1"/>
+      </syspropertyset>
+      <sysproperty key="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+      <sysproperty key="javax.net.ssl.trustStore" value="${build.resources}/security/tst.keystore"/>
+      <sysproperty key="org.jboss.security.ignoreHttpsHost" value="true"/>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <!-- Include for those tests that need common security resources -->
+        <pathelement location="${build.resources}/security"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <formatter type="plain" usefile="${junit.formatter.usefile}"/>
+      <formatter type="xml" usefile="${junit.formatter.usefile}"/>
+
+      <test todir="${build.reports}" name="${test}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}"
+        fork="${junit.batchtest.fork}"/>
+    </junit>
+  </target>
+
+  <target name="one-test-ssl" if="test" description="Execute a single test.">
+    <mkdir dir="${build.reports}"/>
+    <mkdir dir="${build.testlog}"/>
+    <!-- Remove the test.log so each test has a fresh log -->
+    <delete file="${build.testlog}/test.log"/>
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}"
+      timeout="${junit.timeout}" jvm="${junit.jvm}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <!-- Used for JGroups -->
+      <jvmarg value="-Dbind.address=${node0}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <sysproperty key="java.endorsed.dirs" value="${jboss.dist}/lib/endorsed"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="jbosstest.secure" value="true"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+      <sysproperty key="java.security.auth.login.config" value="${build.resources}/security/auth.conf"/>
+      <sysproperty key="org.jboss.security.ignoreHttpsHost" value="true"/>
+
+      <sysproperty key="javax.net.ssl.keyStore" value="${build.resources}/test-configs/tomcat-ssl/conf/client.keystore"/>
+      <sysproperty key="javax.net.ssl.keyStorePassword" value="unit-tests-client"/>
+      <sysproperty key="javax.net.ssl.trustStore" value="${build.resources}/test-configs/tomcat-ssl/conf/client.keystore"/>
+      <sysproperty key="javax.net.ssl.trustStorePassword" value="unit-tests-client"/>
+
+      <classpath>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.resources}"/>
+        <!-- Include for those tests that need common security resources -->
+        <pathelement location="${build.resources}/security"/>
+        <path refid="tests.classpath"/>
+      </classpath>
+
+      <formatter type="plain" usefile="${junit.formatter.usefile}"/>
+      <formatter type="xml" usefile="${junit.formatter.usefile}"/>
+
+      <test todir="${build.reports}" name="${test}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}"
+        fork="${junit.batchtest.fork}"/>
+    </junit>
+  </target>
+
+  <target name="one-cluster-test" if="test">
+
+    <property name="jboss-junit-configuration" value="UDP"/>
+
+    <antcall target="tests-clustering-configure" inheritRefs="true"/>
+
+    <server:start name="cluster-${jboss-junit-configuration}-0"/>
+    <server:start name="cluster-${jboss-junit-configuration}-1"/>
+
+    <echo message="Going to call target tests-clustering-unit for ${test}"/>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="one.test.includes"/>
+      <param name="jboss-junit-configuration" value="Default-${jboss-junit-configuration}"/>
+      <param name="jbosstest.cluster.node0.config" value="cluster-${jboss-junit-configuration}-0"/>
+      <param name="jbosstest.cluster.node1.config" value="cluster-${jboss-junit-configuration}-1"/>
+    </antcall>
+
+    <server:stop name="cluster-${jboss-junit-configuration}-0"/>
+    <server:stop name="cluster-${jboss-junit-configuration}-1"/>
+  </target>
+
+  <target name="one-cluster-test-nostart" if="test">
+
+    <property name="jboss-junit-configuration" value="UDP"/>
+
+    <echo message="Going to call target tests-clustering-unit for ${test}"/>
+
+    <antcall target="tests-clustering-unit">
+      <param name="cluster.includes.refid" value="one.test.includes"/>
+      <param name="jboss-junit-configuration" value="Default-${jboss-junit-configuration}"/>
+      <param name="jbosstest.cluster.node0.config" value="cluster-${jboss-junit-configuration}-0"/>
+      <param name="jbosstest.cluster.node1.config" value="cluster-${jboss-junit-configuration}-1"/>
+    </antcall>	  	
+  </target>
+
+  <target name="one-cluster-test-tcp">
+    <property name="jgroups-stack" value="TCP"/>
+    <property name="jboss-junit-configuration" value="TCP"/>
+    <antcall target="one-cluster-test" inheritRefs="true"/>
+  </target>
+
+  <!-- Misc tests of the testing framework itself
+  -->
+  <target name="tests-apache" description="Test that apache can be started/stopped from ant">
+    <apache location="${apache.location}" action-type="start"/>
+    <start-sleep seconds="15"/>
+    <apache location="${apache.location}" action-type="stop"/>
+    <start-sleep seconds="5"/>
+  </target>
+
+  <target name="tests-jboss-cluster" description="Test that two jboss cluster nodes can be started/stopped from ant">
+    <server:start name="node0"/>
+    <server:start name="node1"/>
+    <start-sleep seconds="60"/>
+    <server:stop name="node0"/>
+    <server:stop name="node1"/>
+  </target>
+
+  <!-- Reporting targets that generate reports from JUnit output.
+  -->
+  <target name="reports" depends="tests-report" description="Generates all reports."/>
+
+  <target name="tests-report-clean">
+    <delete dir="${build.reports}"/>
+  </target>
+
+  <target name="tests-report" depends="tests-report-html, tests-report-text, tests-report-xml">
+    <tar tarfile="${module.output}/${TIMENOW}.tgz" compression="gzip" longfile="gnu">
+      <tarfileset dir="${build.reports}/html" prefix="${TIMENOW}">
+        <include name="**"/>
+      </tarfileset>
+    </tar>
+  </target>
+
+  <target name="tests-report-html" depends="compile-stylesheets">
+    <mkdir dir="${build.reports}/html"/>
+
+    <junitreport todir="${build.reports}">
+      <fileset dir="${build.reports}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${build.reports}/html" styledir="${build.stylesheets}"/>
+    </junitreport>
+  </target>
+
+  <target name="tests-matrix" description="Executes only the version check compatibility suite. Use -Dmatrix-versions=[version container] for this task"
+    depends="maybejars" if="matrix-versions">
+
+    <fail message="Use -Dmatrix-versions=[version container] for this task" unless="matrix-versions"/>
+    <fail message="Set -Djdk14= to a JDK1.4 installation" unless="jdk14"/>
+    <fail message="Set -Djdk15= to a JDK1.5 installation" unless="jdk15"/>
+    
+    <create-config baseconf="default" newconf="legacy-invokers">
+      <patternset>
+        <include name="conf/**"/>
+        <include name="deploy/**"/>
+        <include name="lib/**"/>
+      </patternset>
+    </create-config>
+    
+    <!-- test interoperating with clients using the legacy rmi invokers -->
+    <test-compatibility client-version="3_2_8SP1" client-jdk="${jdk15}" client-serialization-flag="-Dorg.jboss.j2ee.Serialization" serialization-flag="-Dnone" server-config="legacy-invokers"/>
+    <test-compatibility client-version="3_2_x"    client-jdk="${jdk15}" client-serialization-flag="-Dorg.jboss.j2ee.Serialization" serialization-flag="-Dnone" server-config="legacy-invokers"/>
+    <test-compatibility client-version="4_0_1SP1" client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Dorg.jboss.j2ee.LegacySerialization" server-config="legacy-invokers"/>
+    <test-compatibility client-version="4_0_2"    client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Dnone" server-config="legacy-invokers"/>
+    <test-compatibility client-version="4_0_3"    client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Dnone" server-config="legacy-invokers"/>
+    <test-compatibility client-version="4_0_3SP1" client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Dnone" server-config="legacy-invokers"/>
+    <!-- testing interoperating with clients using the unified invokers over jboss remoting -->
+    <test-compatibility client-version="4_0_4_GA" client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Djboss.remoting.pre_2_0_compatible=true" server-config="default"/>
+    <test-compatibility client-version="4_0_5_GA" client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Djboss.remoting.pre_2_0_compatible=true" server-config="default"/>
+    <test-compatibility client-version="4_0_x"    client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Djboss.remoting.pre_2_0_compatible=true" server-config="default"/>
+    <test-compatibility client-version="4_2_0_GA" client-jdk="${jdk15}" client-serialization-flag="-Dnone" serialization-flag="-Dnone" server-config="default"/>
+    <test-compatibility client-version="4_2_1_GA" client-jdk="${jdk15}" client-serialization-flag="-Dnone" serialization-flag="-Dnone" server-config="default"/>
+    <test-compatibility client-version="4_2_2_GA" client-jdk="${jdk15}" client-serialization-flag="-Dnone" serialization-flag="-Dnone" server-config="default"/>
+    <test-compatibility client-version="4_2_x"    client-jdk="${jdk15}" client-serialization-flag="-Dnone" serialization-flag="-Dnone" server-config="default"/>
+    <!-- testing interoperating with clients using the pooled invokers -->
+    <test-compatibility-pooled-invokers client-version="4_0_3"    client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Dorg.jboss.invocation.pooled.Legacy"/>
+    <test-compatibility-pooled-invokers client-version="4_0_3SP1" client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Dorg.jboss.invocation.pooled.Legacy"/>
+    <test-compatibility-pooled-invokers client-version="4_0_4_GA" client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Dnone"/>
+    <test-compatibility-pooled-invokers client-version="4_0_5_GA" client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Dnone"/>
+    <test-compatibility-pooled-invokers client-version="4_0_x"    client-jdk="${jdk14}" client-serialization-flag="-Dnone" serialization-flag="-Dnone"/>
+    <test-compatibility-pooled-invokers client-version="4_2_0_GA" client-jdk="${jdk15}" client-serialization-flag="-Dnone" serialization-flag="-Dnone"/>
+    <test-compatibility-pooled-invokers client-version="4_2_1_GA" client-jdk="${jdk15}" client-serialization-flag="-Dnone" serialization-flag="-Dnone"/>
+    <test-compatibility-pooled-invokers client-version="4_2_2_GA" client-jdk="${jdk15}" client-serialization-flag="-Dnone" serialization-flag="-Dnone"/>
+    <test-compatibility-pooled-invokers client-version="4_2_x"    client-jdk="${jdk15}" client-serialization-flag="-Dnone" serialization-flag="-Dnone"/>
+  </target>
+
+  <macrodef name="test-compatibility-pooled-invokers">
+    <attribute name="client-version"/>
+    <attribute name="client-jdk"/>
+    <attribute name="client-serialization-flag"/>    
+    <attribute name="serialization-flag"/>
+    <sequential>
+      <start-jboss conf="default" jvmargs="-Xmx128m @{serialization-flag}"/>
+      <wait-on-host/>
+      <antcall target="tests-standard-unit-matrix-version-pooled">
+        <param name="matrix-configuration" value="@{client-version}"/>
+	<param name="junit-jvm-command" value="@{client-jdk}/bin/java"/>
+        <param name="current-version-dir" value="${matrix-versions}/@{client-version}"/>
+        <param name="client-serialization-flag" value="@{client-serialization-flag}"/>
+      </antcall>
+      <stop-jboss jvmargs="@{serialization-flag}"/>
+      <wait-on-shutdown conf="default"/>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="test-compatibility">
+    <attribute name="client-version"/>
+    <attribute name="client-jdk"/>
+    <attribute name="client-serialization-flag"/>    
+    <attribute name="serialization-flag"/>
+    <attribute name="server-config"/>
+    <sequential>
+      <start-jboss conf="@{server-config}" jvmargs="-Xmx128m @{serialization-flag}"/>
+      <wait-on-host/>
+      <antcall target="tests-standard-unit-matrix-version">
+        <param name="matrix-configuration" value="@{client-version}"/>
+	<param name="junit-jvm-command" value="@{client-jdk}/bin/java"/>
+        <param name="current-version-dir" value="${matrix-versions}/@{client-version}"/>
+        <param name="client-serialization-flag" value="@{client-serialization-flag}"/>
+      </antcall>
+      <stop-jboss jvmargs="@{serialization-flag}"/>
+      <wait-on-shutdown conf="@{server-config}"/>
+    </sequential>
+  </macrodef>
+
+  <target name="tests-standard-unit-matrix-version">
+    <execute-matrix-unit test-name="testbyvalue" parameter-filter="org/jboss/test/testbyvalue/test/**/*TestCase.class"/>
+    <execute-matrix-unit test-name="client" parameter-filter="org/jboss/test/client/**/*TestCase.class"/>
+    <execute-matrix-unit test-name="bmp" parameter-filter="org/jboss/test/bmp/**/*TestCase.class"/>
+    <execute-matrix-unit test-name="cmp2" parameter-filter="org/jboss/test/cmp2/**/*TestCase.class"/>
+    <execute-matrix-unit test-name="jms" parameter-filter="org/jboss/test/jbossmq/test/JBossMQUnitTest.class"/>
+  </target>
+
+  <target name="tests-standard-unit-matrix-version-pooled">
+    <execute-matrix-unit test-name="pooled-invoker" parameter-filter="org/jboss/test/pooled/test/**/BeanStressTestCase.class"/>
+  </target>
+
+  <macrodef name="execute-matrix-unit">
+    <attribute name="test-name"/>
+    <attribute name="parameter-filter"/>
+    <sequential>
+      <!-- this requires antcall as a property can't be redefined -->
+      <antcall target="execute-matrix-unit-target">
+        <param name="test-name" value="@{test-name}"/>
+        <param name="parameter-filter" value="@{parameter-filter}"/>
+      </antcall>
+    </sequential>
+  </macrodef>
+
+  <target name="execute-matrix-unit-target">
+    <echo message=">>>>>> Executing test=${test-name} filter=${parameter-filter}"/>
+    <pathconvert pathSep="," dirSep="/" property="jbosstest.hometest">
+      <path location="${build.classes14}"/>
+    </pathconvert>
+
+    <pathconvert pathSep="," dirSep="/" property="jbosstest.executionlist">
+      <path>
+        <fileset dir="${build.classes14}">
+          <include name="${parameter-filter}"/>
+          <!-- The following test excluded because they need jboss.jar to
+               access the following classes not included with the client libs:
+               org/jboss/ejb/plugins/cmp/jdbc/metadata/JDBCQueryMetaData
+               org/jboss/metadata/ClientMetaData -->
+          <exclude name="org/jboss/test/client/test/MetaDataUnitTestCase.class"/>
+          <exclude name="org/jboss/test/cmp2/commerce/QueryTest.class"/>
+          <exclude name="org/jboss/test/cmp2/commerce/LimitOffsetTest.class"/>
+          <exclude name="org/jboss/test/cmp2/commerce/CompleteUnitTestCase.class"/>
+        </fileset>
+      </path>
+    </pathconvert>
+
+    <junit dir="${module.output}" printsummary="${junit.printsummary}" haltonerror="${junit.haltonerror}" haltonfailure="${junit.haltonfailure}" fork="true"
+      timeout="${junit.timeout}" jvm="${junit-jvm-command}">
+
+      <jvmarg line="${junit.jvm.options}"/>
+      <!-- Used for JGroups -->
+      <jvmarg value="-Dbind.address=${node0}"/>
+      <jvmarg value="${client-serialization-flag}"/>
+      <sysproperty key="jbosstest.deploy.dir" file="${build.lib}"/>
+      <sysproperty key="build.testlog" value="${build.testlog}"/>
+      <sysproperty key="log4j.configuration" value="file:${build.resources}/log4j.xml"/>
+      <sysproperty key="jboss-junit-configuration" value="${test-name}_${matrix-configuration}"/>
+      <sysproperty key="java.naming.provider.url" value="${node0.jndi.url}"/>
+      <sysproperty key="jbosstest.server.host" value="${node0}"/>
+      <!-- Pass along any jbosstest.* system properties -->
+      <syspropertyset>
+        <propertyref prefix="jbosstest."/>
+      </syspropertyset>
+      <classpath>
+        <pathelement location="${build.classes14}"/>
+        <pathelement location="${build.resources}"/>
+        <fileset dir="${current-version-dir}" includes="*.jar"/>
+        <!-- compiled with javac.source/target = 1.4 since
+        org/jboss/test/JBossTestCase (from jboss-test.jar)
+        is needed for the tests -->
+        <path refid="jboss.test.classpath"/>
+      </classpath>
+      <formatter classname="org.jboss.ant.taskdefs.XMLJUnitMultipleResultFormatter" usefile="${junit.formatter.usefile}"
+        extension="-${test-name}_${matrix-configuration}.xml"/>
+
+      <batchtest todir="${build.reports}" haltonerror="${junit.batchtest.haltonerror}" haltonfailure="${junit.batchtest.haltonfailure}" fork="${junit.batchtest.fork}">
+
+        <fileset dir="${build.classes14}">
+          <include name="org/jboss/test/compatibility/test/matrix/MatrixTestContainer.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
+  </target>
+
+  <!--
+  | this currently spews logs of VariableReference crap, so it is turned
+  | off by default.  Once this is fixed, it should be built after
+  | tests-report-html
+  -->
+
+  <target name="tests-report-text" depends="tests-report-html">
+    <mkdir dir="${build.reports}/text"/>
+
+    <style basedir="${build.reports}" destdir="${build.reports}/text" extension=".txt" style="${build.stylesheets}/summary1b.xsl" includes="TESTS-TestSuites.xml">
+      <param name="thedate" expression="${TIMENOW}"/>
+      <param name="java_version" expression="${java.version}"/>
+      <param name="java_vendor" expression="${java.vendor}"/>
+      <param name="java_vm_specification_version" expression="${java.vm.specification.version}"/>
+      <param name="java_vm_version" expression="${java.vm.version}"/>
+      <param name="java_vm_name" expression="${java.vm.name}"/>
+      <param name="java_vm_info" expression="${java.vm.info}"/>
+      <param name="java_specification_version" expression="${java.specification.version}"/>
+      <param name="java_class_version" expression="${java.class.version}"/>
+      <param name="os_name" expression="${os.name}"/>
+      <param name="os_arch" expression="${os.arch}"/>
+      <param name="os_version" expression="${os.version}"/>
+      <param name="builduid" expression="${TIMENOW}"/>
+      <param name="results_web" expression="${results_web}"/>
+    </style>
+  </target>
+
+  <target name="tests-report-xml" depends="tests-report-html">
+    <mkdir dir="${build.reports}/xml"/>
+
+    <style basedir="${build.reports}" destdir="${build.reports}/xml" extension=".xml" style="${build.stylesheets}/shortXmlSummary.xsl" includes="TESTS-TestSuites.xml">
+      <param name="thedate" expression="${TIMENOW}"/>
+      <param name="java_version" expression="${java.version}"/>
+      <param name="java_vendor" expression="${java.vendor}"/>
+      <param name="java_vm_specification_version" expression="${java.vm.specification.version}"/>
+      <param name="java_vm_version" expression="${java.vm.version}"/>
+      <param name="java_vm_name" expression="${java.vm.name}"/>
+      <param name="java_vm_info" expression="${java.vm.info}"/>
+      <param name="java_specification_version" expression="${java.specification.version}"/>
+      <param name="java_class_version" expression="${java.class.version}"/>
+      <param name="os_name" expression="${os.name}"/>
+      <param name="os_arch" expression="${os.arch}"/>
+      <param name="os_version" expression="${os.version}"/>
+    </style>
+  </target>
+
+  <!--
+  | Integration Tests
+  | The targets are defined in build-integration.xml
+  -->
+  <target name="tests-integration">
+    <antcall target="tests-wsrp-integration"/>
+  </target>
+
+</project>

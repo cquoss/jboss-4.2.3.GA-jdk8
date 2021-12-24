@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main"/>
+	<classpathentry kind="src" path="/system"/>
+	<classpathentry kind="src" path="/jmx"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/common/lib/jboss-common.jar"/>
+	<classpathentry kind="src" path="/management"/>
+	<classpathentry kind="src" path="/server"/>
+	<classpathentry kind="src" path="/varia"/>
+	<classpathentry kind="src" path="/messaging"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/thirdparty/gnu-getopt/lib/getopt.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jfreechart/lib/jfreechart.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-servlet/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/sun-servlet/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/trove/lib/trove.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/dom4j/lib/dom4j.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/beanshell/lib/bsh.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/aop/lib/jboss-aop.jar"/>
+	<classpathentry kind="lib" path="/thirdparty/jboss/remoting/lib/jboss-remoting.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/security"/>
+	<classpathentry kind="output" path="output/eclipse-classes"/>
+</classpath>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psf version="2.0">
+	<provider id="org.tigris.subversion.subclipse.core.svnnature">
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/aspects,aspects"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/build,build"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/cluster,cluster"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/connector,connector"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/console,console"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/deployment,deployment"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/ejb3,ejb3"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/ejb3x,ejb3x"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/hibernate-int,hibernate-int"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/iiop,iiop"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/j2ee,j2ee"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/jaxrpc,jaxrpc"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/jmx,jmx"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/management,management"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/messaging,messaging"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/naming,naming"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/security,security"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/server,server"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/system,system"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/test,test"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/testsuite,testsuite"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/tomcat,tomcat"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/tools,tools"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/transaction,transaction"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/varia,varia"/>
+		<project reference="0.9.3,https://svn.jboss.org/repos/jbossas/branches/Branch_4_2/webservice,webservice"/>
+	</provider>
+</psf>

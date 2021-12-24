@@ -1,0 +1,50 @@
+<xmbean:mbean
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation=
+      "http://jboss.org/xmbean resources/xml/multispaced/xmbean.xsd
+       http://jboss.org/xmbean/persistence/jdbc resources/xml/multispaced/jdbcpm.xsd"
+   xmlns:xmbean="http://jboss.org/xmbean"
+   xmlns:jdbcpm="http://jboss.org/xmbean/persistence/jdbc">
+
+   <xmbean:description>The JBoss XMBean version of the monitor server</xmbean:description>
+
+   <xmbean:class>monitor.MonitorPOJO</xmbean:class>
+   <xmbean:constructor>
+      <xmbean:description>The no-arg constructor</xmbean:description>
+      <xmbean:name>monitor.MonitorPOJO</xmbean:name>
+   </xmbean:constructor>
+
+   <xmbean:attribute
+      access="read-write"
+      getMethod="getInterval"
+      setMethod="setInterval">
+
+      <xmbean:description>
+         The interval in milliseconds between checks of VM memory and threads
+      </xmbean:description>
+
+      <xmbean:name>Interval</xmbean:name>
+      <xmbean:type>int</xmbean:type>
+   </xmbean:attribute>
+
+   <xmbean:operation>
+      <xmbean:description>Access the last HistoryLength monitor reports</xmbean:description>
+      <xmbean:name>history</xmbean:name>
+      <xmbean:return-type>java.lang.String</xmbean:return-type>
+   </xmbean:operation>
+
+   <xmbean:notification>
+      <xmbean:description>
+         A notification sent when the monitor interval expires
+      </xmbean:description>
+      <xmbean:name>javax.management.Notification</xmbean:name>
+      <xmbean:notification-type>monitor.IntervalElapsed</xmbean:notification-type>
+   </xmbean:notification>
+
+   <xmbean:persistence>
+      <jdbcpm:persistence-manager>
+         <jdbcpm:datasource xmlns:xmbean="http://jboss.org/persistence/jdbc2">java:/DefaultDS</jdbcpm:datasource>
+         <jdbcpm:table>xmbeans</jdbcpm:table>
+      </jdbcpm:persistence-manager>
+   </xmbean:persistence>
+</xmbean:mbean>

@@ -1,0 +1,18 @@
+<project name="beanshell-component-info">
+   <!-- ============================================================ -->
+   <!-- Beanshell                                                    -->
+   <!-- ============================================================ -->
+   <component id="beanshell"
+              version="1.3.0-brew"
+              licenseType="lgpl"
+              projectHome="http://www.beanshell.org/"
+              description="Lightweight Scripting for Java"
+              scm=":ext:cvs.devel.redhat.com:/cvs/dist/bsh"
+              tag="bsh-1_3_0-5jpp_el4ep1_2">
+      <!-- Built using JDK 1.4 -->
+      <artifact id="bsh.jar"/>      
+      <export>
+         <include input="bsh.jar"/>         
+      </export>
+   </component>
+</project>

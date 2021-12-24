@@ -1,0 +1,99 @@
+!!!EJB3 over HTTP/HTTPS
+This tutorial describes how to access EJB3s via HTTP or HTTPS (HTTP over SSL). This is typically
+done when the beans are deployed behind a firewall so the client needs to communicate via
+a protocol and port allowed through the firewall. There are several steps required to configure the
+client, the server, and the beans to enable HTTP/HTTPS. Lets cover these one by one.
+
+!! Enabling Web Connectors
+Take a look at [jboss-web.deployer/server.xml|jboss-web.deployer/server.xml], which is in the
+deploy directory. The [server.xml|jboss-web.deployer/server.xml] file
+will need to be modified from the default.  Both the HTTP
+and HTTPS Connectors are enabled on ports 8080 and 8443, respectively. Notice the settings that
+distinguish HTTP from HTTPS. Note that the HTTPS Connector has parameters for the keystore 
+and truststore. This is where the digitial certificates and public/private keys are stored
+that are used by SSL. More on keystore config later. 
+
+!! Enabling Servlets
+Take a look at [servlet-invoker.war|servlet-invoker.war], specifically the [WEB-INF/web.xml|servlet-invoker.war/WEB-INF/web.xml]
+file. The {{servlet-invoker.war}} directory needs to be created per this example and deployed
+in the deploy directory. This will deploy the servlets that handle the HTTP and HTTPS requests.
+Notice that in [web.xml|servlet-invoker.war/WEB-INF/web.xml] file there are two servlets. The HTTP servlet defines the 
+{{invokerName}} and the HTTPS servlet defines the {{locatorUrl}}. These parameters will be used
+when configuring the EJB3 Connectors and the beans.
+
+!! Enabling EJB3 Connectors
+Take a look at [ejb3.deployer/META-INF/jboss-service.xml|ejb3.deployer/META-INF/jboss-service.xml], 
+which is in the deploy directory. The [jboss-service.xml|ejb3.deployer/META-INF/jboss-service.xml]
+will need to be modified from the default. At the bottom of the file you will see two MBeans that are not
+included in the default configuration. These MBeans configure the EJB3 Connectors for HTTP and
+HTTPS. Notice the {{InvokerLocator}} parameters in each of the Connector configs.
+
+!! Keystores and Truststores
+You will need to generate public/private key pairs and digital certificates to enable SSL. The
+JDK provides a {{keytool}} utility for the generation and management of keys and certificates.
+The server keystore contains the server side public and private keys as well as the client's certificate, which 
+includes the client public key. The server truststore contains the client's certificate, which 
+indicates that the owner of the certificate is trusted. Conversely, the client side needs access
+to the truststore, which contains the server's certificate, which indicates that the owner of the
+certificate is trusted. Typically, the keystore and truststore are placed in the {{conf}} directory
+on the server side.
+
+!! Bean Configuration
+Take a look at [CalculatorHttpBean.java|src/org/jboss/tutorial/http_https/bean/CalculatorHttpBean.java] and
+[CalculatorHttpsBean.java|src/org/jboss/tutorial/http_https/bean/CalculatorHttpsBean.java]. Not the 
+{{@RemoteBinding(clientBindUrl=".."")}} annotations. The {{clientBindUrl}} settings correspond
+to the {{InvokerLocator}} parameters configured on the server side. 
+
+!Client
+Take a look at [Client.java|src/org/jboss/tutorial/http_https/client/Client.java]. You will see
+examples of invoking the Calculator bean via both HTTP and HTTPS. Note the configuration of the
+{{HostnameVerifier}}. This is required in some cases where the hostname in the URL does not
+match the expected URL hostname. The {{HostnameVerifier}} handles this scenario.
+
+!Building and Running
+To build and run the example, make sure you have {{ejb3.deployer}} installed in JBoss 4.x.
+See the reference manual on how to install EJB 3.0. You will need to modify the JBossAS {{run}} script
+to configure the keystore. The following needs to be added to the JAVA_OPTS, which
+are passed to the VM:
+
+{{JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.keyStore=$JBOSS_HOME/server/default/conf/localhost.keystore -Djavax.net.ssl.keyStorePassword=opensource -Djava.protocol.handler.pkgs=javax.net.ssl"}}
+
+Then run {{ant}}. This will replace the default configuration with the HTTP and HTTPS enabled
+configuration. Start JBoss. Once JBoss is started with these options, you can run the client.
+Take a look at [build.xml|build.xml]. Note that there are VM options for the truststore being passed to the client VM.
+
+{{{
+Unix:    $ export JBOSS_HOME=<where your jboss 4.x distribution is>
+Windows: $ set JBOSS_HOME=<where your jboss 4.x distribution is>
+$ ant run
+Buildfile: build.xml
+
+run:
+     [java] Kabir is a student.
+     [java] Kabir types in the wrong password
+     [java] Saw expected SecurityException: null
+     [java] Kabir types in correct password.
+     [java] Kabir does unchecked addition.
+     [java] 1 + 1 = 2
+     [java] Kabir is not a teacher so he cannot do division
+     [java] null
+     [java] Students are allowed to do subtraction
+     [java] 1 - 1 = 0
+     [java] Kabir is a student.
+     [java] Kabir types in the wrong password
+     [java] Warning: URL Host: localhost vs. 192.168.1.57
+     [java] Saw expected SecurityException: null
+     [java] Kabir types in correct password.
+     [java] Kabir does unchecked addition.
+     [java] Warning: URL Host: localhost vs. 192.168.1.57
+     [java] 1 + 1 = 2
+     [java] Kabir is not a teacher so he cannot do division
+     [java] Warning: URL Host: localhost vs. 192.168.1.57
+     [java] null
+     [java] Students are allowed to do subtraction
+     [java] Warning: URL Host: localhost vs. 192.168.1.57
+     [java] 1 - 1 = 0
+}}}
+
+
+

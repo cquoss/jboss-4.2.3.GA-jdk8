@@ -181,8 +181,62 @@
     description="Compile all source files."/>
 
   <!-- Compile all class files -->
-  <target name="compile-classes" depends="compile-classes-jdk5, compile-classes-jdk6"/>
-  <target name="compile-classes-jdk5" depends="init" unless="HAVE_JDK_1.6">
+  <target name="compile-classes" depends="compile-classes-jdk5, compile-classes-jdk6, compile-classes-jdk8"/>
+
+  <target name="compile-classes-jdk8" depends="init" if="HAVE_JDK_1.8">
+    <mkdir dir="${build.classes}"/>
+
+    <!-- compile the non adapter classes from regular source -->
+    <javac destdir="${build.classes}"
+           optimize="${javac.optimize}"
+           target="8"
+           source="8"
+           debug="${javac.debug}"
+           depend="${javac.depend}"
+           verbose="${javac.verbose}"
+           deprecation="${javac.deprecation}"
+           includeAntRuntime="${javac.include.ant.runtime}"
+           includeJavaRuntime="${javac.include.java.runtime}"
+           includes="${javac.includes}"
+           excludes="${javac.excludes}"
+           failonerror="${javac.fail.onerror}">
+      <src path="${source.java}"/>
+      <exclude name="org/jboss/resource/adapter/jdbc/jdk5/**"/>
+      <exclude name="org/jboss/resource/adapter/jdbc/jdk6/**"/>
+      <classpath refid="javac.classpath"/>
+    </javac>
+
+  </target>
+
+  <!-- TODO compile switched off using non-existing foo property -->
+
+  <target name="compile-classes-jdk6" depends="init" if="foo">
+    <mkdir dir="${build.classes}"/>
+
+    <!-- compile the non adapter classes from regular source -->
+    <javac destdir="${build.classes}"
+           optimize="${javac.optimize}"
+           target="${javac.target}"
+           source="${javac.source}"
+           debug="${javac.debug}"
+           depend="${javac.depend}"
+           verbose="${javac.verbose}"
+           deprecation="${javac.deprecation}"
+           includeAntRuntime="${javac.include.ant.runtime}"
+           includeJavaRuntime="${javac.include.java.runtime}"
+           includes="${javac.includes}"
+           excludes="${javac.excludes}"
+           failonerror="${javac.fail.onerror}">
+      <src path="${source.java}"/>
+      <exclude name="org/jboss/resource/adapter/jdbc/jdk5/**"/>
+      <classpath refid="javac.classpath"/>
+    </javac>
+    <property name="compile-done"/>
+  </target>
+
+  <!-- TODO compile switched off using non-existing foo property -->
+
+  <target name="compile-classes-jdk5" depends="init" if="foo">
     <mkdir dir="${build.classes}"/>
 
     <!-- compile the non adapter classes from regular source -->
@@ -204,29 +258,7 @@
       <classpath refid="javac.classpath"/>
     </javac>
   </target>
-  <target name="compile-classes-jdk6" depends="init" if="HAVE_JDK_1.6">
-    <mkdir dir="${build.classes}"/>
 
-    <!-- compile the non adapter classes from regular source -->
-    <javac destdir="${build.classes}"
-      optimize="${javac.optimize}"
-      target="${javac.target}"
-      source="${javac.source}"
-      debug="${javac.debug}"
-      depend="${javac.depend}"
-      verbose="${javac.verbose}"
-      deprecation="${javac.deprecation}"
-      includeAntRuntime="${javac.include.ant.runtime}"
-      includeJavaRuntime="${javac.include.java.runtime}"
-      includes="${javac.includes}"
-      excludes="${javac.excludes}"
-      failonerror="${javac.fail.onerror}">
-      <src path="${source.java}"/>
-      <exclude name="org/jboss/resource/adapter/jdbc/jdk5/**"/>
-      <classpath refid="javac.classpath"/>
-    </javac>
-  </target>
- 
   <!-- Compile resource files -->
   <target name="compile-resources" depends="init">
     <mkdir dir="${build.resources}"/>

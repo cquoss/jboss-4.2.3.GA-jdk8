@@ -25,6 +25,8 @@ REM ******************************************************
 
 SETLOCAL
 
+set JAVA_HOME=D:\Install\java\jdk-8
+
 set CLASSPATH=
 set ANT_HOME=
 set ANT_OPTS=-Djava.protocol.handler.pkgs=org.jboss.net.protocol -Dbuild.script=build.bat

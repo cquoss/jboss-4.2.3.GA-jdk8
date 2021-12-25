@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 import javax.naming.Reference;
 import javax.resource.Referenceable;
@@ -164,5 +165,10 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       {
          throw new NestedSQLException(e);
       }
+   }
+
+   @Override
+   public Logger getParentLogger() {
+      return null;
    }
 }

@@ -104,21 +104,15 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection 
    
    static
    {
+      // TODO more elegant, maybe?
       Class connectionFactory = null;
       try
       {
-         connectionFactory = BaseWrapperManagedConnection.class.forName("org.jboss.resource.adapter.jdbc.jdk6.WrappedConnectionFactoryJDK6");
+         connectionFactory = BaseWrapperManagedConnection.class.forName("org.jboss.resource.adapter.jdbc.jdk8.WrappedConnectionFactoryJDK8");
       }
-      catch (ClassNotFoundException e)
+      catch (ClassNotFoundException ex)
       {
-         try
-         {
-            connectionFactory = BaseWrapperManagedConnection.class.forName("org.jboss.resource.adapter.jdbc.jdk5.WrappedConnectionFactoryJDK5");
-         }
-         catch (ClassNotFoundException ex)
-         {
-            throw new RuntimeException("Unabled to load wrapped connection factory", ex);
-         }
+         throw new RuntimeException("Unabled to load wrapped connection factory", ex);
       }
       try
       {

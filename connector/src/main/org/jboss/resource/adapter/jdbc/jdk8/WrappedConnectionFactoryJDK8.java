@@ -19,48 +19,32 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.resource.adapter.jdbc.jdk5;
+package org.jboss.resource.adapter.jdbc.jdk8;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.sql.SQLException;
 
 import org.jboss.resource.adapter.jdbc.BaseWrapperManagedConnection;
-import org.jboss.resource.adapter.jdbc.WrappedCallableStatement;
+import org.jboss.resource.adapter.jdbc.CachedCallableStatement;
+import org.jboss.resource.adapter.jdbc.CachedPreparedStatement;
 import org.jboss.resource.adapter.jdbc.WrappedConnection;
-import org.jboss.resource.adapter.jdbc.WrappedPreparedStatement;
-import org.jboss.resource.adapter.jdbc.WrappedStatement;
+import org.jboss.resource.adapter.jdbc.WrappedConnectionFactory;
 
-/**
- * WrappedConnectionJDK5.
- * 
- * @author <a href="adrian@jboss.com">Adrian Brock</a>
- * @version $Revision: 1.1 $
- */
-public class WrappedConnectionJDK5 extends WrappedConnection
+public class WrappedConnectionFactoryJDK8 implements WrappedConnectionFactory
 {
-   /**
-    * Create a new WrappedConnectionJDK5.
-    * 
-    * @param mc the managed connection
-    */
-   public WrappedConnectionJDK5(BaseWrapperManagedConnection mc)
+   public WrappedConnection createWrappedConnection(BaseWrapperManagedConnection mc)
    {
-      super(mc);
+      return new WrappedConnectionJDK8(mc);
    }
 
-   protected WrappedStatement wrapStatement(Statement statement)
+   public CachedPreparedStatement createCachedPreparedStatement(PreparedStatement ps) throws SQLException
    {
-      return new WrappedStatementJDK5(this, statement);
+      return new CachedPreparedStatementJDK8(ps);
    }
 
-   protected WrappedPreparedStatement wrapPreparedStatement(PreparedStatement statement)
+   public CachedCallableStatement createCachedCallableStatement(CallableStatement cs) throws SQLException
    {
-      return new WrappedPreparedStatementJDK5(this, statement);
-   }
-
-   protected WrappedCallableStatement wrapCallableStatement(CallableStatement statement)
-   {
-      return new WrappedCallableStatementJDK5(this, statement);
+      return new CachedCallableStatementJDK8(cs);
    }
 }

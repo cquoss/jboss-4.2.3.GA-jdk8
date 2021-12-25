@@ -21,6 +21,8 @@ REM ******************************************************
 
 SETLOCAL
 
+set JAVA_HOME=D:\Install\java\jdk-8
+
 set NOPAUSE=true
 set CLASSPATH=
 set ANT_HOME=

@@ -39,7 +39,8 @@
   <available classname="java.lang.StackTraceElement" property="HAVE_JDK_1.4"/>
   <available classname="java.lang.Enum" property="HAVE_JDK_1.5"/>
   <available classname="java.lang.management.LockInfo" property="HAVE_JDK_1.6"/>  
-  
+  <available classname="java.util.Optional" property="HAVE_JDK_1.8"/>
+
   <fail unless="HAVE_JDK_1.5">
   Unsupported Java version: You need at least JDK5 to build JBoss4.2
   </fail>

@@ -40,6 +40,16 @@ public class WrappedStatementJDK8 extends WrappedStatement
       return new WrappedResultSetJDK8(this, resultSet);
    }
 
+   @Override
+   public boolean isCloseOnCompletion() throws SQLException {
+      return getUnderlyingStatement().isCloseOnCompletion();
+   }
+
+   @Override
+   public void closeOnCompletion() throws SQLException {
+      getUnderlyingStatement().closeOnCompletion();
+   }
+
    public boolean isClosed() throws SQLException
    {
       lock();

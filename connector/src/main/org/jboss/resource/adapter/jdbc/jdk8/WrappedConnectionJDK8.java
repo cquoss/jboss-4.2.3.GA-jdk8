@@ -81,18 +81,69 @@ public class WrappedConnectionJDK8 extends WrappedConnection
    }
 
    @Override
-   public String getSchema() throws SQLException {
-      return getUnderlyingConnection().getSchema();
+   public String getSchema() throws SQLException
+   {
+      lock();
+      try
+      {
+         Connection c = getUnderlyingConnection();
+         try
+         {
+            return c.getSchema();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
+      }
+      finally
+      {
+         unlock();
+      }
    }
 
    @Override
-   public void setSchema(final String schema) throws SQLException {
-      getUnderlyingConnection().setSchema(schema);
+   public void setSchema(final String schema) throws SQLException
+   {
+      lock();
+      try
+      {
+         Connection c = getUnderlyingConnection();
+         try
+         {
+            c.setSchema(schema);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
+      }
+      finally
+      {
+         unlock();
+      }
    }
 
    @Override
-   public void abort(final Executor executor) throws SQLException {
-      // do nothing
+   public void abort(final Executor executor) throws SQLException
+   {
+      lock();
+      try
+      {
+         Connection c = getUnderlyingConnection();
+         try
+         {
+            c.abort(executor);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
+      }
+      finally
+      {
+         unlock();
+      }
    }
 
    public Array createArrayOf(String typeName, Object[] elements) throws SQLException

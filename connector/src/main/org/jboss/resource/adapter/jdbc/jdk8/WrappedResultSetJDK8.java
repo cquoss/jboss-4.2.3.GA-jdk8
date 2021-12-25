@@ -39,6 +39,16 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
       super(statement, resultSet);
    }
 
+   @Override
+   public <T> T getObject(final String parameterName, final Class<T> type) throws SQLException {
+      return (T) getWrappedObject().getObject(parameterName);
+   }
+
+   @Override
+   public <T> T getObject(final int parameterIndex, final Class<T> type) throws SQLException {
+      return (T) getWrappedObject().getObject(parameterIndex);
+   }
+
    public int getHoldability() throws SQLException
    {
       ResultSet resultSet = getUnderlyingResultSet();

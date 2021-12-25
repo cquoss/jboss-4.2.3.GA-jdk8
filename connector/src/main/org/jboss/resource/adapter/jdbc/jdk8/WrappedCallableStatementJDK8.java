@@ -58,10 +58,12 @@ public class WrappedCallableStatementJDK8 extends WrappedCallableStatement
       // do nothing
    }
 
+   @Override
    public <T> T getObject(final String parameterName, final Class<T> type) throws SQLException {
       return (T) getWrappedObject().getObject(parameterName);
    }
 
+   @Override
    public <T> T getObject(final int parameterIndex, final Class<T> type) throws SQLException {
       return (T) getWrappedObject().getObject(parameterIndex);
    }

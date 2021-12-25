@@ -45,6 +45,16 @@ public class WrappedPreparedStatementJDK8 extends WrappedPreparedStatement
       return new WrappedResultSetJDK8(this, resultSet);
    }
 
+   @Override
+   public boolean isCloseOnCompletion() throws SQLException {
+      return false;
+   }
+
+   @Override
+   public void closeOnCompletion() throws SQLException {
+      // do nothing
+   }
+
    public boolean isClosed() throws SQLException
    {
       lock();
